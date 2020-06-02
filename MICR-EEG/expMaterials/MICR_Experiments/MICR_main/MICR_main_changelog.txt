@@ -1,0 +1,48 @@
+2/27
+
+Created new .csv files with: 
+- corrected stimuli and block grouping (was messed up in original lists on Google Sheets)
+- includes the (hopefully correct) trigger numbers
+
+2/28
+
+Updated .py script with useVersion command
+
+** Currently no sound files in this folder, not even placeholder ones
+** Need to include final version sound files
+
+3/4
+
+Updated sentStim folder with all *final versions of sound files
+* still need to listen to all sound files to check that sound good for the last time after being intensity scaled
+* may need to do some edits, like noise reduction
+
+3/5
+Updated sound files in folder:
+- S2_AI_23_ur.wav
+- ... (Several more)
+Fixed a script error with 'corrAns' changed to 'correctAns'
+** Need to update on lab computer
+
+Did noise reduction for all of S9 and some of S8's recordings
+Updated sound files in folder
+
+3/6-7
+Copied over updated sound files and script to lab computer
+
+Tested Triggers on lab computer
+- Added if ver =... then Trigger = ... to lab version of code
+- changed 0.5 sec ISI to 1 sec
+
+Re-recorded S2, spliced in new tokens for some sentences
+Updated new S2 soundfiles in folder
+* Need to update sound files on lab computer
+
+3/10
+Updated sound files on lab computer
+
+3/12
+Tested experiment in full pilot
+
+Updated CN_B3_stim.csv 
+- fixed typo for question S9_filler_2: Did she use to hold birthday parties?

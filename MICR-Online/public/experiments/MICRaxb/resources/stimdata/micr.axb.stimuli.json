@@ -1,0 +1,140 @@
+{
+  "prepInstructionText": ["<div class=\"text-placeholder\"></div> <div class=\"vertical-center\"><p>In this experiment, you will hear sets of three words and are asked to judge whether the first or last word sounded the most similar to the middle word. You will hear words produced by two different speakers, who you'll first be given some information about.</p><p>Before you begin the main experiment, we will do a couple of audio checks and practice trials. Please switch off your phone/notifications, ensure that you are in a quiet location without distractions and put on headphones or earbuds now.</p><p><i>Click the 'Next' button to continue.</i></p></div>"
+    ,
+    "<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p>First, click 'play' on the audio player to listen to a sample audio clip. Listen as many times as you wish to make sure you have adjusted your device's volume (not the volume on the audio player) to a comfortable listening level with headphones on.</p><br> <audio controls> <source src=\"../../src/audio/audioTest_word.wav\" type=\"audio/wav\"> Your browser does not support this audio. Please switch browsers and try again.</audio> <br> <p><i>When you're ready to continue, click the 'Next' button.</i></p></div>"
+    ,
+    "<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p>Next, we will do a short audio test to ensure that your audio listening quality is appropriate for the main task.<br> In each trial, you will hear three tones at a time. You will be asked to decide which tone (first, second, third) was the quietest by clicking a button on the screen (e.g. FIRST sound is QUIETEST).</p><p>The task will start immediately when you continue.</p><p><i>When you're ready to begin, click the 'Next' button.</i></p></div>"
+  ],
+  "mainInstructionText": [
+    "<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p>In this experiment, your task is to judge how similar different pronunciations of the same word sound. First, you will receive some information about the speaker you are about to hear. </p> <p>Then, in each trial you will hear one word repeated three times (e.g. mouse... mouse... mouse). Your task is to listen carefully and decide whether the middle word sounded more first word or the last word.</p><p>If the first word is more similar, press '1'. If the second word is more similar, press '0'.</p><p><i>To begin a few practice trials, press SPACE.</i></p></div>"
+  ],
+  "finalInstructionText": ["<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p>Great, you've finished the practice!<br> Now we will begin the actual experiment.</p><p><i>When you're ready to begin, press SPACE.</i></p></div>"
+  ]
+  ,
+  "fixationCross": ["<div class=\"vertical-center\" style=\"font-size:60px;\">+</div>"
+  ],
+  "axbText": ["<div class=\"vertical-center\" style='width:60%;'><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+  ],
+  "keyChoiceText": ["<div class=\"vertical-center\" style='width:60%;'><div style='float: left;'><p>Press '1' for same.</p></div><div style='float: right;'><p>Press '0' for different.</p></div></div>"
+  ],
+  "sliderPromptText": ["<div class=\"vertical-center\"><p>On a scale from 1 (very different) to 7 (very similar), how similar were the two pronunciations?</p></div><br>"
+  ],
+  "breakMessage": ["<div class=\"vertical-center\"><p>Feel free to take a break!</p><i>When you're ready to continue, press SPACE to begin the next trial.</i></p></div>"
+  ],
+  "completionMessage": ["<div class=\"vertical-center\"><p>You're all done!</p><p>Your responses have been recorded.</p><p>Thank you for participating in this experiment.</p><i>Press SPACE to be redirected.</i></p></div>"
+  ],
+  "surveyMessage": ["<div class=\"vertical-center\"><p>Your responses have been recorded.</p><p><b>You've completed the main part of the experiment. Thank you!</b></p><p><b>The remainder of the study consists of a personality questionnaire and a language background survey</b>.</p><p>After you complete those parts of the experiment, you will be returned to Prolific.co.</p><p><i>Press SPACE to be automatically redirected.</i></p></div>"
+  ],
+  "audio": [
+    "../../src/audio/toneTest_1.wav",
+    "../../src/audio/toneTest_2.wav",
+    "../../src/audio/toneTest_3.wav",
+    "../../src/audio/toneTest_4.wav",
+    "../../src/audio/toneTest_5.wav",
+    "../../src/audio/toneTest_6.wav",
+    "resources/audio/practiceStim/S1_AU_14_axb.wav",
+    "resources/audio/practiceStim/S1_AU_14_bxa.wav",
+    "resources/audio/practiceStim/S1_AI_21_axb.wav",
+    "resources/audio/practiceStim/S1_AI_21_bxa.wav",
+    "resources/audio/wordStim/S3_AU_16_ur_tw_axb-900.wav",
+    "resources/audio/wordStim/S3_AU_19_ur_tw_axb-900.wav",
+    "resources/audio/wordStim/S9_AU_11_ur_tw_axb-900.wav",
+    "resources/audio/wordStim/S9_AU_19_ur_tw_axb-900.wav"
+  ],
+  "condA": {
+    "blocks": [
+      {"blockName": "blockMIMI", "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]},
+      {"blockName": "blockCNCN", "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]}
+    ]
+  },
+  "condB": {
+    "blocks": [
+      {"blockName": "blockMICN", "speakerInfo": ["<div class=\"vertical-center\"><p>This speaker is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]},
+      {"blockName": "blockCNMI", "speakerInfo": ["<div class=\"vertical-center\"><p>This speaker is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]}
+    ]
+  },
+  "condC": {
+    "blocks": [
+      {"blockName": "blockCNCN", "speakerInfo": ["<div class=\"vertical-center\"><p>This speaker is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]},
+      {"blockName": "blockMIMI", "speakerInfo": ["<div class=\"vertical-center\"><p>This speaker is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]}
+    ]
+  },
+  "condD": {
+    "blocks": [
+      {"blockName": "blockCNMI", "speakerInfo": ["<div class=\"vertical-center\"><p>This speaker is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]},
+      {"blockName": "blockMICN", "speakerInfo": ["<div class=\"vertical-center\"><p>This speaker is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]}
+    ]
+  },
+  "blockMIMI": [
+    {"wordStim": "resources/audio/wordStim/S3_AU_16_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MIMI"
+    },
+    {"wordStim": "resources/audio/wordStim/S3_AU_19_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MIMI"
+    },
+    {"wordStim": "resources/audio/wordStim/S3_AU_19_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MIMI"
+    },
+    {"wordStim": "resources/audio/wordStim/S3_AU_16_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MIMI"
+    }
+  ],
+  "blockCNCN": [
+    {"wordStim": "resources/audio/wordStim/S9_AU_11_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:CN, vowel:AI, variant:mp, blockName:CNCN"
+    },
+    {"wordStim": "resources/audio/wordStim/S9_AU_19_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:CN, vowel:AI, variant:mp, blockName:CNCN"
+    },
+    {"wordStim": "resources/audio/wordStim/S9_AU_19_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:CN, vowel:AI, variant:mp, blockName:CNCN"
+    },
+    {"wordStim": "resources/audio/wordStim/S9_AU_11_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:CN, vowel:AI, variant:mp, blockName:CNCN"
+    }
+  ],
+  "blockMICN": [
+    {"wordStim": "resources/audio/wordStim/S3_AU_16_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MICN"
+    },
+    {"wordStim": "resources/audio/wordStim/S3_AU_19_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MICN"
+    },
+    {"wordStim": "resources/audio/wordStim/S3_AU_19_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MICN"
+    },
+    {"wordStim": "resources/audio/wordStim/S3_AU_16_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MICN"
+    }
+  ],
+  "blockCNMI": [
+    {"wordStim": "resources/audio/wordStim/S9_AU_11_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:CN, vowel:AI, variant:mp, blockName:CNMI"
+    },
+    {"wordStim": "resources/audio/wordStim/S9_AU_19_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:CN, vowel:AI, variant:mp, blockName:CNMI"
+    },
+    {"wordStim": "resources/audio/wordStim/S9_AU_19_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:CN, vowel:AI, variant:mp, blockName:CNMI"
+    },
+    {"wordStim": "resources/audio/wordStim/S9_AU_11_ur_tw_axb-900.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "trialType:test, speakerIdentity:CN, vowel:AI, variant:mp, blockName:CNMI"
+    }
+  ]
+}

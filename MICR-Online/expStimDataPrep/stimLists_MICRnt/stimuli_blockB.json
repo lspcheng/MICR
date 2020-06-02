@@ -1,0 +1,602 @@
+[
+  {
+    "sentStim": "resources/audio/sentStim/S2_AI_21_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AI_22_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AI_24_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AI_25_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AI_26_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AI_28_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AI_29_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AI_30_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AU_12_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AU_13_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AU_14_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AU_16_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AU_17_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AU_18_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_AU_20_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_filler_01_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_filler_03_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_filler_05_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_filler_07_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S2_filler_09_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AI_21_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AI_22_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AI_24_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AI_25_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AI_26_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AI_28_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AI_29_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AI_30_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AU_12_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AU_13_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AU_14_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AU_16_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AU_17_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AU_18_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_AU_20_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_filler_01_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_filler_03_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_filler_05_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_filler_07_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S3_filler_09_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AI_21_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AI_22_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AI_24_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AI_25_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AI_26_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AI_28_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AI_29_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AI_30_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AU_12_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AU_13_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AU_14_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AU_16_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AU_17_rs.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AU_18_ur.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_AU_20_mp.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_filler_01_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_filler_03_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_filler_05_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_filler_07_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S4_filler_09_lc.wav",
+    "facePrime": "<img src=\"resources/images/US_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:MI, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AI_21_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AI_22_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AI_24_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AI_25_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AI_26_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AI_28_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AI_29_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AI_30_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AU_12_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AU_13_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AU_14_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AU_16_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AU_17_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AU_18_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_AU_20_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_filler_01_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_filler_03_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_filler_05_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_filler_07_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S5_filler_09_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AI_21_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AI_22_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AI_24_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AI_25_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AI_26_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AI_28_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AI_29_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AI_30_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AU_12_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AU_13_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AU_14_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AU_16_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AU_17_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AU_18_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_AU_20_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_filler_01_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_filler_03_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_filler_05_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_filler_07_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S8_filler_09_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AI_21_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AI_22_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AI_24_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AI_25_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AI_26_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AI_28_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AI_29_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AI_30_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AI, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AU_12_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AU_13_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AU_14_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AU_16_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AU_17_rs.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:rs, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AU_18_ur.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:ur, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_AU_20_mp.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:AU, variant:mp, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_filler_01_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_filler_03_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_filler_05_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_filler_07_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  },
+  {
+    "sentStim": "resources/audio/sentStim/S9_filler_09_lc.wav",
+    "facePrime": "<img src=\"resources/images/CN_face_1.png\" style=\"width:80vw;height:auto;\"></img>",
+    "data": "speakerIdentity:CN, vowel:filler, variant:lc, blockName:blockB"
+  }
+]

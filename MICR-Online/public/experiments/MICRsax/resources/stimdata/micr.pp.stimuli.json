@@ -1,0 +1,71 @@
+{
+  "instructionText": ["<div class=\"vertical-center\"><p>In this experiment, you will be listening to sentences spoken by speakers from Michigan and Canada.</p><p>First, you will hear a recording of a full sentence. After the sentence is played, you will hear a recording of the last word again. Your task is to decide whether this repeated word is pronounced the same as the last word of the sentence. You will press '1' on the keyboard if it is the same, or '0' if it is different. </p><p><i>Press SPACE to continue.</i></p></div>",
+    "<div class=\"vertical-center\"><p>First, we will begin with a few practice trials.</p><p>You can use these trials to test and adjust your volume appropriately.</p><p><i>When you're ready, press SPACE to begin.</i></p></div>"
+  ],
+  "fixationCross": ["<div class=\"vertical-center\" style=\"font-size:60px;\">+</div>"
+  ],
+  "keyChoiceText": ["<div class=\"vertical-center\" style='width:60%;'><div style='float: left;'><p>Press '1' for same.</p></div><div style='float: right;'><p>Press '0' for different.</p></div></div>"
+  ],
+  "sliderPromptText": ["<div class=\"vertical-center\"><p>On a scale from 1 (very different) to 7 (very similar), how similar were the two pronunciations?</p></div><br>"
+  ],
+  "breakMessage": ["<div class=\"vertical-center\"><p>Feel free to take a break!</p><i>When you're ready to continue, press SPACE to begin the next trial.</i></p></div>"
+  ],
+  "completionMessage": ["<div class=\"vertical-center\"><p>You're all done!</p><p>Your responses have been recorded.</p><p>Thank you for participating in this experiment.</p><i>Press SPACE to be redirected.</i></p></div>"
+  ],
+  "redirectProlific": ["<div class=\"vertical-center\"><p>You are being redirected back to Prolific.co.</p><p>If you are not redirected in 5 seconds, please click this link: <insert link here>.</p></div>"
+  ],
+  "surveyMessage": ["<div class=\"vertical-center\"><p>You've completed the main part of the experiment. Thank you!</p><p>Your responses have been recorded.</p><p><b>The remaining part of the experiment consists of a language background survey</b>.</p><p><i>Press SPACE to be redirected.</i></p></div>"
+  ],
+  "redirectQualtrics": ["<div class=\"vertical-center\"><p>You are being redirected the survey on Qualtrics.com.</p><p>If you are not redirected in 5 seconds, please click this link: <insert link here>.</p></div>."
+  ],
+  "images": [
+      "resources/images/CN_face_1.png", "resources/images/US_face_1.png"
+  ],
+  "audio": [
+    "resources/audio/sentStim/S3_AU_11_mp.wav","resources/audio/sentStim/S3_AU_11_rs.wav","resources/audio/sentStim/S3_AU_11_ur.wav","resources/audio/sentStim/S9_AU_11_mp.wav","resources/audio/sentStim/S9_AU_11_rs.wav","resources/audio/sentStim/S9_AU_11_ur.wav"
+  ],
+  "condA": {
+    "blocks": [
+      {"blockName": "blockMI1"},
+      {"blockName": "blockCN1"}
+    ]
+  },
+  "condB": {
+    "blocks": [
+      {"blockName": "blockCN1"},
+      {"blockName": "blockMI1"}
+    ]
+  },
+  "blocks": [
+    {"blockName": "blockMI1"},
+    {"blockName": "blockCN1"}
+  ],
+  "blockMI1": [
+    {"sentStim": "resources/audio/sentStim/S3_AU_11_mp.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockA"
+    },
+    {"sentStim": "resources/audio/sentStim/S3_AU_11_rs.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockA"
+    },
+    {"sentStim": "resources/audio/sentStim/S3_AU_11_ur.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockA"
+    }
+  ],
+  "blockCN1": [
+    {"sentStim": "resources/audio/sentStim/S9_AU_11_mp.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockA"
+    },
+    {"sentStim": "resources/audio/sentStim/S9_AU_11_rs.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockA"
+    },
+    {"sentStim": "resources/audio/sentStim/S9_AU_11_ur.wav",
+      "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
+      "data": "speakerIdentity:MI, vowel:AI, variant:mp, blockName:blockA"
+    }
+  ]
+}

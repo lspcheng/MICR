@@ -1,2 +1,2 @@
 # MICR
-## Canadian Raising in Michigan: Awareness and Individual Differences in Sociophonetic Perception
+## Canadian Raising in Michigan: The Role of Awareness and Individual Differences in Sociophonetic Perception

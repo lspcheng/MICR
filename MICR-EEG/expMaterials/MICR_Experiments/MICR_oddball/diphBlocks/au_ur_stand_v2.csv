@@ -1,0 +1,11 @@
+path,fn,ext,diph,Trigger,stimtype,stimcode
+diphBlocks\DiphthongStim_varied\,s5_au_ur,1.wav,diphBlocks\DiphthongStim_varied\s5_au_ur1.wav,7,standard,a
+diphBlocks\DiphthongStim_varied\,s5_au_ur,1.wav,diphBlocks\DiphthongStim_varied\s5_au_ur1.wav,7,standard,b
+diphBlocks\DiphthongStim_varied\,s5_au_ur,1.wav,diphBlocks\DiphthongStim_varied\s5_au_ur1.wav,7,standard,c
+diphBlocks\DiphthongStim_varied\,s5_au_ur,1.wav,diphBlocks\DiphthongStim_varied\s5_au_ur1.wav,7,standard,d
+diphBlocks\DiphthongStim_varied\,s5_au_rs,1.wav,diphBlocks\DiphthongStim_varied\s5_au_rs1.wav,8,deviant,e
+diphBlocks\DiphthongStim_varied\,s5_au_ur,2.wav,diphBlocks\DiphthongStim_varied\s5_au_ur2.wav,7,standard,a
+diphBlocks\DiphthongStim_varied\,s5_au_ur,2.wav,diphBlocks\DiphthongStim_varied\s5_au_ur2.wav,7,standard,b
+diphBlocks\DiphthongStim_varied\,s5_au_ur,2.wav,diphBlocks\DiphthongStim_varied\s5_au_ur2.wav,7,standard,c
+diphBlocks\DiphthongStim_varied\,s5_au_ur,2.wav,diphBlocks\DiphthongStim_varied\s5_au_ur2.wav,7,standard,d
+diphBlocks\DiphthongStim_varied\,s5_au_rs,2.wav,diphBlocks\DiphthongStim_varied\s5_au_rs2.wav,8,deviant,e

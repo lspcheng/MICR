@@ -1,0 +1,80 @@
+.vertical-center {
+  position: absolute;
+  width: 80%;
+
+  top: 50%;
+  left: 50%;
+
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+/* .text-placeholder {
+  position: relative;
+  max-width: 95%;
+  width: 95%;
+  height: 75vh;
+  // background-color: blue;
+} */
+
+.jspsych-instructions-nav {
+  position: absolute;
+  max-width: 95%;
+  margin: auto;
+  width: 95%;
+  bottom: 10vh;
+}
+
+.container {
+            width:600px;
+            height:190px;
+            margin: auto;
+            background-color:white;
+            padding-top:20px;
+            padding-left:15px;
+            padding-right:15px;
+        }
+
+        #a-box {
+            float:left;
+            width:30%;
+            height:50%;
+            /* margin: auto; */
+            padding-top: 18px;
+            background-color:#FFCB05;
+            border-radius: 8px;
+            border:solid #00274C;
+            /* #00274C = Michigan Blue #FFCB05 = Michigan Maize */
+        }
+        #x-box {
+            float:left;
+            width:30%;
+            height:50%;
+            /* margin: auto; */
+            padding-top: 18px;
+            background-color:#e6e6e6;
+            border-radius: 8px;
+            border:solid #00274C;
+            /* #00274C = Michigan Blue #FFCB05 = Michigan Maize */
+            margin-left:20px;
+        }
+
+        #b-box {
+            float:right;
+            width:30%;
+            height:50%;
+            /* margin: auto; */
+            padding-top: 18px;
+            background-color:#FFCB05;
+            border-radius: 8px;
+            border:solid #00274C;
+            /* #00274C = Michigan Blue #FFCB05 = Michigan Maize */
+      }
+
+.title-text {
+  text-align: center;
+  vertical-align: middle;
+  /* text-shadow: 2px 2px #B9B9B9; */
+  font-weight: bold;
+  font-size: 140%;
+}
