@@ -1,0 +1,45 @@
+# Restrict access to following folders
+
+## MICR_base
+MICR_base/
+
+## MICR-EEG
+### Project extras
+MICR_Documents/
+MICR_Surveys/
+
+### PsychoPy-related extras
+__pycache__/
+data/
+
+### Stimuli Files
+SentenceStim/
+DiphthongStim_varied/
+
+
+## MICR-Online
+### Stimuli Files & Data
+audio/
+expDataOutput/
+
+### Micellaneous
+template/
+
+# Logs
+logs
+*.log
+
+firebase-debug.log*
+
+# Firebase cache
+.firebase/
+
+# Firebase config
+
+# Uncomment this if you'd like others to create their own Firebase project.
+# For a team working on the same Firebase project(s), it is recommended to leave
+# it commented so all members can deploy to the same project(s) in .firebaserc.
+# .firebaserc
+
+# dotenv environment variables file
+.env
