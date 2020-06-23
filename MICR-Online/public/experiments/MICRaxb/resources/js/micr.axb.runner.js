@@ -22,23 +22,7 @@
  // TODO: Update default stimuli .json file name with experiment-specific name.
 
 $( document ).ready(function() {
-
-  urlVars = jsPsych.data.urlVariables();
-
-  getParticipantCompletion(urlVars.PROLOFIC_PID, urlVars.STUDY_ID)
-    .then(function(snapshot) {
-
-      if(snapshot.val() && snapshot.val().complete == 1) {
-        console.log('This participant has already completed the experiment!');
-        showUserError();
-      }
-
-      else {
-        console.log('This participant has not yet completed the experiment. :)');
-        loadStimuliAndRun("resources/stimdata/micr.axb.stimuli.json");
-      }
-
-  });
+  loadStimuliAndRun("resources/stimdata/micr.axb.stimuli.json");
 });
 
 

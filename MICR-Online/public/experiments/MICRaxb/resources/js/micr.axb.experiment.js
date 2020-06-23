@@ -63,8 +63,10 @@ function Experiment(params, firebaseStorage) {
                       currentDate.getMonth() + 1,
                       currentDate.getDate()].join('-');
 
-    filename = experimentData.id + prettyDate + '/' + participant.id + '.csv'
-    experimentData.storageLocation = firebaseStorage.ref().child(filename);
+    var timestamp_msec = currentDate.getTime();
+
+    filename = 'MICRaxb' + '/' + prettyDate + '/' + participant.id + '_' + timestamp_msec + '.csv';
+    experimentData.storageLocation = firebaseStorage.ref().child('results/' + filename);
 
   }
 
