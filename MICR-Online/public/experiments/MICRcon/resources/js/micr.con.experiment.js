@@ -27,7 +27,6 @@ function Experiment(params, firebaseStorage) {
     // TODO: Add Prolific or other redirects here
   }
 
-
   /******************
    * Data storage
    ******************/
@@ -112,7 +111,7 @@ function Experiment(params, firebaseStorage) {
 
 
   /************************************************************************
-  * EXPERIMENT BLOCKS
+  * EXPERIMENT CONTENT
   *************************************************************************/
 
   /***************************
@@ -140,6 +139,8 @@ function Experiment(params, firebaseStorage) {
   // experiment. For example, instructions.
   var initPreExperiment = function() {
 
+    /**** Informed consent *****/
+
     var informedConsent = {
       type:'external-html',
       url: "micr.con.consent.html",
@@ -148,6 +149,8 @@ function Experiment(params, firebaseStorage) {
       check_fn: check_consent
     };
     timeline.push(informedConsent);
+
+    /**** Instructions *****/
 
     var studyInstructions1 = {
       type: 'instructions',
@@ -158,7 +161,7 @@ function Experiment(params, firebaseStorage) {
     }
     timeline.push(studyInstructions1);
 
-    /**** Audio/Headphone test *****/
+/**** Audio/Headphone test *****/
 
     var toneTest = {
       timeline: [
@@ -199,7 +202,6 @@ function Experiment(params, firebaseStorage) {
     }
     timeline.push(toneTest);
 
-
     var debrief_block = {
       type: "html-keyboard-response",
       choices: " ",
@@ -214,22 +216,6 @@ function Experiment(params, firebaseStorage) {
     }
     timeline.push(debrief_block);
 
-    /**** Pre-Awareness Survey *****/
-
-    // var shortSurvey = {
-    //   type: 'survey-text',
-    //   preamble: 'Please answer a few questions about your experiences with Michigan and Canadian English.',
-    //   // preamble: 'Please answer a few questions about your demographic and language background.',
-    //   questions: [
-    //     // {prompt: "What is your age?", name: 'Age', placeholder: "35"},
-    //     // {prompt: "What gender do you identify as?", name: 'Gender', placeholder: "female"},
-    //     // {prompt: "Where did you spend most of your time before age 18?", name: 'GrewUp', placeholder: "City/Town, State/Province, Country"},
-    //     // {prompt: "Where is/are your native language(s)?", name: 'nativeLang', placeholder: "English"},
-    //     {prompt: "Can you tell if someone is from Michigan or from Canada based only on the way they speak? <br> How likely are you to be able to identify someone as being from Canada?", name: 'IK1', rows: 6, columns: 80},
-    //     {prompt: "Please explain what differences you think there are between Michigan and Canadian English.", name: 'EK1', rows: 6, columns: 80}
-    //   ],
-    // }
-    // timeline.push(shortSurvey);
 
     /* Enter fullscreen mode for trials */
     timeline.push({
@@ -239,9 +225,13 @@ function Experiment(params, firebaseStorage) {
 
     }
 
-    /**** Practice trials *****/
+    /***************************
+    * Practice Trials
+    ****************************/
 
   var initPractice = function() {
+
+/**** Main Task Instructions *****/
 
     var studyInstructions2 = {
       type: 'instructions',
@@ -252,14 +242,7 @@ function Experiment(params, firebaseStorage) {
     }
     timeline.push(studyInstructions2);
 
-    // var speakerInfoScreen = {
-    //   type: "html-keyboard-response",
-    //   stimulus: "<div class=\"vertical-center\"><p>The speaker you are about to hear is from Buffalo, New York.</p><p> <br> <i>Press SPACE to continue.</i></p></div>",
-    //   choices: [" "],
-    //   // trial_duration: 500,
-    //   post_trial_gap: 0,
-    // }
-    // timeline.push(speakerInfoScreen);
+/**** Practice Trials *****/
 
     var promptScreen = {
       type: "html-keyboard-response",
@@ -277,17 +260,19 @@ function Experiment(params, firebaseStorage) {
       choices: ["1","0"],
       trial_ends_after_audio: false,
       post_trial_gap: 500,
-      data: jsPsych.timelineVariable('data'),
+      data: {trial_role: jsPsych.timelineVariable('trial_role'), vowel: jsPsych.timelineVariable('vowel')},
     }
+
+    var stimInfo = [
+      { wordStim: 'resources/audio/practiceStim/S1_AU_14_axb.wav', trial_role: 'practice', vowel: 'AU'},
+      { wordStim: 'resources/audio/practiceStim/S1_AU_14_bxa.wav', trial_role: 'practice', vowel: 'AU'},
+      { wordStim: 'resources/audio/practiceStim/S1_AI_21_axb.wav', trial_role: 'practice', vowel: 'AI'},
+      { wordStim: 'resources/audio/practiceStim/S1_AI_21_bxa.wav', trial_role: 'practice', vowel: 'AI'}
+    ]
 
     var trial_procedure = {
       timeline: [promptScreen, wordAudio],
-      timeline_variables: [
-      { wordStim: 'resources/audio/practiceStim/S1_AU_14_axb.wav', data: {trial_role: 'practice', vowel: 'AU'}},
-      { wordStim: 'resources/audio/practiceStim/S1_AU_14_bxa.wav', data: {trial_role: 'practice', vowel: 'AU'}},
-      { wordStim: 'resources/audio/practiceStim/S1_AI_21_axb.wav', data: {trial_role: 'practice', vowel: 'AI'}},
-      { wordStim: 'resources/audio/practiceStim/S1_AI_21_bxa.wav', data: {trial_role: 'practice', vowel: 'AI'}}
-      ],
+      timeline_variables: stimInfo,
       randomize_order: true,         // Randomize using timeline chunk options
       repetitions: 1
     }
@@ -314,7 +299,9 @@ function Experiment(params, firebaseStorage) {
   // create a practice phase.
   var initTrials = function(blockName) {
 
-    /* Define the trial components  */
+/**** Actual Trials *****/
+
+    /* Define the static trial components  */
     var promptScreen = {
       type: "html-keyboard-response",
       stimulus: params.axbText,
@@ -341,7 +328,9 @@ function Experiment(params, firebaseStorage) {
       },
     }
 
-    /* Define break */
+    /**** Trial-based Breaks *****/
+
+    /* Define break screen */
     var breakScreen = {
       type: 'html-keyboard-response',
       stimulus: params.breakMessage,
@@ -349,7 +338,7 @@ function Experiment(params, firebaseStorage) {
       data: {trial_role: 'break'},
     }
 
-    /* Trial-based breaks */
+    /* Setting up Trial-based breaks conditional function */
     var ifthenBreak = {
         timeline: [breakScreen],
         conditional_function: function(){
@@ -382,18 +371,14 @@ function Experiment(params, firebaseStorage) {
         /* Parse stimuli data */
         // Parse the data string into a JavaScript object that can be read as columns in the output Data
         _.each(stimuli, function(stimulus) {
-          // console.log(stimulus);
           var parsedData = stimulus.data.split(', ');
           var obj = {};
           _.each(parsedData, function(keyValuePair) {
-            // console.log(keyValuePair);
             var tup = keyValuePair.split(':');
             obj[tup[0]] = tup[1];
-            // console.log(obj)
           });
           stimulus.data = obj;
         });
-        // console.log(stimuli);
 
     /* Compile the trial components  */
     var trial_procedure = {
@@ -414,15 +399,6 @@ function Experiment(params, firebaseStorage) {
   var initBlock = function(block, numBlocks, i) {
 
     /* Define block procedure */
-
-    // var speakerInfoScreen = {
-    //   type: "html-keyboard-response",
-    //   stimulus: block.speakerInfo,
-    //   choices: [" "],
-    //   // trial_duration: 500,
-    //   post_trial_gap: 0,
-    // }
-    // timeline.push(speakerInfoScreen);
 
     initTrials(block.blockName)
 
@@ -448,7 +424,6 @@ function Experiment(params, firebaseStorage) {
   ****************************/
 
   var initBlocks = function() {
-
 
     /* Define condition */
     /* Conditions will be set in the URL flag
@@ -476,7 +451,6 @@ function Experiment(params, firebaseStorage) {
   _.each(blocksList, function(block, i) {
     initBlock(block, numBlocks, i);
 
-
     });
 
   }
@@ -490,27 +464,13 @@ function Experiment(params, firebaseStorage) {
 
   var initPostExperiment = function() {
 
-    /* Include this if have a short/simply survey; otherwise, redirect to survey on Qualtrics
 
-      var shortSurvey = {
-        type: 'survey-text',
-        preamble: 'Please answer a few questions about your demographic and language background.',
-        questions: [
-          {prompt: "What is your age?", name: 'Age'},
-          {prompt: "What gender do you identify as?", name: 'Gender'},
-          {prompt: "Where is/are your native language(s)?", name: 'nativeLang'}
-        ],
-      }
-      timeline.push(shortSurvey);
-
-    */
-
-    /* exit full screen mode for trials
-    */
+    /* exit full screen mode for trials */
     timeline.push({
       type: 'fullscreen',
       fullscreen_mode: false
     });
+
 
     var thankYou = {
         on_start: function() {
@@ -522,6 +482,7 @@ function Experiment(params, firebaseStorage) {
         stimulus: params.completionMessage,
     };
     timeline.push(thankYou);
+
 
     // var redirect = {
     //     on_start: function() {
@@ -538,95 +499,45 @@ function Experiment(params, firebaseStorage) {
 
 };
 
-
-/* Sample Intro
-    var welcome = {
-        type: "html-keyboard-response",
-        stimulus: "<p>Welcome to the experiment. Press any key to begin.</p>"
-    };
-
-    timeline.push(welcome);
-
-    var instructions = {
-      type: "html-keyboard-response",
-      stimulus: "<p>This is a sample experiment.</p>" +
-                "<p>Press any key to begin.</p>",
-      post_trial_gap: 2000
-    };
-
-    timeline.push(instructions);
-*/
-
-/* Sample Trials
-
-    var stimuli = params.stimuli
-
-    var fixation = {
-      type: 'html-keyboard-response',
-      stimulus: '<div style="font-size:60px;"><p>+</p></div>',
-      choices: jsPsych.NO_KEYS,
-      trial_duration: 1000,
-    }
-
-    var test = {
-      type: "html-keyboard-response",
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      prompt: "Press F or J.",
-      choices: ['f', 'j']
-    }
-
-    var testProcedure = {
-      timeline: [fixation, test],
-      timeline_variables: stimuli
-    }
-
-    timeline.push(testProcedure);
-*/
+/**** END OF EXPERIMENT *****/
 
 
-/* Other trials
 
-// var primeImage = {
-//   type: 'html-keyboard-response',
-//   stimulus: jsPsych.timelineVariable('facePrime'),
-//   choices: jsPsych.NO_KEYS,
-//   trial_duration: 500,
-//   post_trial_gap: 0,              // no post_trial_gap so that images display across trials seamlessly
-// }
 
-// var sentenceAudio = {
-//   type: "audio-keyboard-response",
-//   stimulus: jsPsych.timelineVariable('sentStim'),
-//   prompt: jsPsych.timelineVariable('facePrime'),
-//   // choices: jsPsych.NO_KEYS,
-//   trial_ends_after_audio: true,
-//   post_trial_gap: 0,              // no post_trial_gap so that images display across trials seamlessly
-//   choices: [" "],                 // for testing purposes only
-//   response_ends_trial: true,      // for testing purposes only
-// }
+/*****************
+* Extras
+******************/
 
-// var keyResponse = {
-//   type: "html-keyboard-response",
-//   stimulus: params.keyChoiceText,
-//   choices: ["1","0"],
-//   post_trial_gap: 0,              // no post_trial_gap so that isi times are exact
-//   data: jsPsych.timelineVariable('data')
-// }
+/**** Pre-Awareness Survey *****/
 
-// var ratingResponse = {
-//   type: "html-slider-response",
-//   stimulus: "",
-//   prompt: params.sliderPromptText,
-//   labels: ["1","2","3","4","5","6","7"],
-//   min: 1,
-//   max: 7,
-//   start: 4,
-//   step: 1,
-//   slider_width: 400,
-//   response_ends_trial: true,
-//   post_trial_gap: 0,              // no post_trial_gap so that isi times are exact
-//   data: jsPsych.timelineVariable('data'),
-// }
+    // var shortSurvey = {
+    //   type: 'survey-text',
+    //   preamble: 'Please answer a few questions about your experiences with Michigan and Canadian English.',
+    //   // preamble: 'Please answer a few questions about your demographic and language background.',
+    //   questions: [
+    //     // {prompt: "What is your age?", name: 'Age', placeholder: "35"},
+    //     // {prompt: "What gender do you identify as?", name: 'Gender', placeholder: "female"},
+    //     // {prompt: "Where did you spend most of your time before age 18?", name: 'GrewUp', placeholder: "City/Town, State/Province, Country"},
+    //     // {prompt: "Where is/are your native language(s)?", name: 'nativeLang', placeholder: "English"},
+    //     {prompt: "Can you tell if someone is from Michigan or from Canada based only on the way they speak? <br> How likely are you to be able to identify someone as being from Canada?", name: 'IK1', rows: 6, columns: 80},
+    //     {prompt: "Please explain what differences you think there are between Michigan and Canadian English.", name: 'EK1', rows: 6, columns: 80}
+    //   ],
+    // }
+    // timeline.push(shortSurvey);
 
+/**** Short post-Survey *****/
+
+    /* Include this if have a short/simply survey; otherwise, redirect to survey on Qualtrics
+
+  var shortSurvey = {
+    type: 'survey-text',
+    preamble: 'Please answer a few questions about your demographic and language background.',
+    questions: [
+      {prompt: "What is your age?", name: 'Age'},
+      {prompt: "What gender do you identify as?", name: 'Gender'},
+      {prompt: "Where is/are your native language(s)?", name: 'nativeLang'}
+    ],
+  }
+  timeline.push(shortSurvey);
 
 */
