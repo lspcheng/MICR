@@ -26,6 +26,16 @@
   "surveyMessage": ["<div class=\"vertical-center\"><p>Your responses have been recorded.</p><p><b>You've completed the main part of the experiment. Thank you!</b></p><p><b>The remainder of the study consists of a personality questionnaire and a language background survey</b>.</p><p>After you complete those parts of the experiment, you will be returned to Prolific.co.</p><p><i>Press SPACE to be automatically redirected.</i></p></div>"
   ],
   "audio": [
+    "../../src/audio/toneTest_1.wav",
+    "../../src/audio/toneTest_2.wav",
+    "../../src/audio/toneTest_3.wav",
+    "../../src/audio/toneTest_4.wav",
+    "../../src/audio/toneTest_5.wav",
+    "../../src/audio/toneTest_6.wav",
+    "resources/audio/practiceStim/S1_AU_14_axb.wav",
+    "resources/audio/practiceStim/S1_AU_14_bxa.wav",
+    "resources/audio/practiceStim/S1_AU_21_axb.wav",
+    "resources/audio/practiceStim/S1_AU_21_bxa.wav",
     "resources/audio/wordStim/S3_AU_11_axb_Step-10.wav",
     "resources/audio/wordStim/S3_AU_11_axb_Step-2.wav",
     "resources/audio/wordStim/S3_AU_11_axb_Step-3.wav",
