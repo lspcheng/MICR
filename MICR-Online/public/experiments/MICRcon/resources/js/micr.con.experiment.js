@@ -265,10 +265,10 @@ function Experiment(params, firebaseStorage) {
     }
 
     var stimInfo = [
-      { wordStim: 'resources/audio/practiceStim/S1_AU_14_axb.wav', trial_role: 'practice', vowel: 'AU'},
-      { wordStim: 'resources/audio/practiceStim/S1_AU_14_bxa.wav', trial_role: 'practice', vowel: 'AU'},
-      { wordStim: 'resources/audio/practiceStim/S1_AI_21_axb.wav', trial_role: 'practice', vowel: 'AI'},
-      { wordStim: 'resources/audio/practiceStim/S1_AI_21_bxa.wav', trial_role: 'practice', vowel: 'AI'}
+      { wordStim: 'resources/audio/practiceStim/S1_AU_14_axb.wav', trial_role: 'practice'},
+      { wordStim: 'resources/audio/practiceStim/S1_AU_14_bxa.wav', trial_role: 'practice'},
+      { wordStim: 'resources/audio/practiceStim/S1_AI_21_axb.wav', trial_role: 'practice'},
+      { wordStim: 'resources/audio/practiceStim/S1_AI_21_bxa.wav', trial_role: 'practice'}
     ]
 
     var trial_procedure = {
@@ -321,18 +321,18 @@ function Experiment(params, firebaseStorage) {
       trial_ends_after_audio: false,
       post_trial_gap: 500,
       data: {trial_role: jsPsych.timelineVariable('trial_role'),
-              speaker: jsPsych.timelineVariable('speaker'),
-              vowel: jsPsych.timelineVariable('vowel'),
-              sentNum: jsPsych.timelineVariable('sentNum'),
-              order: jsPsych.timelineVariable('order'),
-              step: jsPsych.timelineVariable('step'),
-              speakerIdentity: jsPsych.timelineVariable('speakerIdentity'),
-              raised_answer: jsPsych.timelineVariable('raised_answer')},
+            wordStim: jsPsych.timelineVariable('wordStim'),
+            speaker: jsPsych.timelineVariable('speaker'),
+            vowel: jsPsych.timelineVariable('vowel'),
+            sentNum: jsPsych.timelineVariable('sentNum'),
+            order: jsPsych.timelineVariable('order'),
+            step: jsPsych.timelineVariable('step'),
+            speakerIdentity: jsPsych.timelineVariable('speakerIdentity'),
+            raised_answer: jsPsych.timelineVariable('raised_answer')
+    },
       on_finish: function(data) {
         data.key_response = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press);
-
         data.raised_response = data.key_response == data.raised_answer;
-        
         var testTrials = jsPsych.data.get().filter({trial_role: 'test'});
         var trialNum = testTrials.count();
         console.log(trialNum)
@@ -376,8 +376,8 @@ function Experiment(params, firebaseStorage) {
     }
 
     /* Define stimuli details */
-    // var stimuli_info = params[blockName];
-    var stimuli_info = params.audioStim;
+    // console.log(params[blockName]);
+     var stimInfo = params.audioStim;
 
         /* Parse stimuli data */
         // Parse the data string into a JavaScript object that can be read as columns in the output Data
@@ -394,7 +394,7 @@ function Experiment(params, firebaseStorage) {
     /* Compile the trial components  */
     var trial_procedure = {
       timeline: [promptScreen, wordAudio, ifthenBreak], // TODO: add ifthenBreak to timeline if trial-based breaks
-      timeline_variables: stimuli_info,
+      timeline_variables: stimInfo,
       randomize_order: true,         // Randomize using timeline chunk options
       repetitions: 1
     }
@@ -406,65 +406,65 @@ function Experiment(params, firebaseStorage) {
   /***************************
   * Blocks
   ****************************/
-
-  var initBlock = function(block, numBlocks, i) {
-
-    /* Define block procedure */
-
-    initTrials(block.blockName)
-
-    // var breakScreen = {
-    //   type: 'html-keyboard-response',
-    //   stimulus: params.breakMessage,
-    //   choices: [" "],
-    //   data: {trial_role: 'break'},
-    // }
-
-    /* Block-based breaks */
-    /* Add break between blocks except for last
-    */
-    // if(i < numBlocks - 1) {
-    //   timeline.push(breakScreen);
-    // }
-
-  }
-
+  //
+  // var initBlock = function(block, numBlocks, i) {
+  //
+  //   /* Define block procedure */
+  //
+  //   initTrials(block.blockName)
+  //
+  //   // var breakScreen = {
+  //   //   type: 'html-keyboard-response',
+  //   //   stimulus: params.breakMessage,
+  //   //   choices: [" "],
+  //   //   data: {trial_role: 'break'},
+  //   // }
+  //
+  //   /* Block-based breaks */
+  //   /* Add break between blocks except for last
+  //   */
+  //   // if(i < numBlocks - 1) {
+  //   //   timeline.push(breakScreen);
+  //   // }
+  //
+  // }
+  //
 
   /***************************
   * Conditions & Blocks
   ****************************/
-
-  var initBlocks = function() {
-
-    /* Define condition */
-    /* Conditions will be set in the URL flag
-     * e.g. experiments/MICRpp/micr.pp.exp.html?condition=condA
-     * The jsPsych.data.urlVariables() function in runner.js sends this flag information to params
-     * Call params.condition to retrieve the condition variable name (e.g. condA)
-    */
-    condBlocks = "blocks"
-
-    /* Define blocks */
-    /* Use ordered blocks (no randomization) OR */
-    var blocksList = params[condition.id][condBlocks]
-    numBlocks = blocksList.length
-
-    // Randomize the blocks into a shuffled block list
-    // var blocksList = jsPsych.randomization.shuffle(params[condition][condBlocks])
-
-    /* For each block in the shuffledBlocks list,  (Underscore for loop)
-     * Pass blockName into the trials function --i.e. run trials using
-     * stimuli from that blockName
-     * (Trials are pushed to main timeline within initTrials())
-     * Then, if not the final block, run the break screen
-    */
-
-  _.each(blocksList, function(block, i) {
-    initBlock(block, numBlocks, i);
-
-    });
-
-  }
+  //
+  // var initBlocks = function() {
+  //
+  //   /* Define condition */
+  //   /* Conditions will be set in the URL flag
+  //    * e.g. experiments/MICRpp/micr.pp.exp.html?condition=condA
+  //    * The jsPsych.data.urlVariables() function in runner.js sends this flag information to params
+  //    * Call params.condition to retrieve the condition variable name (e.g. condA)
+  //   */
+  //   condBlocks = "blocks"
+  //
+  //   /* Define blocks */
+  //   /* Use ordered blocks (no randomization) OR */
+  //   var blocksList = params[condition.id][condBlocks]
+  //   numBlocks = blocksList.length
+  //
+  //   // Randomize the blocks into a shuffled block list
+  //   // var blocksList = jsPsych.randomization.shuffle(params[condition][condBlocks])
+  //
+  //   /* For each block in the shuffledBlocks list,  (Underscore for loop)
+  //    * Pass blockName into the trials function --i.e. run trials using
+  //    * stimuli from that blockName
+  //    * (Trials are pushed to main timeline within initTrials())
+  //    * Then, if not the final block, run the break screen
+  //   */
+  //
+  // _.each(blocksList, function(block, i) {
+  //   initBlock(block, numBlocks, i);
+  //
+  //   });
+  //
+  // }
 
   /***************************
   * Post-experiment
