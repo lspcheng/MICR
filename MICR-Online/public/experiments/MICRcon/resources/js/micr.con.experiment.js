@@ -104,7 +104,8 @@ function Experiment(params, firebaseStorage) {
   this.createTimeline = function() {
     initPreExperiment();
     initPractice();
-    initBlocks();
+    // initBlocks();
+    initTrials();
     initPostExperiment();
     console.log(timeline)
   }
@@ -297,7 +298,8 @@ function Experiment(params, firebaseStorage) {
   // In a more complex experiment, you might want to make additional functions,
   // such as "initBlock()" to create experiment blocks, or initPractice() to
   // create a practice phase.
-  var initTrials = function(blockName) {
+  // var initTrials = function(blockName) {
+  var initTrials = function() {
 
 /**** Actual Trials *****/
 
@@ -318,10 +320,19 @@ function Experiment(params, firebaseStorage) {
       choices: ["1","0"],
       trial_ends_after_audio: false,
       post_trial_gap: 500,
-      data: jsPsych.timelineVariable('data'),
+      data: {trial_role: jsPsych.timelineVariable('trial_role'),
+              speaker: jsPsych.timelineVariable('speaker'),
+              vowel: jsPsych.timelineVariable('vowel'),
+              sentNum: jsPsych.timelineVariable('sentNum'),
+              order: jsPsych.timelineVariable('order'),
+              step: jsPsych.timelineVariable('step'),
+              speakerIdentity: jsPsych.timelineVariable('speakerIdentity'),
+              raised_answer: jsPsych.timelineVariable('raised_answer')},
       on_finish: function(data) {
         data.key_response = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press);
+
         data.raised_response = data.key_response == data.raised_answer;
+        
         var testTrials = jsPsych.data.get().filter({trial_role: 'test'});
         var trialNum = testTrials.count();
         console.log(trialNum)
@@ -348,8 +359,8 @@ function Experiment(params, firebaseStorage) {
 
           // Set last trial and break intervals here
           // TODO: Change values as needed
-          var lastTrialNum = 8
-          var breakInterval = 4
+          var lastTrialNum = 18*4
+          var breakInterval = 18
 
           // If trial number is divisiable by block break value, AND if it is not the last trial, show the break screen; else don't
           if(trialNum % breakInterval === 0){
@@ -365,25 +376,25 @@ function Experiment(params, firebaseStorage) {
     }
 
     /* Define stimuli details */
-    // console.log(params[blockName]);
-     var stimuli = params[blockName];
+    // var stimuli_info = params[blockName];
+    var stimuli_info = params.audioStim;
 
         /* Parse stimuli data */
         // Parse the data string into a JavaScript object that can be read as columns in the output Data
-        _.each(stimuli, function(stimulus) {
-          var parsedData = stimulus.data.split(', ');
-          var obj = {};
-          _.each(parsedData, function(keyValuePair) {
-            var tup = keyValuePair.split(':');
-            obj[tup[0]] = tup[1];
-          });
-          stimulus.data = obj;
-        });
+        // _.each(stimuli, function(stimulus) {
+        //   var parsedData = stimulus.data.split(', ');
+        //   var obj = {};
+        //   _.each(parsedData, function(keyValuePair) {
+        //     var tup = keyValuePair.split(':');
+        //     obj[tup[0]] = tup[1];
+        //   });
+        //   stimulus.data = obj;
+        // });
 
     /* Compile the trial components  */
     var trial_procedure = {
       timeline: [promptScreen, wordAudio, ifthenBreak], // TODO: add ifthenBreak to timeline if trial-based breaks
-      timeline_variables: stimuli,
+      timeline_variables: stimuli_info,
       randomize_order: true,         // Randomize using timeline chunk options
       repetitions: 1
     }
