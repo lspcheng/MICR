@@ -320,8 +320,8 @@ function Experiment(params, firebaseStorage) {
       post_trial_gap: 500,
       data: jsPsych.timelineVariable('data'),
       on_finish: function(data) {
-        data.key_pressed = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press);
-        data.raised_response = data.key_pressed == data.raised_answer;
+        data.key_response = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press);
+        data.raised_response = data.key_response == data.raised_answer;
         var testTrials = jsPsych.data.get().filter({trial_role: 'test'});
         var trialNum = testTrials.count();
         console.log(trialNum)

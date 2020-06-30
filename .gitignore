@@ -43,3 +43,4 @@ firebase-debug.log*
 
 # dotenv environment variables file
 .env
+.Rproj.user
