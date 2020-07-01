@@ -169,8 +169,28 @@ stimulusDF <- sentStimList %>%
   
   print()
   
-  # Print DF to check
+# Print DF to check
 stimulusDF
+```
+
+Separately calculate the number of stimuli and factors of the total number to use for trial break organization.
+```{r jsondata-kvs-createdf-n}
+# Get number of stims (for trial break calculation)
+nStims = nrow(stimulusDF) 
+
+# Function to find factors of a number
+print_factors <- function(x) {
+  print(paste("The factors of",x,"are:"))
+  for(i in 1:(x)) {
+    if((x %% i) == 0) {
+      print(paste(i, x/i, sep=" : "))
+    }
+  }
+}
+
+# List factors of the number of stims
+print_factors(nStims)
+
 ```
 
 #### OPTIONAL: Add a Block Column
@@ -207,6 +227,8 @@ stimulusDF <- stimulusDF %>%
   print()
 
 ```
+
+
 
 
 ### Convert to JSON

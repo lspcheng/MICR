@@ -359,7 +359,7 @@ function Experiment(params, firebaseStorage) {
 
           // Set last trial and break intervals here
           // TODO: Change values as needed
-          var lastTrialNum = 18*4
+          var lastTrialNum = 72
           var breakInterval = 18
 
           // If trial number is divisiable by block break value, AND if it is not the last trial, show the break screen; else don't
@@ -376,7 +376,7 @@ function Experiment(params, firebaseStorage) {
     }
 
     /* Define stimuli details */
-    // console.log(params[blockName]);
+     // var stimInfo = params[condition.id];
      var stimInfo = params.audioStim;
 
         /* Parse stimuli data */
