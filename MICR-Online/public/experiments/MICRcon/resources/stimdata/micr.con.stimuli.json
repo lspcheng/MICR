@@ -903,19 +903,7 @@
       "trial_role": "test"
     }
   ],
-  "condA": {
-    "blocks": [
-      {"blockName": "block1"},
-      {"blockName": "block2"}
-    ]
-  },
-  "condB": {
-    "blocks": [
-      {"blockName": "block2"},
-      {"blockName": "block1"}
-    ]
-  },
-  "blockMIMI": [
+  "condA": [
     {"wordStim": "resources/audio/wordStim/S3_AU_16_ur_tw_axb-900.wav",
       "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
       "data": "trial_role:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MIMI, raised_answer:1"
@@ -933,7 +921,7 @@
       "data": "trial_role:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MIMI, raised_answer:0"
     }
   ],
-  "blockCNCN": [
+  "condB": [
     {"wordStim": "resources/audio/wordStim/S9_AU_11_ur_tw_axb-900.wav",
       "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
       "data": "trial_role:test, speakerIdentity:CN, vowel:AI, variant:mp, blockName:CNCN, raised_answer:1"
@@ -951,7 +939,7 @@
       "data": "trial_role:test, speakerIdentity:CN, vowel:AI, variant:mp, blockName:CNCN, raised_answer:0"
     }
   ],
-  "blockMICN": [
+  "block1": [
     {"wordStim": "resources/audio/wordStim/S3_AU_16_ur_tw_axb-900.wav",
       "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/US_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
       "data": "trial_role:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MICN"
@@ -969,7 +957,7 @@
       "data": "trial_role:test, speakerIdentity:MI, vowel:AI, variant:mp, blockName:MICN"
     }
   ],
-  "blockCNMI": [
+  "block2": [
     {"wordStim": "resources/audio/wordStim/S9_AU_11_ur_tw_axb-900.wav",
       "facePrime": "<div class=\"vertical-center\"><img src=\"resources/images/CN_face_1.png\" style=\"width:60vw;height:auto;\"></img></div>",
       "data": "trial_role:test, speakerIdentity:CN, vowel:AI, variant:mp, blockName:CNMI"

@@ -181,12 +181,12 @@ Specify the number of blocks and the naming conventions as necessary. For exampl
 
 ```{r jsondata-kvs-createdf-block, include=F}
 # Add in blocks
-# Fill column with sequential blockA-D for the nrow of the DF (evenly distributed) ### *Specifically for MICRcon
+# Fill column with sequential block names for the nrow of the DF (evenly distributed) 
 # To fully randomize, add "%>% mutate(blockName = sample(blockName))"
 # To randomize within certain conditions, add the relevant "%>% group_by(conditions) ... %>% ungroup()" around sample()
 stimulusDF <- stimulusDF %>%
-  mutate(blockName = paste("block",rep(LETTERS[1:4], length.out=nrow(.)),sep="")) %>%
-  print()
+  mutate(condName = paste("cond",rep(LETTERS[1:2], length.out=nrow(.)),sep=""))
+stimulusDF
 ```
 
 #### OBSOLETE: Create a Nested Data Column
@@ -232,15 +232,15 @@ If you do have blocks, then convert the stimuli data to JSON by block. This chun
 ```{r jsondata-kvs-convert-blocks, include=F}
 # Write stimuli files per block, to be pasted into the experiment stimuli JSON file.
 # Create list of block names (as above, but only the unique blocks)
-blockList <- paste0("block",rep(LETTERS[1:4]))
+blockList <- paste0("cond",rep(LETTERS[1:2]))
 
 # Run a for-loop that subsets by each block, selects the relevant columns, coverts to JSON and write to a file
 for (block in blockList){
   
   # Create DF for experiment stimuli JSON format
   stimulusDF.exp <- stimulusDF %>%
-    subset(blockName == block) %>%
-    select(sentStim, facePrime, data) #%>%
+    subset(condName == block) #%>%
+    #select(sentStim, facePrime, data) #%>%
     #print()
 
   # Convert DF to JSON format + save as JSON file
@@ -254,80 +254,4 @@ for (block in blockList){
 Now you can open the JSON files in Atom and 'prettify' them by using the `Pretty JSON: Prettify` command. From there, copy and paste in the relevant portions into the experiment stimuli JSON file! Note that the (blocked) stimuli will need manually included keys in the main file.
 
 You have an experiment now!
-
-
-
-
-
-
-
-
-
-
-## Extras and References {-}
-
-```{r stimdata-combined, include=F, eval=F}
-# Creates joint list 
-# Unfinshed ***Don't use
-
-# List files from file path
-sentStimList <- list.files(path = "../public/experiments/MICRpp/resources/audio/sentStim/")
-imageList <- list.files(path = "../public/experiments/MICRpp/resources/images/")
-
-# If created joint dataframe (but issue with NAs remaining in JSON)
-# Match column vector lengths by padding NAs onto shorter lists
-max.len = max(length(sentStimList), length(imageList))
-imageListNA = c(imageList, rep(NA, max.len - length(imageList)))
-#sentStimList = c(sentStimList, rep(NA, max.len - length(sentStimList)))
-
-# Create dataframe of column vectors
-stimList <- data.frame(images = imageListNA, 
-                       audio = sentStimList)
-
-# Create json list of values (by column)
-# Using jsonlite::toJSON(x,dataframe="columns")
-# Creates json format with header as key and column cells as list values
-# NOTE: Need to find and replace ",null" before Prettifying the JSON file
-stimList.json <-  jsonlite::toJSON(stimList, dataframe = "columns", na="null")
-write(stimList.json, "./jsonfiles/stimList.json")
-
-```
-
-
-```{r jsondata-extras, eval=F}
-
-# Trim DF to be converted to experiment data
-# Check what data values should look like
-stimulusDF.data <- stimulusDF %>%
-  select(speakerIdentity, vowel, variant) %>%
-  print()
-stimuliData.json <-  jsonlite::toJSON(stimulusDF.data, dataframe = "rows")
-cat(stimuliData.json)
-
-```
-
-```{r jsondata-demo, eval=F}
-# create dataframe to define stimuli
-stroop_stim <- data.frame( stimulus = length(16),
-                           word = rep(c("red","green","blue","yellow"), each=4),
-                           color = rep(c("red","green","blue","yellow"), 4),
-                           response = rep(c("r","g","b","y"), 4),
-                           stim_type = length(16),
-                           id = "stroop_stim",
-                           fontsize = "60pt") %>%
-  mutate(stim_type = as.numeric(word==color)) %>%
-  mutate(stim_type = recode(stim_type, `1` = "congruent", `0` = "incongruent"))
-
-knitr::kable(stroop_stim)
-
-stimulus_json <- stimulus_df_to_json(df = stroop_stim,
-                                     stimulus = "stimulus",
-                                     data = c("word","color","response","stim_type"))
-stimulus_json
-
-write_json(stimulus_json, "jsontest.json", pretty = TRUE, auto_unbox = TRUE)
-
-stimulus_json_script <- write_to_script(stimulus_json,"test_stimuli")
-
-```
 
