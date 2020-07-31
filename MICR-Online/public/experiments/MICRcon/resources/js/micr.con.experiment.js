@@ -210,7 +210,7 @@ function Experiment(params, firebaseStorage) {
       stimulus: function() {
 
         var trials = jsPsych.data.get().filter({trial_role: 'tonetest'});
-        var correct_trials = trials.filter({correct: true}).count();
+        var correct_trials = trials.filter({correct_response: true}).count();
 
         return "<div class=\"vertical-center\"><p><b>Your score was "+correct_trials+"/6.</b></p><p>If you scored below 6, please ensure that you are wearing headphones and in a quiet location free of distractions.</p><p><i>To continue to the main experiment, press SPACE.</i></p></div>";
       }
