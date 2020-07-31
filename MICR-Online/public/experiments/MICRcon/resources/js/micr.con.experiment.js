@@ -308,7 +308,7 @@ function Experiment(params, firebaseStorage) {
       type: "html-keyboard-response",
       stimulus: params.axbText,
       choices: jsPsych.NO_KEYS,
-      trial_duration: 500,
+      trial_duration: 300, // + 200ms at start of audio = 500ms total ITI
       post_trial_gap: 0,
       data: {trial_role: 'fixation'},
     }
@@ -359,8 +359,8 @@ function Experiment(params, firebaseStorage) {
 
           // Set last trial and break intervals here
           // TODO: Change values as needed
-          var lastTrialNum = 72
-          var breakInterval = 18
+          var lastTrialNum = 720
+          var breakInterval = 24
 
           // If trial number is divisiable by block break value, AND if it is not the last trial, show the break screen; else don't
           if(trialNum % breakInterval === 0){
@@ -376,8 +376,12 @@ function Experiment(params, firebaseStorage) {
     }
 
     /* Define stimuli details */
-     // var stimInfo = params[condition.id];
-     var stimInfo = params.audioStim;
+
+    // #1 If running one full set of stimuli only:
+    var stimInfo = params.audioStim;
+
+    // #2 If running multiple conditions of stimuli:
+    // var stimInfo = params[condition.id];
 
         /* Parse stimuli data */
         // Parse the data string into a JavaScript object that can be read as columns in the output Data

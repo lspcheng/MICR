@@ -191,6 +191,9 @@ print_factors <- function(x) {
 # List factors of the number of stims
 print_factors(nStims)
 
+# List factors of half the number of stims (e.g. one of two conditions)
+print_factors(nStims/2)
+
 ```
 
 #### OPTIONAL: Add a Block Column
