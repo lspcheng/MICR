@@ -260,15 +260,15 @@ function Experiment(params, firebaseStorage) {
       prompt: params.axbText,
       choices: ["1","0"],
       trial_ends_after_audio: false,
-      post_trial_gap: 500,
+      post_trial_gap: 300, // + 200ms at start of audio = 500ms total ITI
       data: {trial_role: jsPsych.timelineVariable('trial_role'), vowel: jsPsych.timelineVariable('vowel')},
     }
 
     var stimInfo = [
-      { wordStim: 'resources/audio/practiceStim/S1_AU_14_axb.wav', trial_role: 'practice'},
-      { wordStim: 'resources/audio/practiceStim/S1_AU_14_bxa.wav', trial_role: 'practice'},
-      { wordStim: 'resources/audio/practiceStim/S1_AI_21_axb.wav', trial_role: 'practice'},
-      { wordStim: 'resources/audio/practiceStim/S1_AI_21_bxa.wav', trial_role: 'practice'}
+      { wordStim: 'resources/audio/practiceStim/S1_AU_14_axb_Step-6.wav', trial_role: 'practice'},
+      { wordStim: 'resources/audio/practiceStim/S1_AU_14_bxa_Step-6.wav', trial_role: 'practice'},
+      { wordStim: 'resources/audio/practiceStim/S1_AI_21_axb_Step-6.wav', trial_role: 'practice'},
+      { wordStim: 'resources/audio/practiceStim/S1_AI_21_bxa_Step-6.wav', trial_role: 'practice'}
     ]
 
     var trial_procedure = {

@@ -6,7 +6,7 @@
     "<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p>Next, we will do a short audio test to ensure that your audio listening quality is appropriate for the main task. Please ensure you are wearing headphones. <br> In each trial, you will hear three tones at a time. You will be asked to decide which tone (first, second, third) was the quietest by clicking a button on the screen (e.g. FIRST sound is QUIETEST).</p><p>The task will start immediately when you continue.</p><p><i>When you're ready to begin, click the 'Next' button.</i></p></div>"
   ],
   "mainInstructionText": [
-    "<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p>In this experiment, your task is to judge how similar different pronunciations of the same word sound. </p> <p>In each trial you will hear one word repeated three times (e.g. mouse... mouse... mouse). Your task is to listen carefully and decide whether the middle word sounded more first word or the last word.</p><p>If the first word is more similar, press '1'. If the second word is more similar, press '0'.</p><p><i>To begin a few practice trials, press SPACE.</i></p></div>"
+    "<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p>In this experiment, your task is to judge how similar different pronunciations of the same word sound.</p> <p>In each trial you will hear one word repeated three times (e.g. mouse... mouse... mouse). Your task is to listen carefully and decide whether the middle word sounded more like the first word or the last word.</p><p>If the first word is more similar, press '1'. If the second word is more similar, press '0'.</p> <p>Some of the pronunciations will sound very similar. Just do your best and don't overthink your response.</p> <p><i>To begin a few practice trials, press SPACE.</i></p></div>"
   ],
   "finalInstructionText": ["<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p>Great, you've finished the practice!<br> Now we will begin the actual experiment.</p><p><i>When you're ready to begin, press SPACE.</i></p></div>"
   ]
@@ -32,10 +32,10 @@
     "../../src/audio/toneTest_4.wav",
     "../../src/audio/toneTest_5.wav",
     "../../src/audio/toneTest_6.wav",
-    "resources/audio/practiceStim/S1_AU_14_axb.wav",
-    "resources/audio/practiceStim/S1_AU_14_bxa.wav",
-    "resources/audio/practiceStim/S1_AI_21_axb.wav",
-    "resources/audio/practiceStim/S1_AI_21_bxa.wav",
+    "resources/audio/practiceStim/S1_AI_21_axb_Step-6.wav",
+    "resources/audio/practiceStim/S1_AI_21_bxa_Step-6.wav",
+    "resources/audio/practiceStim/S1_AU_14_axb_Step-6.wav",
+    "resources/audio/practiceStim/S1_AU_14_bxa_Step-6.wav",
     "resources/audio/wordStim/S3_AI_21_axb_Step-10.wav",
     "resources/audio/wordStim/S3_AI_21_axb_Step-2.wav",
     "resources/audio/wordStim/S3_AI_21_axb_Step-3.wav",
