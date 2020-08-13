@@ -358,9 +358,9 @@ function Experiment(params, firebaseStorage) {
           var trialNum = testTrials.count();
 
           // Set last trial and break intervals here
-          // TODO: Change values as needed
-          var lastTrialNum = 720
-          var breakInterval = 24
+          // TODO: Change values as needed2s
+          var lastTrialNum = 270
+          var breakInterval = 27
 
           // If trial number is divisiable by block break value, AND if it is not the last trial, show the break screen; else don't
           if(trialNum % breakInterval === 0){
@@ -378,10 +378,10 @@ function Experiment(params, firebaseStorage) {
     /* Define stimuli details */
 
     // #1 If running one full set of stimuli only:
-    var stimInfo = params.audioStim;
+    // var stimInfo = params.audioStim;
 
     // #2 If running multiple conditions of stimuli:
-    // var stimInfo = params[condition.id];
+    var stimInfo = params[condition.id];
 
         /* Parse stimuli data */
         // Parse the data string into a JavaScript object that can be read as columns in the output Data
