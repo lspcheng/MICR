@@ -260,7 +260,7 @@ function Experiment(params, firebaseStorage) {
       prompt: params.axbText,
       choices: ["1","0"],
       trial_ends_after_audio: false,
-      post_trial_gap: 300, // + 200ms at start of audio = 500ms total ITI
+      post_trial_gap: 500, // + 500ms at start of audio = 1000ms total ITI
       data: {trial_role: jsPsych.timelineVariable('trial_role'), vowel: jsPsych.timelineVariable('vowel')},
     }
 
@@ -272,7 +272,7 @@ function Experiment(params, firebaseStorage) {
     ]
 
     var trial_procedure = {
-      timeline: [promptScreen, wordAudio],
+      timeline: [wordAudio],
       timeline_variables: stimInfo,
       randomize_order: true,         // Randomize using timeline chunk options
       repetitions: 1
@@ -308,7 +308,7 @@ function Experiment(params, firebaseStorage) {
       type: "html-keyboard-response",
       stimulus: params.axbText,
       choices: jsPsych.NO_KEYS,
-      trial_duration: 300, // + 200ms at start of audio = 500ms total ITI
+      trial_duration: 500,
       post_trial_gap: 0,
       data: {trial_role: 'fixation'},
     }
@@ -319,7 +319,7 @@ function Experiment(params, firebaseStorage) {
       prompt: params.axbText,
       choices: ["1","0"],
       trial_ends_after_audio: false,
-      post_trial_gap: 500,
+      post_trial_gap: 500, // + 500ms at start of audio = 1000ms total ITI
       data: {trial_role: jsPsych.timelineVariable('trial_role'),
             wordStim: jsPsych.timelineVariable('wordStim'),
             speaker: jsPsych.timelineVariable('speaker'),
@@ -397,7 +397,7 @@ function Experiment(params, firebaseStorage) {
 
     /* Compile the trial components  */
     var trial_procedure = {
-      timeline: [promptScreen, wordAudio, ifthenBreak], // TODO: add ifthenBreak to timeline if trial-based breaks
+      timeline: [wordAudio, ifthenBreak], // TODO: add ifthenBreak to timeline if trial-based breaks
       timeline_variables: stimInfo,
       randomize_order: true,         // Randomize using timeline chunk options
       repetitions: 1
@@ -499,16 +499,16 @@ function Experiment(params, firebaseStorage) {
     timeline.push(thankYou);
 
 
-    // var redirect = {
-    //     on_start: function() {
-    //       // HTTP redirect:
-    //       window.location.replace("https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID="+participant.id);
-    //     },
-    //     type: "html-keyboard-response",
-    //     choices: jsPsych.NO_KEYS,
-    //     stimulus: "<div class=\"vertical-center\"><p>You are being redirected to the surveys on Qualtrics.com.</p><p>If you are not redirected in 5 seconds, please click this link: https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID="+participant.id+".</p></div>."
-    // };
-    // timeline.push(redirect);
+    var redirect = {
+        on_start: function() {
+          // HTTP redirect:
+          window.location.replace("https://app.prolific.co/submissions/complete?cc="+params.cc);
+        },
+        type: "html-keyboard-response",
+        choices: jsPsych.NO_KEYS,
+        stimulus: "<div class=\"vertical-center\"><p>You are being redirected to Prolific.co.</p><p>If you are not redirected in 5 seconds, please click this link: https://app.prolific.co/submissions/complete?cc="+params.cc+".</p></div>."
+    };
+    timeline.push(redirect);
 
   }
 
