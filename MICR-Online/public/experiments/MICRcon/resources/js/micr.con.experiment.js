@@ -260,7 +260,7 @@ function Experiment(params, firebaseStorage) {
       prompt: params.axbText,
       choices: ["1","0"],
       trial_ends_after_audio: false,
-      post_trial_gap: 500, // + 500ms at start of audio = 1000ms total ITI
+      post_trial_gap: 500, // + 500ms prompt = 1000ms total ITI
       data: {trial_role: jsPsych.timelineVariable('trial_role'), vowel: jsPsych.timelineVariable('vowel')},
     }
 
@@ -272,7 +272,7 @@ function Experiment(params, firebaseStorage) {
     ]
 
     var trial_procedure = {
-      timeline: [wordAudio],
+      timeline: [promptScreen, wordAudio],
       timeline_variables: stimInfo,
       randomize_order: true,         // Randomize using timeline chunk options
       repetitions: 1
@@ -319,7 +319,7 @@ function Experiment(params, firebaseStorage) {
       prompt: params.axbText,
       choices: ["1","0"],
       trial_ends_after_audio: false,
-      post_trial_gap: 500, // + 500ms at start of audio = 1000ms total ITI
+      post_trial_gap: 500, // + 500ms prompt = 1000ms total ITI
       data: {trial_role: jsPsych.timelineVariable('trial_role'),
             wordStim: jsPsych.timelineVariable('wordStim'),
             speaker: jsPsych.timelineVariable('speaker'),
@@ -397,7 +397,7 @@ function Experiment(params, firebaseStorage) {
 
     /* Compile the trial components  */
     var trial_procedure = {
-      timeline: [wordAudio, ifthenBreak], // TODO: add ifthenBreak to timeline if trial-based breaks
+      timeline: [promptScreen, wordAudio, ifthenBreak], // TODO: add ifthenBreak to timeline if trial-based breaks
       timeline_variables: stimInfo,
       randomize_order: true,         // Randomize using timeline chunk options
       repetitions: 1
