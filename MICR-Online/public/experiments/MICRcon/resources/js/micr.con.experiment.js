@@ -495,6 +495,7 @@ function Experiment(params, firebaseStorage) {
         choices: [" "],
         // stimulus: params.surveyMessage,
         stimulus: params.completionMessage,
+        trial_duration: 5000
     };
     timeline.push(thankYou);
 
