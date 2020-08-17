@@ -21,7 +21,7 @@
   ],
   "breakMessage": ["<div class=\"vertical-center\"><p>Feel free to take a break!</p><i>When you're ready to continue, press SPACE to begin the next trial.</i></p></div>"
   ],
-  "completionMessage": ["<div class=\"vertical-center\"><p>Thank you for participating in this experiment!</p><p>Your responses are being recorded... Please wait 5 seconds. </p><i>After that, press SPACE to be redirected to Prolific.co.</i></p></div>"
+  "completionMessage": ["<div class=\"vertical-center\"><p>Thank you for participating in this experiment!</p><p>Your responses are being recorded... </p><i>In 5 seconds, you will be redirected to Prolific.co.</i></p></div>"
   ],
   "surveyMessage": ["<div class=\"vertical-center\"><p>Your responses have been recorded.</p><p><b>You've completed the main part of the experiment. Thank you!</b></p><p><b>The remainder of the study consists of a personality questionnaire and a language background survey</b>.</p><p>After you complete those parts of the experiment, you will be returned to Prolific.co.</p><p><i>Press SPACE to be automatically redirected.</i></p></div>"
   ],
