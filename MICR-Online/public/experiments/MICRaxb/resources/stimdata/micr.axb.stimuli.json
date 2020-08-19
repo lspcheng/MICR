@@ -21,7 +21,7 @@
   ],
   "breakMessage": ["<div class=\"vertical-center\"><p>Feel free to take a break!</p><i>When you're ready to continue, press SPACE to begin the next trial.</i></p></div>"
   ],
-  "halfwayBreakMessage": ["<div class=\"vertical-center\"><p>You're halfway through the experiment! Feel free to take a break before moving on.</p><i>When you're ready to continue, press SPACE to begin the next trial.</i></p></div>"
+  "halfwayBreakMessage": ["<div class=\"vertical-center\"><p>You're halfway through the experiment! Feel free to take a break before moving on to listen to the next speaker.</p><i>When you're ready to continue, press SPACE.</i></p></div>"
   ],
   "completionMessage": ["<div class=\"vertical-center\"><p>Thank you for participating in this experiment!</p><p>Your responses are being recorded... </p><i>In 5 seconds, you will be redirected to Prolific.co.</i></p></div>"
   ],
