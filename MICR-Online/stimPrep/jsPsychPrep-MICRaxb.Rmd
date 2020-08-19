@@ -190,18 +190,23 @@ stimulusDF
 stimulusDF_condAB <- stimulusDF %>%
   mutate(speakerGuise = speakerIdentity) %>%
   mutate(guiseName = paste(speaker, speakerGuise, sep = "-")) %>%
+  mutate_if(is.character, as.factor) %>%
   select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role)
 stimulusDF_condAB
 
 stimulusDF_condCD <- stimulusDF %>%
   mutate(speakerGuise = case_when(speakerIdentity == "MI" ~ "CN",
                                   speakerIdentity == "CN" ~ "MI")) %>%
-  mutate(guiseName = paste(speaker, speakerGuise, sep = "-"))%>%
+  mutate(guiseName = paste(speaker, speakerGuise, sep = "-")) %>%
+  mutate_if(is.character, as.factor) %>%
   select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role)
 stimulusDF_condCD
 
 stimulusDF <- rbind(stimulusDF_condAB, stimulusDF_condCD)
 stimulusDF
+
+summary(stimulusDF_condCD)
+summary(stimulusDF)
 
 ```
 
