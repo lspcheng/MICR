@@ -437,7 +437,7 @@ function Experiment(params, firebaseStorage) {
     console.log(guiseNumber);
     /* Define block procedure */
 
-    guiseInfo = params[condition.id][guiseNumber];
+    var guiseInfo = params[condition.id][guiseNumber];
     console.log(guiseInfo);
 
     var speakerInfoScreen = {

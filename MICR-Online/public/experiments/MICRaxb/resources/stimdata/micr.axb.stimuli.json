@@ -208,52 +208,44 @@
     "resources/audio/wordStim/S9_AU_20_bxa_Step-8.wav"
   ],
   "condA": {
-    "guise1": [
+    "guise1":
       {"guiseName": "S3-MI",
         "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
-      }
-      ],
-    "guise2" : [
+      },
+    "guise2" :
       {"guiseName": "S9-CN",
         "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
-    ]
   },
   "condB": {
-    "guise1": [
+    "guise1":
       {"guiseName": "S9-CN",
         "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
-      }
-    ],
-    "guise2" : [
+      },
+    "guise2" :
       {"guiseName": "S3-MI",
         "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
-    ]
   },
   "condC": {
-    "guise1": [
+    "guise1":
       {"guiseName": "S3-CN",
         "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
-      }
-    ],
-    "guise2" : [
+      },
+    "guise2" :
       {"guiseName": "S9-MI",
         "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
-    ]
   },
   "condD": {
-    "guise1": [
+    "guise1":
       {"guiseName": "S9-MI",
         "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
-      }
-    ],
-    "guise2" : [
+      },
+    "guise2" :
       {"guiseName": "S3-CN",
         "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
-    ]
   },
   "S3-MI": [
     {
