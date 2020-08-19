@@ -391,22 +391,18 @@ function Experiment(params, firebaseStorage) {
             var trialNum = testTrials.count();
 
             // Set last trial and break intervals here
-            // TODO: Change values as needed2s
-            var lastTrialNum = 84
+            // TODO: Change values as needed
+            var lastTrialNum = 168
             var breakInterval = 21
 
             // If trial number is divisiable by block break value, AND if it is not the last trial, show the break screen; else don't
             if(trialNum % breakInterval === 0){
-              if(trialNum !== lastTrialNum){
+              if(trialNum !== lastTrialNum && trialNum !== lastTrialNum/2){
                 return true;
-              } else {
-                return false;
-                }
-              } else {
-              return false;
-            }
+              }
+            } return false;
           }
-      }
+        }
 
       /* Define stimuli details */
 
