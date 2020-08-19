@@ -343,7 +343,7 @@ function Experiment(params, firebaseStorage) {
         data: {trial_role: 'fixation'},
       }
 
-//  TODO: Update data columns and timeline variable names
+//  DONE! TODO: Update data columns and timeline variable names
       var wordAudio = {
         type: "audio-keyboard-response",
         stimulus: jsPsych.timelineVariable('wordStim'),
@@ -359,6 +359,8 @@ function Experiment(params, firebaseStorage) {
               order: jsPsych.timelineVariable('order'),
               step: jsPsych.timelineVariable('step'),
               speakerIdentity: jsPsych.timelineVariable('speakerIdentity'),
+              speakerGuise: jsPsych.timelineVariable('speakerGuise'),
+              guiseName: jsPsych.timelineVariable('guiseName'),
               raised_answer: jsPsych.timelineVariable('raised_answer')
       },
         on_finish: function(data) {
@@ -431,10 +433,9 @@ function Experiment(params, firebaseStorage) {
 
 /* Define the Block function */
 
-
   var initBlock = function(guiseNumber) {
-
     console.log(guiseNumber);
+
     /* Define block procedure */
 
     var guiseInfo = params[condition.id][guiseNumber];
@@ -452,59 +453,20 @@ function Experiment(params, firebaseStorage) {
 
   }
 
+/* Define the Halfway Break function */
 
+  var initHalfway = function() {
 
-var initHalfway = function() {
+      var halfwayBreakScreen = {
+        type: "html-keyboard-response",
+        stimulus: params.halfwayBreakMessage,
+        choices: [" "],
+        post_trial_gap: 0,
+        data: {trial_role: 'break'},
+      }
+      timeline.push(halfwayBreakScreen);
 
-    var halfwayBreakScreen = {
-      type: "html-keyboard-response",
-      stimulus: params.halfwayBreakMessage,
-      choices: [" "],
-      post_trial_gap: 0,
     }
-    timeline.push(halfwayBreakScreen);
-
-  }
-
-
-  // /***************************
-  // * Conditions
-  // ****************************/
-  //
-  // var initBlocks = function() {
-  //
-  //   /* Define condition */
-  //   /* Conditions will be set in the URL flag
-  //    * e.g. experiments/MICRpp/micr.pp.exp.html?condition=condA
-  //    * The jsPsych.data.urlVariables() function in runner.js sends this flag information to params
-  //    * Call params.condition to retrieve the condition variable name */
-  //   condition = params.condition
-  //   console.log(params.condition)
-  //   condBlocks = "blocks"
-  //
-  //   /* Define blocks */
-  //   /* Use ordered blocks (no randomization) OR */
-  //   var blocksList = params[condition][condBlocks]
-  //   console.log(params[condition][condBlocks])
-  //   numBlocks = blocksList.length
-  //
-  //   // Randomize the blocks into a shuffled block list
-  //   // var blocksList = jsPsych.randomization.shuffle(params[condition][condBlocks])
-  //
-  //   /* For each block in the shuffledBlocks list,  (Underscore for loop)
-  //    * Pass blockName into the trials function --i.e. run trials using
-  //    * stimuli from that blockName
-  //    * (Trials are pushed to main timeline within iniTrials())
-  //    * Then, if not the final block, run the break screen
-  //   */
-  //
-  // _.each(blocksList, function(block, i) {
-  //   initBlock(block, numBlocks, i);
-  //
-  //
-  //   });
-  //
-  // }
 
   /***************************
   * Post-experiment
@@ -514,7 +476,6 @@ var initHalfway = function() {
   // experiment. For example, a confirmation or thank-you page.
 
   var initPostExperiment = function() {
-
 
     /* exit full screen mode for trials */
     timeline.push({
@@ -544,7 +505,7 @@ var initHalfway = function() {
     };
     timeline.push(surveyPage);
 
-//  TODO: change this to redirect to qualtrics survey
+//  DONE! TODO: change this to redirect to qualtrics survey
     var redirect = {
         on_start: function() {
           // HTTP redirect:
