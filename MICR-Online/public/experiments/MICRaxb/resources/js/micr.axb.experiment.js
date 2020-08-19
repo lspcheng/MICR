@@ -51,10 +51,10 @@ function Experiment(params, firebaseStorage) {
   // experiment. Can be called at any time.
   this.addPropertiesTojsPsych = function () {
     jsPsych.data.addProperties({
-      participantId: participant.id, condition: condition.id
+      participantId: participant.id, conditionId: condition.id
     });
+    console.log(participant.id);
     console.log(condition.id);
-    console.log(participant.id)
   }
 
   this.setStorageLocation = function() {
@@ -105,10 +105,11 @@ function Experiment(params, firebaseStorage) {
     this.createTimeline = function() {
       initPreExperiment();
       initPractice();
-      // initBlocks();
-      initTrials();
+      initBlock("guise1");
+      initHalfway();
+      initBlock("guise2");
       initPostExperiment();
-      console.log(timeline)
+      // console.log(timeline)
     }
 
 
@@ -265,14 +266,13 @@ function Experiment(params, firebaseStorage) {
 
   /**** Practice Trials *****/
 
-      // var speakerInfoScreen = {
-      //   type: "html-keyboard-response",
-      //   stimulus: "<div class=\"vertical-center\"><p>The speaker you are about to hear is from Buffalo, New York.</p><p> <br> <i>Press SPACE to continue.</i></p></div>",
-      //   choices: [" "],
-      //   // trial_duration: 500,
-      //   post_trial_gap: 0,
-      // }
-      // timeline.push(speakerInfoScreen);
+      var speakerInfoScreen = {
+        type: "html-keyboard-response",
+        stimulus: "<div class=\"vertical-center\"><p>The speaker you are about to hear is from Buffalo, New York.</p><p> <br> <i>Press SPACE to continue.</i></p></div>",
+        choices: [" "],
+        post_trial_gap: 0,
+      }
+      timeline.push(speakerInfoScreen);
 
       var promptScreen = {
         type: "html-keyboard-response",
@@ -329,7 +329,7 @@ function Experiment(params, firebaseStorage) {
     // such as "initBlock()" to create experiment blocks, or initPractice() to
     // create a practice phase.
     // var initTrials = function(blockName) {
-    var initTrials = function() {
+    var initTrials = function(guiseName) {
 
   /**** Actual Trials *****/
 
@@ -412,7 +412,7 @@ function Experiment(params, firebaseStorage) {
       // var stimInfo = params.audioStim;
 
       // #2 If running multiple conditions of stimuli:
-      var stimInfo = params[condition.id];
+      var stimInfo = params[guiseName];
 
       /* Compile the trial components  */
       var trial_procedure = {
@@ -431,74 +431,80 @@ function Experiment(params, firebaseStorage) {
 
 /* Define the Block function */
 
-  var initBlock = function(block, numBlocks, i) {
 
+  var initBlock = function(guiseNumber) {
+
+    console.log(guiseNumber);
     /* Define block procedure */
+
+    guiseInfo = params[condition.id][guiseNumber];
+    console.log(guiseInfo);
 
     var speakerInfoScreen = {
       type: "html-keyboard-response",
-      stimulus: block.speakerInfo,
+      stimulus: guiseInfo.speakerInfo,
       choices: [" "],
       post_trial_gap: 0,
     }
     timeline.push(speakerInfoScreen);
 
-    initTrials(block.blockName)
-
-    // var breakScreen = {
-    //   type: 'html-keyboard-response',
-    //   stimulus: params.breakMessage,
-    //   choices: [" "],
-    // }
-    //
-    // /* Block-based breaks */
-    // /* Add break between blocks except for last
-    // */
-    // if(i < numBlocks - 1) {
-    //   timeline.push(breakScreen);
-    // }
+    initTrials(guiseInfo.guiseName)
 
   }
 
 
-  /***************************
-  * Conditions
-  ****************************/
 
-  var initBlocks = function() {
+var initHalfway = function() {
 
-    /* Define condition */
-    /* Conditions will be set in the URL flag
-     * e.g. experiments/MICRpp/micr.pp.exp.html?condition=condA
-     * The jsPsych.data.urlVariables() function in runner.js sends this flag information to params
-     * Call params.condition to retrieve the condition variable name */
-    condition = params.condition
-    console.log(params.condition)
-    condBlocks = "blocks"
-
-    /* Define blocks */
-    /* Use ordered blocks (no randomization) OR */
-    var blocksList = params[condition][condBlocks]
-    console.log(params[condition][condBlocks])
-    numBlocks = blocksList.length
-
-    // Randomize the blocks into a shuffled block list
-    // var blocksList = jsPsych.randomization.shuffle(params[condition][condBlocks])
-
-    /* For each block in the shuffledBlocks list,  (Underscore for loop)
-     * Pass blockName into the trials function --i.e. run trials using
-     * stimuli from that blockName
-     * (Trials are pushed to main timeline within iniTrials())
-     * Then, if not the final block, run the break screen
-    */
-
-  _.each(blocksList, function(block, i) {
-    initBlock(block, numBlocks, i);
-
-
-    });
+    var halfwayBreakScreen = {
+      type: "html-keyboard-response",
+      stimulus: params.halfwayBreakMessage,
+      choices: [" "],
+      post_trial_gap: 0,
+    }
+    timeline.push(halfwayBreakScreen);
 
   }
+
+
+  // /***************************
+  // * Conditions
+  // ****************************/
+  //
+  // var initBlocks = function() {
+  //
+  //   /* Define condition */
+  //   /* Conditions will be set in the URL flag
+  //    * e.g. experiments/MICRpp/micr.pp.exp.html?condition=condA
+  //    * The jsPsych.data.urlVariables() function in runner.js sends this flag information to params
+  //    * Call params.condition to retrieve the condition variable name */
+  //   condition = params.condition
+  //   console.log(params.condition)
+  //   condBlocks = "blocks"
+  //
+  //   /* Define blocks */
+  //   /* Use ordered blocks (no randomization) OR */
+  //   var blocksList = params[condition][condBlocks]
+  //   console.log(params[condition][condBlocks])
+  //   numBlocks = blocksList.length
+  //
+  //   // Randomize the blocks into a shuffled block list
+  //   // var blocksList = jsPsych.randomization.shuffle(params[condition][condBlocks])
+  //
+  //   /* For each block in the shuffledBlocks list,  (Underscore for loop)
+  //    * Pass blockName into the trials function --i.e. run trials using
+  //    * stimuli from that blockName
+  //    * (Trials are pushed to main timeline within iniTrials())
+  //    * Then, if not the final block, run the break screen
+  //   */
+  //
+  // _.each(blocksList, function(block, i) {
+  //   initBlock(block, numBlocks, i);
+  //
+  //
+  //   });
+  //
+  // }
 
   /***************************
   * Post-experiment
