@@ -266,13 +266,14 @@ function Experiment(params, firebaseStorage) {
 
   /**** Practice Trials *****/
 
-      var speakerInfoScreen = {
-        type: "html-keyboard-response",
-        stimulus: "<div class=\"vertical-center\"><p>The speaker you are about to hear is from Buffalo, New York.</p><p> <br> <i>Press SPACE to continue.</i></p></div>",
-        choices: [" "],
-        post_trial_gap: 0,
-      }
-      timeline.push(speakerInfoScreen);
+    // REMOVED so as to not additionally prime participants to US
+      // var speakerInfoScreen = {
+      //   type: "html-keyboard-response",
+      //   stimulus: "<div class=\"vertical-center\"><img src=\"resources/images/US_face_2.png\" style=\"width:400px;height:300px;\"><br> <p>The speaker you are about to hear is from Buffalo, New York.</p><p> <br> <i>Press SPACE to continue.</i></p></div>",
+      //   choices: [" "],
+      //   post_trial_gap: 0,
+      // }
+      // timeline.push(speakerInfoScreen);
 
       var promptScreen = {
         type: "html-keyboard-response",
