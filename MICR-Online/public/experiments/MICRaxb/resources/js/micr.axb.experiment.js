@@ -523,27 +523,36 @@ var initHalfway = function() {
     });
 
 
-    var thankYou = {
+    var savingPage = {
+        on_start: function() {
+          saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation)
+        },
+        type: "html-keyboard-response",
+        choices: jsPsych.NO_KEYS,
+        stimulus: params.savingMessage,
+        trial_duration: 5000
+    };
+    timeline.push(savingPage);
+
+    var surveyPage = {
         on_start: function() {
           saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation)
         },
         type: "html-keyboard-response",
         choices: [" "],
-        // stimulus: params.surveyMessage,
-        stimulus: params.completionMessage,
-        trial_duration: 5000
+        stimulus: params.surveyMessage,
     };
-    timeline.push(thankYou);
+    timeline.push(surveyPage);
 
 //  TODO: change this to redirect to qualtrics survey
     var redirect = {
         on_start: function() {
           // HTTP redirect:
-          window.location.replace("https://app.prolific.co/submissions/complete?cc="+params.cc);
+          window.location.replace("https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID"+participant.id);
         },
         type: "html-keyboard-response",
         choices: jsPsych.NO_KEYS,
-        stimulus: "<div class=\"vertical-center\"><p>You are being redirected to Prolific.co.</p><p>If you are not redirected in 5 seconds, please click this link: https://app.prolific.co/submissions/complete?cc="+params.cc+".</p></div>."
+        stimulus: "<div class=\"vertical-center\"><p>You are being redirected to Qualtrics.com.</p><p>If you are not redirected in 5 seconds, please click this link: https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID"+participant.id+".</p></div>."
     };
     timeline.push(redirect);
 
