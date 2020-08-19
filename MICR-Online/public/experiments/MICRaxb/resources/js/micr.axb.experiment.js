@@ -505,11 +505,11 @@ function Experiment(params, firebaseStorage) {
     var redirect = {
         on_start: function() {
           // HTTP redirect:
-          window.location.replace("https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID"+participant.id);
+          window.location.replace("https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID="+participant.id);
         },
         type: "html-keyboard-response",
         choices: jsPsych.NO_KEYS,
-        stimulus: "<div class=\"vertical-center\"><p>You are being redirected to Qualtrics.com.</p><p>If you are not redirected in 5 seconds, please click this link: https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID"+participant.id+".</p></div>."
+        stimulus: "<div class=\"vertical-center\"><p>You are being redirected to Qualtrics.com.</p><p>If you are not redirected in 5 seconds, please click this link: https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID="+participant.id+".</p></div>."
     };
     timeline.push(redirect);
 
