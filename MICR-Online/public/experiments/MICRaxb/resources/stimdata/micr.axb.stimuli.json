@@ -6,7 +6,7 @@
     "<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p>Next, we will do a short audio test to ensure that your audio listening quality is appropriate for the main task. Please ensure you are wearing headphones. <br> In each trial, you will hear three tones at a time. You will be asked to decide which tone (first, second, third) was the quietest by clicking a button on the screen (e.g. FIRST sound is QUIETEST).</p><p>The task will start immediately when you continue.</p><p><i>When you're ready to begin, click the 'Next' button.</i></p></div>"
   ],
   "mainInstructionText": [
-    "<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p>In this experiment, your task is to judge how similar different pronunciations of the same word sound.</p> <p>In each trial, you will hear one word repeated three times (e.g. mouse... mouse... mouse). Your task is to listen carefully and decide whether the middle word sounded more like the first word or the last word. If the first word is more similar, press '1' on your keyboard. If the second word is more similar, press '0' on your keyboard.</p> <p>Please try to respond as quickly as possible without sacrificing accuracy. You will find that some of the pronunciations sound extremely similar. Just go with your instinct and don't overthink your response.</p> <p>Several breaks are included throughout the experiment — during those times, you are welcome to take a few minutes to rest before continuing to the next set of trials.</p> <p><i>To begin a few practice trials, press SPACE.</i></p></div>"
+    "<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p>In this experiment, you will listen to words spoken by two people from either Canada or the US. Your task is to judge how similar different pronunciations of the same word sound.</p> <p>In each trial, you will hear one word repeated three times (e.g. mouse... mouse... mouse). Your task is to listen carefully and decide whether the middle word sounded more like the first word or the last word. If the first word is more similar, press '1' on your keyboard. If the second word is more similar, press '0' on your keyboard.</p> <p>Please try to respond as quickly as possible without sacrificing accuracy. You will find that some of the pronunciations sound extremely similar. Just go with your instinct and don't overthink your response.</p> <p>Several breaks are included throughout the experiment — during those times, you are welcome to take a few minutes to rest before continuing to the next set of trials.</p> <p><i>To begin a few practice trials, press SPACE.</i></p></div>"
   ],
   "finalInstructionText": ["<div class=\"text-placeholder\"></div><div class=\"vertical-center\"><p><b>Great, you've finished the practice!</b></p><p> Now we will begin the actual experiment.</p><p><i>When you're ready to begin, press SPACE.</i></p></div>"
   ]
@@ -28,6 +28,12 @@
   "savingMessage": ["<div class=\"vertical-center\"><p><b>You've completed the main part of the experiment. Thank you!</b></p><p>Please wait while your responses are being recorded...</p></div>"
   ],
   "surveyMessage": ["<div class=\"vertical-center\"><p><b>The remainder of this study consists of a personality questionnaire and a language background survey hosted on Qualtrics.com</b>.</p><p>After you complete those parts of the experiment, you will be returned to Prolific.co.</p><p><i>Press SPACE to be automatically redirected to the survey on Qualtrics.</i></p></div>"
+  ],
+  "images": [
+    "resources/images/CN_face_1.png",
+    "resources/images/CN_face_2.png",
+    "resources/images/US_face_1.png",
+    "resources/images/US_face_2.png"
   ],
   "audio": [
     "../../src/audio/toneTest_1.wav",
@@ -212,41 +218,41 @@
   "condA": {
     "guise1":
       {"guiseName": "S3-MI",
-        "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       },
     "guise2" :
       {"guiseName": "S9-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
   },
   "condB": {
     "guise1":
       {"guiseName": "S9-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       },
     "guise2" :
       {"guiseName": "S3-MI",
-        "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
   },
   "condC": {
     "guise1":
       {"guiseName": "S3-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       },
     "guise2" :
       {"guiseName": "S9-MI",
-        "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
   },
   "condD": {
     "guise1":
       {"guiseName": "S9-MI",
-        "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       },
     "guise2" :
       {"guiseName": "S3-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
   },
   "S3-MI": [
