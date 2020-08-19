@@ -178,12 +178,31 @@ stimulusDF <- sentStimList %>%
   mutate(trial_role = "test") %>%
   
   # Reorder columns
-  select(wordStim, everything()) %>%
-  
-  print()
+  select(wordStim, everything()) 
   
 # Print DF to check
 stimulusDF
+
+```
+
+```{r jsondata-kvs-duplicateblocks}
+
+stimulusDF_condAB <- stimulusDF %>%
+  mutate(speakerGuise = speakerIdentity) %>%
+  mutate(guiseName = paste(speaker, speakerGuise, sep = "-")) %>%
+  select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role)
+stimulusDF_condAB
+
+stimulusDF_condCD <- stimulusDF %>%
+  mutate(speakerGuise = case_when(speakerIdentity == "MI" ~ "CN",
+                                  speakerIdentity == "CN" ~ "MI")) %>%
+  mutate(guiseName = paste(speaker, speakerGuise, sep = "-"))%>%
+  select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role)
+stimulusDF_condCD
+
+stimulusDF <- rbind(stimulusDF_condAB, stimulusDF_condCD)
+stimulusDF
+
 ```
 
 #### OPTIONAL: Add a Subsetted Block/Condition Column 
@@ -194,7 +213,7 @@ This is if you are splitting full stimulus set into subsets (i.e. dividing the f
 
 Specify the number of blocks and the naming conventions as necessary. For example, 'LETTERS[1:4]' results in 'A, B, C, D' in caps while '1:3' results in the numbers 1-3. 
 
-```{r jsondata-kvs-createdf-block, include=F}
+```{r jsondata-kvs-subsetblocks, include=F}
 # Add in blocks
 # Fill column with sequential block names for the nrow of the DF (evenly distributed) 
 # To fully randomize, add "%>% mutate(blockName = sample(blockName))"
@@ -233,6 +252,9 @@ print_factors(nStims/2)
 # List factors of half the number of stims (e.g. one of two conditions) with 3 repetitions
 print_factors((nStims/2)*3)
 
+# List factors of quarter the number of stims (e.g. one of four conditions)
+print_factors(nStims/4)
+
 ```
 
 ### Convert to JSON
@@ -251,21 +273,26 @@ Finally, convert the stimuli data to JSON. If you don't have multiple blocks, th
 
 #### Option 1: Blocked Design
 
-TODO: Update the block structure.
+TODO: Update the block structure and change the column name to subset by.
 
 If you do have blocks, then convert the stimuli data to JSON by block. This chunk creates a list of the blocks and saves a file for each block.
 
 ```{r jsondata-kvs-convert-blocks, include=F}
 # Write stimuli files per block, to be pasted into the experiment stimuli JSON file.
-# Create list of block names (as above, but only the unique blocks)
-blockList <- paste0("cond",rep(LETTERS[1:2]))
+
+# Add your list of blocks
+## (Option 1) Create list of block names (as above, but only the unique blocks) 
+#blockList <- paste0("cond",rep(LETTERS[1:2]))
+
+## (Option 2) Write out your full list
+blockList <- c("S3-MI", "S9-CN", "S3-CN", "S9-MI")
 
 # Run a for-loop that subsets by each block, selects the relevant columns, coverts to JSON and write to a file
 for (block in blockList){
   
   # Create DF for experiment stimuli JSON format
   stimulusDF.exp <- stimulusDF %>%
-    subset(condName == block) #%>%
+    subset(guiseName == block) #%>%
     #select(sentStim, facePrime, data) #%>%
     #print()
 

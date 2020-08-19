@@ -51,7 +51,7 @@ function initializeJsPsych(experiment) {
     show_progress_bar: true,
     display_element: 'jspsych-target',
     // default_iti: 500,
-    show_preload_progress_bar: true, // hide preload progress bar
+    show_preload_progress_bar: true, 
     preload_audio: audio,
     preload_images: images,
     exclusions: {audio: true},

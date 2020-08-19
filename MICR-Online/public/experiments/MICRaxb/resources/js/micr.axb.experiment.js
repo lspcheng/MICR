@@ -51,10 +51,10 @@ function Experiment(params, firebaseStorage) {
   // experiment. Can be called at any time.
   this.addPropertiesTojsPsych = function () {
     jsPsych.data.addProperties({
-      participantId: participant.id, condition: condition.id
+      participantId: participant.id, conditionId: condition.id
     });
+    console.log(participant.id);
     console.log(condition.id);
-    console.log(participant.id)
   }
 
   this.setStorageLocation = function() {
@@ -105,10 +105,11 @@ function Experiment(params, firebaseStorage) {
     this.createTimeline = function() {
       initPreExperiment();
       initPractice();
-      // initBlocks();
-      initTrials();
+      initBlock("guise1");
+      initHalfway();
+      initBlock("guise2");
       initPostExperiment();
-      console.log(timeline)
+      // console.log(timeline)
     }
 
 
@@ -265,14 +266,13 @@ function Experiment(params, firebaseStorage) {
 
   /**** Practice Trials *****/
 
-      // var speakerInfoScreen = {
-      //   type: "html-keyboard-response",
-      //   stimulus: "<div class=\"vertical-center\"><p>The speaker you are about to hear is from Buffalo, New York.</p><p> <br> <i>Press SPACE to continue.</i></p></div>",
-      //   choices: [" "],
-      //   // trial_duration: 500,
-      //   post_trial_gap: 0,
-      // }
-      // timeline.push(speakerInfoScreen);
+      var speakerInfoScreen = {
+        type: "html-keyboard-response",
+        stimulus: "<div class=\"vertical-center\"><p>The speaker you are about to hear is from Buffalo, New York.</p><p> <br> <i>Press SPACE to continue.</i></p></div>",
+        choices: [" "],
+        post_trial_gap: 0,
+      }
+      timeline.push(speakerInfoScreen);
 
       var promptScreen = {
         type: "html-keyboard-response",
@@ -329,7 +329,7 @@ function Experiment(params, firebaseStorage) {
     // such as "initBlock()" to create experiment blocks, or initPractice() to
     // create a practice phase.
     // var initTrials = function(blockName) {
-    var initTrials = function() {
+    var initTrials = function(guiseName) {
 
   /**** Actual Trials *****/
 
@@ -343,7 +343,7 @@ function Experiment(params, firebaseStorage) {
         data: {trial_role: 'fixation'},
       }
 
-//  TODO: Update data columns and timeline variable names
+//  DONE! TODO: Update data columns and timeline variable names
       var wordAudio = {
         type: "audio-keyboard-response",
         stimulus: jsPsych.timelineVariable('wordStim'),
@@ -359,6 +359,8 @@ function Experiment(params, firebaseStorage) {
               order: jsPsych.timelineVariable('order'),
               step: jsPsych.timelineVariable('step'),
               speakerIdentity: jsPsych.timelineVariable('speakerIdentity'),
+              speakerGuise: jsPsych.timelineVariable('speakerGuise'),
+              guiseName: jsPsych.timelineVariable('guiseName'),
               raised_answer: jsPsych.timelineVariable('raised_answer')
       },
         on_finish: function(data) {
@@ -412,7 +414,7 @@ function Experiment(params, firebaseStorage) {
       // var stimInfo = params.audioStim;
 
       // #2 If running multiple conditions of stimuli:
-      var stimInfo = params[condition.id];
+      var stimInfo = params[guiseName];
 
       /* Compile the trial components  */
       var trial_procedure = {
@@ -431,74 +433,40 @@ function Experiment(params, firebaseStorage) {
 
 /* Define the Block function */
 
-  var initBlock = function(block, numBlocks, i) {
+  var initBlock = function(guiseNumber) {
+    console.log(guiseNumber);
 
     /* Define block procedure */
 
+    var guiseInfo = params[condition.id][guiseNumber];
+    console.log(guiseInfo);
+
     var speakerInfoScreen = {
       type: "html-keyboard-response",
-      stimulus: block.speakerInfo,
+      stimulus: guiseInfo.speakerInfo,
       choices: [" "],
       post_trial_gap: 0,
     }
     timeline.push(speakerInfoScreen);
 
-    initTrials(block.blockName)
-
-    // var breakScreen = {
-    //   type: 'html-keyboard-response',
-    //   stimulus: params.breakMessage,
-    //   choices: [" "],
-    // }
-    //
-    // /* Block-based breaks */
-    // /* Add break between blocks except for last
-    // */
-    // if(i < numBlocks - 1) {
-    //   timeline.push(breakScreen);
-    // }
+    initTrials(guiseInfo.guiseName)
 
   }
 
+/* Define the Halfway Break function */
 
-  /***************************
-  * Conditions
-  ****************************/
+  var initHalfway = function() {
 
-  var initBlocks = function() {
+      var halfwayBreakScreen = {
+        type: "html-keyboard-response",
+        stimulus: params.halfwayBreakMessage,
+        choices: [" "],
+        post_trial_gap: 0,
+        data: {trial_role: 'break'},
+      }
+      timeline.push(halfwayBreakScreen);
 
-    /* Define condition */
-    /* Conditions will be set in the URL flag
-     * e.g. experiments/MICRpp/micr.pp.exp.html?condition=condA
-     * The jsPsych.data.urlVariables() function in runner.js sends this flag information to params
-     * Call params.condition to retrieve the condition variable name */
-    condition = params.condition
-    console.log(params.condition)
-    condBlocks = "blocks"
-
-    /* Define blocks */
-    /* Use ordered blocks (no randomization) OR */
-    var blocksList = params[condition][condBlocks]
-    console.log(params[condition][condBlocks])
-    numBlocks = blocksList.length
-
-    // Randomize the blocks into a shuffled block list
-    // var blocksList = jsPsych.randomization.shuffle(params[condition][condBlocks])
-
-    /* For each block in the shuffledBlocks list,  (Underscore for loop)
-     * Pass blockName into the trials function --i.e. run trials using
-     * stimuli from that blockName
-     * (Trials are pushed to main timeline within iniTrials())
-     * Then, if not the final block, run the break screen
-    */
-
-  _.each(blocksList, function(block, i) {
-    initBlock(block, numBlocks, i);
-
-
-    });
-
-  }
+    }
 
   /***************************
   * Post-experiment
@@ -509,7 +477,6 @@ function Experiment(params, firebaseStorage) {
 
   var initPostExperiment = function() {
 
-
     /* exit full screen mode for trials */
     timeline.push({
       type: 'fullscreen',
@@ -517,27 +484,36 @@ function Experiment(params, firebaseStorage) {
     });
 
 
-    var thankYou = {
+    var savingPage = {
+        on_start: function() {
+          saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation)
+        },
+        type: "html-keyboard-response",
+        choices: jsPsych.NO_KEYS,
+        stimulus: params.savingMessage,
+        trial_duration: 5000
+    };
+    timeline.push(savingPage);
+
+    var surveyPage = {
         on_start: function() {
           saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation)
         },
         type: "html-keyboard-response",
         choices: [" "],
-        // stimulus: params.surveyMessage,
-        stimulus: params.completionMessage,
-        trial_duration: 5000
+        stimulus: params.surveyMessage,
     };
-    timeline.push(thankYou);
+    timeline.push(surveyPage);
 
-//  TODO: change this to redirect to qualtrics survey
+//  DONE! TODO: change this to redirect to qualtrics survey
     var redirect = {
         on_start: function() {
           // HTTP redirect:
-          window.location.replace("https://app.prolific.co/submissions/complete?cc="+params.cc);
+          window.location.replace("https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID"+participant.id);
         },
         type: "html-keyboard-response",
         choices: jsPsych.NO_KEYS,
-        stimulus: "<div class=\"vertical-center\"><p>You are being redirected to Prolific.co.</p><p>If you are not redirected in 5 seconds, please click this link: https://app.prolific.co/submissions/complete?cc="+params.cc+".</p></div>."
+        stimulus: "<div class=\"vertical-center\"><p>You are being redirected to Qualtrics.com.</p><p>If you are not redirected in 5 seconds, please click this link: https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID"+participant.id+".</p></div>."
     };
     timeline.push(redirect);
 
