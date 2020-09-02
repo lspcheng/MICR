@@ -10,7 +10,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_axb_Step-3.wav",
@@ -23,7 +23,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_axb_Step-4.wav",
@@ -36,7 +36,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_axb_Step-5.wav",
@@ -49,7 +49,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_axb_Step-6.wav",
@@ -62,7 +62,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_axb_Step-7.wav",
@@ -75,7 +75,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_axb_Step-8.wav",
@@ -88,7 +88,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_bxa_Step-2.wav",
@@ -101,7 +101,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_bxa_Step-3.wav",
@@ -114,7 +114,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_bxa_Step-4.wav",
@@ -127,7 +127,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_bxa_Step-5.wav",
@@ -140,7 +140,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_bxa_Step-6.wav",
@@ -153,7 +153,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_bxa_Step-7.wav",
@@ -166,7 +166,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_21_bxa_Step-8.wav",
@@ -179,7 +179,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_axb_Step-2.wav",
@@ -192,7 +192,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_axb_Step-3.wav",
@@ -205,7 +205,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_axb_Step-4.wav",
@@ -218,7 +218,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_axb_Step-5.wav",
@@ -231,7 +231,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_axb_Step-6.wav",
@@ -244,7 +244,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_axb_Step-7.wav",
@@ -257,7 +257,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_axb_Step-8.wav",
@@ -270,7 +270,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_bxa_Step-2.wav",
@@ -283,7 +283,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_bxa_Step-3.wav",
@@ -296,7 +296,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_bxa_Step-4.wav",
@@ -309,7 +309,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_bxa_Step-5.wav",
@@ -322,7 +322,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_bxa_Step-6.wav",
@@ -335,7 +335,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_bxa_Step-7.wav",
@@ -348,7 +348,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_22_bxa_Step-8.wav",
@@ -361,7 +361,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_axb_Step-2.wav",
@@ -374,7 +374,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_axb_Step-3.wav",
@@ -387,7 +387,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_axb_Step-4.wav",
@@ -400,7 +400,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_axb_Step-5.wav",
@@ -413,7 +413,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_axb_Step-6.wav",
@@ -426,7 +426,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_axb_Step-7.wav",
@@ -439,7 +439,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_axb_Step-8.wav",
@@ -452,7 +452,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_bxa_Step-2.wav",
@@ -465,7 +465,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_bxa_Step-3.wav",
@@ -478,7 +478,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_bxa_Step-4.wav",
@@ -491,7 +491,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_bxa_Step-5.wav",
@@ -504,7 +504,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_bxa_Step-6.wav",
@@ -517,7 +517,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_bxa_Step-7.wav",
@@ -530,7 +530,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AI_30_bxa_Step-8.wav",
@@ -543,7 +543,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_axb_Step-2.wav",
@@ -556,7 +556,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_axb_Step-3.wav",
@@ -569,7 +569,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_axb_Step-4.wav",
@@ -582,7 +582,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_axb_Step-5.wav",
@@ -595,7 +595,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_axb_Step-6.wav",
@@ -608,7 +608,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_axb_Step-7.wav",
@@ -621,7 +621,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_axb_Step-8.wav",
@@ -634,7 +634,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_bxa_Step-2.wav",
@@ -647,7 +647,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_bxa_Step-3.wav",
@@ -660,7 +660,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_bxa_Step-4.wav",
@@ -673,7 +673,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_bxa_Step-5.wav",
@@ -686,7 +686,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_bxa_Step-6.wav",
@@ -699,7 +699,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_bxa_Step-7.wav",
@@ -712,7 +712,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_18_bxa_Step-8.wav",
@@ -725,7 +725,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_axb_Step-2.wav",
@@ -738,7 +738,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_axb_Step-3.wav",
@@ -751,7 +751,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_axb_Step-4.wav",
@@ -764,7 +764,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_axb_Step-5.wav",
@@ -777,7 +777,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_axb_Step-6.wav",
@@ -790,7 +790,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_axb_Step-7.wav",
@@ -803,7 +803,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_axb_Step-8.wav",
@@ -816,7 +816,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_bxa_Step-2.wav",
@@ -829,7 +829,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_bxa_Step-3.wav",
@@ -842,7 +842,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_bxa_Step-4.wav",
@@ -855,7 +855,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_bxa_Step-5.wav",
@@ -868,7 +868,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_bxa_Step-6.wav",
@@ -881,7 +881,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_bxa_Step-7.wav",
@@ -894,7 +894,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_19_bxa_Step-8.wav",
@@ -907,7 +907,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_axb_Step-2.wav",
@@ -920,7 +920,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_axb_Step-3.wav",
@@ -933,7 +933,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_axb_Step-4.wav",
@@ -946,7 +946,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_axb_Step-5.wav",
@@ -959,7 +959,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_axb_Step-6.wav",
@@ -972,7 +972,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_axb_Step-7.wav",
@@ -985,7 +985,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_axb_Step-8.wav",
@@ -998,7 +998,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "0",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_bxa_Step-2.wav",
@@ -1011,7 +1011,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_bxa_Step-3.wav",
@@ -1024,7 +1024,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_bxa_Step-4.wav",
@@ -1037,7 +1037,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_bxa_Step-5.wav",
@@ -1050,7 +1050,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_bxa_Step-6.wav",
@@ -1063,7 +1063,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_bxa_Step-7.wav",
@@ -1076,7 +1076,7 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   },
   {
     "wordStim": "resources/audio/wordStim/S3_AU_20_bxa_Step-8.wav",
@@ -1089,6 +1089,6 @@
     "guiseName": "S3-MI",
     "raised_answer": "1",
     "trial_role": "test",
-    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
+    "axbText": "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>"
   }
 ]
