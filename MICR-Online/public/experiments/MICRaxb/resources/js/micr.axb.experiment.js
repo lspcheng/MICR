@@ -106,7 +106,9 @@ function Experiment(params, firebaseStorage) {
       initPreExperiment();
       initPractice();
       initBlock("guise1");
+      initBlock("guise2");
       initHalfway();
+      initBlock("guise1");
       initBlock("guise2");
       initPostExperiment();
       // console.log(timeline)
@@ -246,6 +248,7 @@ function Experiment(params, firebaseStorage) {
       //   ],
       // }
       // timeline.push(shortSurvey);
+
 
       /***************************
       * Practice Trials
@@ -393,7 +396,7 @@ function Experiment(params, firebaseStorage) {
 
             // Set last trial and break intervals here
             // TODO: Change values as needed
-            var lastTrialNum = 168
+            var lastTrialNum = 336
             var breakInterval = 21
 
             // If trial number is divisiable by block break value, AND if it is not the last trial, show the break screen; else don't
@@ -450,7 +453,7 @@ function Experiment(params, firebaseStorage) {
 
   }
 
-/* Define the Halfway Break function */
+/* Define the Midway Break functions */
 
   var initHalfway = function() {
 
