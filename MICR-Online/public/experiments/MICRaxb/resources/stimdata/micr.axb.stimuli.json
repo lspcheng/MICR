@@ -33,7 +33,11 @@
     "resources/images/CN_face_1.png",
     "resources/images/CN_face_2.png",
     "resources/images/US_face_1.png",
-    "resources/images/US_face_2.png"
+    "resources/images/US_face_2.png",
+    "resources/images/BL_face_a.png",
+    "resources/images/BL_face_b.png",
+    "resources/images/CN_flag_950x500.png",
+    "resources/images/US_flag_950x500.png"
   ],
   "audio": [
     "../../src/audio/toneTest_1.wav",
@@ -222,13 +226,13 @@
       },
     "guise2" :
       {"guiseName": "S9-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
   },
   "condB": {
     "guise1":
       {"guiseName": "S9-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       },
     "guise2" :
       {"guiseName": "S3-MI",
@@ -238,7 +242,7 @@
   "condC": {
     "guise1":
       {"guiseName": "S3-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       },
     "guise2" :
       {"guiseName": "S9-MI",
@@ -252,7 +256,27 @@
       },
     "guise2" :
       {"guiseName": "S3-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, British Columbia.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:400px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+      }
+  },
+  "condE": {
+    "guise1":
+      {"guiseName": "S3-base",
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/BL_face_a.png\" style=\"width:400px;height:300px;\"><p>This is the speaker you're about to hear.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+      },
+    "guise2" :
+      {"guiseName": "S9-base",
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/BL_face_b.png\" style=\"width:400px;height:300px;\"><p>This is the speaker you're about to hear.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+      }
+  },
+  "condF": {
+    "guise1":
+      {"guiseName": "S9-base",
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/BL_face_b.png\" style=\"width:400px;height:300px;\"><p>This is the speaker you're about to hear.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+      },
+    "guise2" :
+      {"guiseName": "S3-base",
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/BL_face_a.png\" style=\"width:400px;height:300px;\"><p>This is the speaker you're about to hear.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
   },
   "S3-MI": [
