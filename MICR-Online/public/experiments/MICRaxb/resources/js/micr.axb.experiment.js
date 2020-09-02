@@ -340,7 +340,7 @@ function Experiment(params, firebaseStorage) {
       /* Define the static trial components  */
       var promptScreen = {
         type: "html-keyboard-response",
-        stimulus: params.axbText,
+        stimulus: jsPsych.timelineVariable('axbText'),
         choices: jsPsych.NO_KEYS,
         trial_duration: 500,
         post_trial_gap: 0,
