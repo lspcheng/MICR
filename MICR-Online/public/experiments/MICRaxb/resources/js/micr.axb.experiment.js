@@ -458,6 +458,9 @@ function Experiment(params, firebaseStorage) {
   var initHalfway = function() {
 
       var halfwayBreakScreen = {
+        on_start: function() {
+          saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation);
+        },
         type: "html-keyboard-response",
         stimulus: params.halfwayBreakMessage,
         choices: [" "],
@@ -486,7 +489,7 @@ function Experiment(params, firebaseStorage) {
 
     var savingPage = {
         on_start: function() {
-          saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation)
+          saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation);
         },
         type: "html-keyboard-response",
         choices: jsPsych.NO_KEYS,
@@ -496,9 +499,6 @@ function Experiment(params, firebaseStorage) {
     timeline.push(savingPage);
 
     var surveyPage = {
-        on_start: function() {
-          saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation)
-        },
         type: "html-keyboard-response",
         choices: [" "],
         stimulus: params.surveyMessage,
