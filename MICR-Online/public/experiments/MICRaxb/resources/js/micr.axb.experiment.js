@@ -351,7 +351,7 @@ function Experiment(params, firebaseStorage) {
       var wordAudio = {
         type: "audio-keyboard-response",
         stimulus: jsPsych.timelineVariable('wordStim'),
-        prompt: params.axbText,
+        prompt: jsPsych.timelineVariable('axbText'),
         choices: ["1","0"],
         trial_ends_after_audio: false,
         post_trial_gap: 500, // + 500ms prompt = 1000ms total ITI
