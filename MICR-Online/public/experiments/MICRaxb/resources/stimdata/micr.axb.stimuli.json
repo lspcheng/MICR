@@ -30,10 +30,10 @@
   "surveyMessage": ["<div class=\"vertical-center\"><p><b>The remainder of this study consists of a personality questionnaire and a language background survey hosted on Qualtrics.com</b>.</p><p>After you complete those parts of the experiment, you will be returned to Prolific.co.</p><p><i>Press SPACE to be automatically redirected to the survey on Qualtrics.</i></p></div>"
   ],
   "images": [
-    "resources/images/CN_face_1.png",
-    "resources/images/CN_face_2.png",
-    "resources/images/US_face_1.png",
-    "resources/images/US_face_2.png",
+    "resources/images/CN_face_a.png",
+    "resources/images/CN_face_b.png",
+    "resources/images/US_face_a.png",
+    "resources/images/US_face_b.png",
     "resources/images/BL_face_a.png",
     "resources/images/BL_face_b.png",
     "resources/images/CN_flag_100x52.jpg",
@@ -222,41 +222,41 @@
   "condA": {
     "guise1":
       {"guiseName": "S3-MI",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_2.png\" style=\"width:450px;height:300px;\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_a.png\" style=\"width:450px;height:300px;\"><p>This is the speaker you're about to hear. She is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       },
     "guise2" :
       {"guiseName": "S9-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:450px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_b.png\" style=\"width:450px;height:300px;\"><p>This is the speaker you're about to hear. She is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
   },
   "condB": {
     "guise1":
       {"guiseName": "S9-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:450px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_b.png\" style=\"width:450px;height:300px;\"><p>This is the speaker you're about to hear. She is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       },
     "guise2" :
       {"guiseName": "S3-MI",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_2.png\" style=\"width:450px;height:300px;\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_a.png\" style=\"width:450px;height:300px;\"><p>This is the speaker you're about to hear. She is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
   },
   "condC": {
     "guise1":
       {"guiseName": "S3-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:450px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_a.png\" style=\"width:450px;height:300px;\"><p>This is the speaker you're about to hear. She is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       },
     "guise2" :
       {"guiseName": "S9-MI",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_2.png\" style=\"width:450px;height:300px;\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_b.png\" style=\"width:450px;height:300px;\"><p>This is the speaker you're about to hear. She is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
   },
   "condD": {
     "guise1":
       {"guiseName": "S9-MI",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_2.png\" style=\"width:450px;height:300px;\"><p>The speaker you are about to hear is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/US_face_b.png\" style=\"width:450px;height:300px;\"><p>This is the speaker you're about to hear. She is from Detroit, Michigan.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       },
     "guise2" :
       {"guiseName": "S3-CN",
-        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_2.png\" style=\"width:450px;height:300px;\"><p>The speaker you are about to hear is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
+        "speakerInfo": ["<div class=\"vertical-center\"><img src=\"resources/images/CN_face_a.png\" style=\"width:450px;height:300px;\"><p>This is the speaker you're about to hear. She is from Vancouver, Canada.</p><p> <br> <i>Press SPACE to continue.</i></p></div>"]
       }
   },
   "condE": {
