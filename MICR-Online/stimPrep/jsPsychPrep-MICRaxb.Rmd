@@ -1,0 +1,331 @@
+---
+title: "jsPsych Preparation: MICRaxb"
+output: html_notebook
+---
+
+# Preparation {-}
+1. Load the libraries.
+2. Update the experiment name/folder --- Do a find and replace of the experiment directory name (e.g. "MICRnt" -> "MICRcon").
+3. Update the stimuli directories (e.g. audio, images) as necessary --- Do a find and replace (e.g. "sentStim" --> "wordStim").
+4. Add additional stimuli lists as necessary.
+
+## Libraries & Set-up {-}
+
+First, set up the relevant R packages and libraries.
+
+* RENV sets up the environment, including all the packages and libaries that this book with use.
+
+```{r renv, include=FALSE, results='hide', warning=FALSE}
+# RENV
+# if renv isn't installed, then install it
+if (!requireNamespace("remotes"))
+  install.packages("remotes")
+#remotes::install_github("rstudio/renv")
+
+# Use init() to initialize 'renv' with a new or existing project
+#renv::init()
+
+# Use status() to check what packages are installed but not recorded in lockfile
+#renv::status()
+
+# Use restore() to reinstall all of the packages as declared in the lockfile if porting project to a new machine
+#renv::restore()
+
+# Use snapshot() to add these packages to lockfile
+#renv::snapshot()
+
+```
+
+* Install relevant packages if not already installed.
+
+```{r installpacs, results='hide', warning=FALSE}
+# Pacman, package manager (used for p_load below)
+# if pacman isn't installed, then install it and
+if (!("pacman" %in% installed.packages()[, "Package"])) install.packages("pacman")
+
+# DT, Datatables (https://github.com/rstudio/DT)
+# for creating interactive tables in HTML output
+if (!("DT" %in% installed.packages()[, "Package"])) install.packages("DT")
+
+# Devtools, for downloading packages from github
+if (!("devtools" %in% installed.packages()[, "Package"])) install.packages("devtools")
+
+# Download jsPscyhr
+if (!("jspsychr" %in% installed.packages()[, "Package"])) devtools::install_github("CrumpLab/jspsychr")
+
+
+
+```
+
+* Load relevant libraries for use throughout the whole book, if book is built all at once. All libraries to be used in any analysis is included here (updated when necessary). If each chapter is being knitted on its own, however, libraries will need to be loaded in those files specifically.
+
+```{r libraries, results='hide'}
+# Libraries
+library(pacman)
+# load libraries; install if necessary
+p_load("bookdown", "readr", "knitr",                                       # System
+       "tidyverse", "dplyr", "reshape2","stringr", "mgsub",                # Data wrangling
+       "rjson", "jsonlite", "jspsychr", "data.table")
+
+# Ensure that select() command is the dplyr command (seems to clash with MASS, which is imported by ggplot2)
+select <- dplyr::select
+```
+
+Second, set cache to true to store results to be reused for later runs. Set to false when you want to do a fully new run.
+
+```{r setcache}
+cache <- T
+```
+
+
+# Data Wrangling
+
+## Collect Stimuli
+
+TODO: Find & replace experiment directory name.
+TODO: Find & replace stimuli directory name as necessary.
+
+Grab some of the data. Make sure to change to the correct directory. Get as many lists as you need, and covert the lists into a column vector dataframe.
+```{r stimdata-audio}
+# List sound files from file path + create single column data frame with column name 'audio' 
+sentStimList <- list.files(path = "../public/experiments/MICRaxb/resources/audio/wordStim/") %>%
+  data.frame(audio = .) %>%
+# Prepend relative path
+  mutate(audio = paste0("resources/audio/wordStim/", audio))
+sentStimList
+```
+
+```{r stimdata-images}
+# List image files  + create single column data frame with column name 'images' 
+imageList <- list.files(path = "../public/experiments/MICRaxb/resources/images/") %>%
+  data.frame(images = .)%>%
+  # Prepend relative path
+  mutate(images = paste0("resources/images/", images))
+imageList
+
+```
+
+
+## Create Directory for Output Files
+
+```{r createdir}
+mainDir <- "."
+subDir <- "stimLists_MICRaxb"
+
+if (dir.exists(paste0(mainDir, "/", subDir, "/"))) {
+    cat("subDir exists in mainDir")
+} else {
+#    cat("subDir does not exist in mainDir - creating")
+    dir.create(file.path(mainDir, subDir))
+}
+
+```
+
+
+## JSON Conversion
+
+### Creating List Values for Pre-Loading Stimuli
+
+Now to do some stuff with JSON. 
+
+#### REQUIRED: Make Pre-loading Stimuli List
+
+First, create pre-loading lists of stimuli from stimuli folders. Essentially, use `toJSON` from the `jsonlite` library to convert the dataframes by columns to create JSON key-value pairs that represent the header and a list of the column contents. 
+```{r jsondata-lists-audio}
+# JSON list of values (from DF)
+# Using jsonlite::toJSON(x, dataframe = "columns") [OR using rjson::toJSON(x,indent=0)]
+# Creates json format with header as key and column cells as list values
+
+# Create audio list for pre-loading
+sentStimList.json <-  jsonlite::toJSON(sentStimList, dataframe = "columns")
+cat(sentStimList.json)
+write(sentStimList.json, "./stimLists_MICRaxb/wordStimList.json") 
+
+# Create audio list for pre-loading
+imageList.json <-  jsonlite::toJSON(imageList, dataframe = "columns")
+cat(imageList.json)
+write(imageList.json, "./stimLists_MICRaxb/imageList.json")
+```
+
+#### Optional: Make More Pre-loading Stimuli Lists
+
+Just copy, paste and edit the code above for as many lists as you need.
+
+### Creating Key-Value Pairs for Stimuli Trial Presentation
+Second, create stimuli lists per block. Either recover the relevant conditions/data from the stimuli names, or read in a file that contains that information. Create a block column if necessary (or you may have read it in already). If you are making Then, you can convert the datatable to JSON!
+
+#### REQUIRED: Make Basic Dataframe of Stimuli Info
+
+Here, I've recovered speaker, variant, speakerIdentity, etc. information from the stimuli filenames.
+```{r jsondata-kvs-createdf}
+# JSON list of key-value pairs (from DF)
+# Using jsonlite::toJSON(x, dataframe = "rows")
+# Creates json format with header as key, column cells as single value, rows as sets
+
+# Create stimulus df
+# Start with base audio list df + add
+stimulusDF <- sentStimList %>%
+  
+  # Make copy/renaming of 'audio' column
+  mutate(wordStim = audio) %>%
+
+  # Extract stimulus data from 'audio' column file name (sep by _) + remove extra bits
+  mutate(audio = mgsub(audio, c("resources/audio/wordStim/",".wav","Step-"), c("","",""))) %>%
+  separate(audio,c("speaker", "vowel", "sentNum", "order","step"), sep="_", remove=TRUE) %>%
+  
+  # Recover additional data from existing columns
+  mutate(speakerIdentity = case_when(speaker == "S2" | speaker == "S3" | speaker == "S4"   ~ "MI",
+                             speaker == "S5" | speaker == "S8" | speaker == "S9" ~ "CN")) %>%
+  mutate(raised_answer = case_when(order == "axb" ~ "0",
+                                  order == "bxa" ~ "1")) %>%
+  
+  # Add static data columns
+  mutate(trial_role = "test") %>%
+  
+  # Reorder columns
+  select(wordStim, everything()) 
+  
+# Print DF to check
+stimulusDF
+
+```
+
+```{r jsondata-kvs-duplicateblocks}
+
+stimulusDF_condAB <- stimulusDF %>%
+  mutate(speakerGuise = speakerIdentity) %>%
+  mutate(guiseName = paste(speaker, speakerGuise, sep = "-")) %>%
+  mutate_if(is.character, as.factor) %>%
+  mutate(axbText = case_when(speakerGuise == "CN" ~ "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/CN_flag_100x52.jpg\" style=\"width:100px;height:52px;opacity:0.35;\"> <br> <br> <p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>",
+                            speakerGuise == "MI" ~"<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_100x52.jpg\" style=\"width:100px;height:52px;opacity:0.35;\"> <br> <br> <p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>")) %>%
+  select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role, axbText)
+stimulusDF_condAB
+
+stimulusDF_condCD <- stimulusDF %>%
+  mutate(speakerGuise = case_when(speakerIdentity == "MI" ~ "CN",
+                                  speakerIdentity == "CN" ~ "MI")) %>%
+  mutate(guiseName = paste(speaker, speakerGuise, sep = "-")) %>%
+  mutate_if(is.character, as.factor) %>%
+  mutate(axbText = case_when(speakerGuise == "CN" ~ "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/CN_flag_100x52.jpg\" style=\"width:100px;height:52px;opacity:0.35;\"> <br> <br> <p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>",
+                            speakerGuise == "MI" ~"<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/US_flag_100x52.jpg\" style=\"width:100px;height:52px;opacity:0.35;\"> <br> <br> <p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>")) %>%
+  select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role, axbText)
+stimulusDF_condCD
+
+stimulusDF_condEF <- stimulusDF %>%
+  mutate(speakerGuise = "BL") %>%
+  mutate(guiseName = paste(speaker, speakerGuise, sep = "-")) %>%
+  mutate_if(is.character, as.factor) %>%
+  mutate(axbText = "<div class=\"vertical-center\" style='width:60%;'><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>") %>%
+  select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role, axbText)
+stimulusDF_condEF
+
+stimulusDF <- rbind(stimulusDF_condAB, stimulusDF_condCD, stimulusDF_condEF)
+stimulusDF
+
+summary(stimulusDF)
+
+```
+
+#### OPTIONAL: Add a Subsetted Block/Condition Column 
+
+TODO: Update the block structure.
+
+This is if you are splitting full stimulus set into subsets (i.e. dividing the full experiment into smaller sets for a shorter experiment).
+
+Specify the number of blocks and the naming conventions as necessary. For example, 'LETTERS[1:4]' results in 'A, B, C, D' in caps while '1:3' results in the numbers 1-3. 
+
+```{r jsondata-kvs-subsetblocks, include=F}
+# Add in blocks
+# Fill column with sequential block names for the nrow of the DF (evenly distributed) 
+# To fully randomize, add "%>% mutate(blockName = sample(blockName))"
+# To randomize within certain conditions, add the relevant "%>% group_by(conditions) ... %>% ungroup()" around sample()
+stimulusDF <- stimulusDF %>%
+  mutate(condName = paste("cond",rep(LETTERS[1:4], length.out=nrow(.)),sep=""))
+stimulusDF
+```
+
+#### Breaks-by-Trial Calculations
+
+Separately calculate the number of stimuli and factors of the total number to use for trial break organization.
+```{r jsondata-kvs-createdf-n}
+# Get number of stims (for trial break calculation)
+nStims = nrow(stimulusDF) 
+
+# Function to find factors of a number
+print_factors <- function(x) {
+  print(paste("The factors of",x,"are:"))
+  for(i in 1:(x)) {
+    if((x %% i) == 0) {
+      print(paste(i, x/i, sep=" : "))
+    }
+  }
+}
+
+# List factors of the number of stims
+print_factors(nStims)
+
+# List factors of double the number of stims (e.g. with 2 repetitions)
+print_factors(nStims*2)
+
+# List factors of half the number of stims (e.g. one of two conditions)
+print_factors(nStims/2)
+
+# List factors of half the number of stims (e.g. one of two conditions) with 3 repetitions
+print_factors((nStims/2)*3)
+
+# List factors of quarter the number of stims (e.g. one of four conditions)
+print_factors(nStims/4)
+
+```
+
+### Convert to JSON
+
+#### Option 1: Single File (No blocks)
+
+Finally, convert the stimuli data to JSON. If you don't have multiple blocks, then you can simply select the right data and convert to JSON. 
+
+```{r jsondata-kvs-convert}
+# Convert DF to JSON format + save as JSON file
+  stimuli.json <- jsonlite::toJSON(stimulusDF)
+    #cat(stimuli.json)
+    write(stimuli.json, "./stimLists_MICRaxb/stimuli.json")
+
+```
+
+#### Option 1: Blocked Design
+
+TODO: Update the block structure and change the column name to subset by.
+
+If you do have blocks, then convert the stimuli data to JSON by block. This chunk creates a list of the blocks and saves a file for each block.
+
+```{r jsondata-kvs-convert-blocks, include=F}
+# Write stimuli files per block, to be pasted into the experiment stimuli JSON file.
+
+# Add your list of blocks
+## (Option 1) Create list of block names (as above, but only the unique blocks) 
+#blockList <- paste0("cond",rep(LETTERS[1:2]))
+
+## (Option 2) Write out your full list
+blockList <- c("S3-MI", "S9-CN", "S3-CN", "S9-MI", "S3-BL", "S9-BL")
+
+# Run a for-loop that subsets by each block, selects the relevant columns, coverts to JSON and write to a file
+for (block in blockList){
+  
+  # Create DF for experiment stimuli JSON format
+  stimulusDF.exp <- stimulusDF %>%
+    subset(guiseName == block) #%>%
+    #select(sentStim, facePrime, data) #%>%
+    #print()
+
+  # Convert DF to JSON format + save as JSON file
+  stimuli.json <- jsonlite::toJSON(stimulusDF.exp)
+    #cat(stimuli.json)
+    write(stimuli.json, paste0("./stimLists_MICRaxb/stimuli_",block,".json"))
+}
+
+```
+
+Now you can open the JSON files in Atom and 'prettify' them by using the `Pretty JSON: Prettify` command. From there, copy and paste in the relevant portions into the experiment stimuli JSON file! Note that the (blocked) stimuli will need manually included keys in the main file.
+
+You have an experiment now!
+

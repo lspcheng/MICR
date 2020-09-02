@@ -1783,22 +1783,6 @@ summary {
 </ul>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBQYWNtYW4sIHBhY2thZ2UgbWFuYWdlciAodXNlZCBmb3IgcF9sb2FkIGJlbG93KVxuIyBpZiBwYWNtYW4gaXNuJ3QgaW5zdGFsbGVkLCB0aGVuIGluc3RhbGwgaXQgYW5kXG5pZiAoIShcInBhY21hblwiICVpbiUgaW5zdGFsbGVkLnBhY2thZ2VzKClbLCBcIlBhY2thZ2VcIl0pKSBpbnN0YWxsLnBhY2thZ2VzKFwicGFjbWFuXCIpXG5cbiMgRFQsIERhdGF0YWJsZXMgKGh0dHBzOi8vZ2l0aHViLmNvbS9yc3R1ZGlvL0RUKVxuIyBmb3IgY3JlYXRpbmcgaW50ZXJhY3RpdmUgdGFibGVzIGluIEhUTUwgb3V0cHV0XG5pZiAoIShcIkRUXCIgJWluJSBpbnN0YWxsZWQucGFja2FnZXMoKVssIFwiUGFja2FnZVwiXSkpIGluc3RhbGwucGFja2FnZXMoXCJEVFwiKVxuXG4jIERldnRvb2xzLCBmb3IgZG93bmxvYWRpbmcgcGFja2FnZXMgZnJvbSBnaXRodWJcbmlmICghKFwiZGV2dG9vbHNcIiAlaW4lIGluc3RhbGxlZC5wYWNrYWdlcygpWywgXCJQYWNrYWdlXCJdKSkgaW5zdGFsbC5wYWNrYWdlcyhcImRldnRvb2xzXCIpXG5cbiMgRG93bmxvYWQganNQc2N5aHJcbmlmICghKFwianNwc3ljaHJcIiAlaW4lIGluc3RhbGxlZC5wYWNrYWdlcygpWywgXCJQYWNrYWdlXCJdKSkgZGV2dG9vbHM6Omluc3RhbGxfZ2l0aHViKFwiQ3J1bXBMYWIvanNwc3ljaHJcIilcblxuXG5cbmBgYCJ9 -->
-<pre class="r"><code># Pacman, package manager (used for p_load below)
-# if pacman isn&#39;t installed, then install it and
-if (!(&quot;pacman&quot; %in% installed.packages()[, &quot;Package&quot;])) install.packages(&quot;pacman&quot;)
-
-# DT, Datatables (https://github.com/rstudio/DT)
-# for creating interactive tables in HTML output
-if (!(&quot;DT&quot; %in% installed.packages()[, &quot;Package&quot;])) install.packages(&quot;DT&quot;)
-
-# Devtools, for downloading packages from github
-if (!(&quot;devtools&quot; %in% installed.packages()[, &quot;Package&quot;])) install.packages(&quot;devtools&quot;)
-
-# Download jsPscyhr
-if (!(&quot;jspsychr&quot; %in% installed.packages()[, &quot;Package&quot;])) devtools::install_github(&quot;CrumpLab/jspsychr&quot;)
-</code></pre>
-<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <ul>
@@ -1806,17 +1790,6 @@ if (!(&quot;jspsychr&quot; %in% installed.packages()[, &quot;Package&quot;])) de
 </ul>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBMaWJyYXJpZXNcbmxpYnJhcnkocGFjbWFuKVxuIyBsb2FkIGxpYnJhcmllczsgaW5zdGFsbCBpZiBuZWNlc3NhcnlcbnBfbG9hZChcImJvb2tkb3duXCIsIFwicmVhZHJcIiwgXCJrbml0clwiLCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgU3lzdGVtXG4gICAgICAgXCJ0aWR5dmVyc2VcIiwgXCJkcGx5clwiLCBcInJlc2hhcGUyXCIsXCJzdHJpbmdyXCIsIFwibWdzdWJcIiwgICAgICAgICAgICAgICAgIyBEYXRhIHdyYW5nbGluZ1xuICAgICAgIFwicmpzb25cIiwgXCJqc29ubGl0ZVwiLCBcImpzcHN5Y2hyXCIsIFwiZGF0YS50YWJsZVwiKVxuXG4jIEVuc3VyZSB0aGF0IHNlbGVjdCgpIGNvbW1hbmQgaXMgdGhlIGRwbHlyIGNvbW1hbmQgKHNlZW1zIHRvIGNsYXNoIHdpdGggTUFTUywgd2hpY2ggaXMgaW1wb3J0ZWQgYnkgZ2dwbG90MilcbnNlbGVjdCA8LSBkcGx5cjo6c2VsZWN0XG5gYGAifQ== -->
-<pre class="r"><code># Libraries
-library(pacman)
-# load libraries; install if necessary
-p_load(&quot;bookdown&quot;, &quot;readr&quot;, &quot;knitr&quot;,                                       # System
-       &quot;tidyverse&quot;, &quot;dplyr&quot;, &quot;reshape2&quot;,&quot;stringr&quot;, &quot;mgsub&quot;,                # Data wrangling
-       &quot;rjson&quot;, &quot;jsonlite&quot;, &quot;jspsychr&quot;, &quot;data.table&quot;)
-
-# Ensure that select() command is the dplyr command (seems to clash with MASS, which is imported by ggplot2)
-select &lt;- dplyr::select</code></pre>
-<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Second, set cache to true to store results to be reused for later runs. Set to false when you want to do a fully new run.</p>
