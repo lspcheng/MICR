@@ -35,9 +35,23 @@ var database = firebase.database();
 * FIREBASE HELPER FUNCTIONS
 **************************************************************************/
 
-function saveDataToStorage(filedata, dataRef, thenFunc){
+function saveDataToStorage(filedata, dataRef){
     console.log("Saving progress...");
-    dataRef.putString(filedata).then(thenFunc);
+    var uploadRef = dataRef.putString(filedata);
+}
+
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
+function checkProgress(uploadRef) {
+  snapshot = uploadRef.snapshot
+  console.log(snapshot.bytesTransferred + " of " + snapshot.totalBytes)
+  return snapshot.bytesTransferred == snapshot.totalBytes;
 }
 
 function getParticipantCompletion(participantId, experimentId) {

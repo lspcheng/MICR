@@ -106,7 +106,9 @@ function Experiment(params, firebaseStorage) {
       initPreExperiment();
       initPractice();
       initBlock("guise1");
+      initBlock("guise2");
       initHalfway();
+      initBlock("guise1");
       initBlock("guise2");
       initPostExperiment();
       // console.log(timeline)
@@ -247,6 +249,7 @@ function Experiment(params, firebaseStorage) {
       // }
       // timeline.push(shortSurvey);
 
+
       /***************************
       * Practice Trials
       ****************************/
@@ -337,7 +340,7 @@ function Experiment(params, firebaseStorage) {
       /* Define the static trial components  */
       var promptScreen = {
         type: "html-keyboard-response",
-        stimulus: params.axbText,
+        stimulus: jsPsych.timelineVariable('axbText'),
         choices: jsPsych.NO_KEYS,
         trial_duration: 500,
         post_trial_gap: 0,
@@ -348,7 +351,7 @@ function Experiment(params, firebaseStorage) {
       var wordAudio = {
         type: "audio-keyboard-response",
         stimulus: jsPsych.timelineVariable('wordStim'),
-        prompt: params.axbText,
+        prompt: jsPsych.timelineVariable('axbText'),
         choices: ["1","0"],
         trial_ends_after_audio: false,
         post_trial_gap: 500, // + 500ms prompt = 1000ms total ITI
@@ -393,7 +396,7 @@ function Experiment(params, firebaseStorage) {
 
             // Set last trial and break intervals here
             // TODO: Change values as needed
-            var lastTrialNum = 168
+            var lastTrialNum = 336
             var breakInterval = 21
 
             // If trial number is divisiable by block break value, AND if it is not the last trial, show the break screen; else don't
@@ -450,11 +453,14 @@ function Experiment(params, firebaseStorage) {
 
   }
 
-/* Define the Halfway Break function */
+/* Define the Midway Break functions */
 
   var initHalfway = function() {
 
       var halfwayBreakScreen = {
+        on_start: function() {
+          saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation);
+        },
         type: "html-keyboard-response",
         stimulus: params.halfwayBreakMessage,
         choices: [" "],
@@ -483,7 +489,7 @@ function Experiment(params, firebaseStorage) {
 
     var savingPage = {
         on_start: function() {
-          saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation)
+          saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation);
         },
         type: "html-keyboard-response",
         choices: jsPsych.NO_KEYS,
@@ -493,9 +499,6 @@ function Experiment(params, firebaseStorage) {
     timeline.push(savingPage);
 
     var surveyPage = {
-        on_start: function() {
-          saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation)
-        },
         type: "html-keyboard-response",
         choices: [" "],
         stimulus: params.surveyMessage,
