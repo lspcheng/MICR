@@ -139,7 +139,12 @@ First, create pre-loading lists of stimuli from stimuli folders. Essentially, us
 # Create audio list for pre-loading
 sentStimList.json <-  jsonlite::toJSON(sentStimList, dataframe = "columns")
 cat(sentStimList.json)
-write(sentStimList.json, "./stimLists_MICRaxb/wordStimList.json")
+write(sentStimList.json, "./stimLists_MICRaxb/wordStimList.json") 
+
+# Create audio list for pre-loading
+imageList.json <-  jsonlite::toJSON(imageList, dataframe = "columns")
+cat(imageList.json)
+write(imageList.json, "./stimLists_MICRaxb/imageList.json")
 ```
 
 #### Optional: Make More Pre-loading Stimuli Lists
@@ -191,7 +196,9 @@ stimulusDF_condAB <- stimulusDF %>%
   mutate(speakerGuise = speakerIdentity) %>%
   mutate(guiseName = paste(speaker, speakerGuise, sep = "-")) %>%
   mutate_if(is.character, as.factor) %>%
-  select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role)
+  mutate(axbText = case_when(speakerGuise == "CN" ~ "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/CN_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>",
+                            speakerGuise == "MI" ~"<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>")) %>%
+  select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role, axbText)
 stimulusDF_condAB
 
 stimulusDF_condCD <- stimulusDF %>%
@@ -199,13 +206,22 @@ stimulusDF_condCD <- stimulusDF %>%
                                   speakerIdentity == "CN" ~ "MI")) %>%
   mutate(guiseName = paste(speaker, speakerGuise, sep = "-")) %>%
   mutate_if(is.character, as.factor) %>%
-  select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role)
+  mutate(axbText = case_when(speakerGuise == "CN" ~ "<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/CN_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>",
+                            speakerGuise == "MI" ~"<div class=\"vertical-center\" style='width:60%;'><img src=\"resources/images/resources/images/US_flag_950x500.png\" style=\"width:125px;height:65px;opacity:0.5;\"><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>")) %>%
+  select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role, axbText)
 stimulusDF_condCD
 
-stimulusDF <- rbind(stimulusDF_condAB, stimulusDF_condCD)
+stimulusDF_condEF <- stimulusDF %>%
+  mutate(speakerGuise = "BL") %>%
+  mutate(guiseName = paste(speaker, speakerGuise, sep = "-")) %>%
+  mutate_if(is.character, as.factor) %>%
+  mutate(axbText = "<div class=\"vertical-center\" style='width:60%;'><p style='font-weight:bold;'>Does the middle word sound more like the first word (A) or the last word (B)?</p> <br> <div class=\"container\"> <div id=\"a-box\"> <p class=\"title-text\">A</h3></p> </div> <div id=\"x-box\"> <p class=\"title-text\">X<p> </div> <div id=\"b-box\"> <p class=\"title-text\">B</p></div> <br> <div style='float: left;padding-left:30px;'><p>Press '1' for A</p></div><div style='float: right;padding-right:30px;'><p>Press '0' for B</p> </div> </div></div>") %>%
+  select(wordStim, speaker, sentNum, order, step, speakerIdentity, speakerGuise, guiseName, raised_answer, trial_role, axbText)
+stimulusDF_condEF
+
+stimulusDF <- rbind(stimulusDF_condAB, stimulusDF_condCD, stimulusDF_condEF)
 stimulusDF
 
-summary(stimulusDF_condCD)
 summary(stimulusDF)
 
 ```
@@ -290,7 +306,7 @@ If you do have blocks, then convert the stimuli data to JSON by block. This chun
 #blockList <- paste0("cond",rep(LETTERS[1:2]))
 
 ## (Option 2) Write out your full list
-blockList <- c("S3-MI", "S9-CN", "S3-CN", "S9-MI")
+blockList <- c("S3-MI", "S9-CN", "S3-CN", "S9-MI", "S3-BL", "S9-BL")
 
 # Run a for-loop that subsets by each block, selects the relevant columns, coverts to JSON and write to a file
 for (block in blockList){

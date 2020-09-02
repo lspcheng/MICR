@@ -1,8 +1,12 @@
 {
   "images": [
+    "resources/images/BL_face_a.jpg",
+    "resources/images/BL_face_b.jpg",
     "resources/images/CN_face_1.png",
     "resources/images/CN_face_2.png",
+    "resources/images/CN_flag_950x500.png",
     "resources/images/US_face_1.png",
-    "resources/images/US_face_2.png"
+    "resources/images/US_face_2.png",
+    "resources/images/US_flag_950x500.png"
   ]
 }
