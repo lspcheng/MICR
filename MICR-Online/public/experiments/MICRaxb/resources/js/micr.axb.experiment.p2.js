@@ -116,8 +116,8 @@ function Experiment(params, firebaseStorage) {
     // experiment during testing.
 
     this.createTimeline = function() {
-      // initPreExperiment();
-      // initPractice();
+      initPreExperiment();
+      initPractice();
       initBlock_wGuise("guise1");
       // initBlock("guise2");
       initHalfway();
