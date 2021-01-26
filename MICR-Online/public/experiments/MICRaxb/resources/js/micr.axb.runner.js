@@ -22,7 +22,11 @@
  // TODO: Update default stimuli .json file name with experiment-specific name.
 
 $( document ).ready(function() {
-  loadStimuliAndRun("resources/stimdata/micr.axb.stimuli.json");
+  database.ref('MICR').once('value', function(snapshot) {
+    var count = snapshot.val().Condition;
+    var expData = {count : count};
+  loadStimuliAndRun("resources/stimdata/micr.axb.stimuli.json", expData);
+  })
 });
 
 
@@ -51,7 +55,7 @@ function initializeJsPsych(experiment) {
     show_progress_bar: true,
     display_element: 'jspsych-target',
     // default_iti: 500,
-    show_preload_progress_bar: true, 
+    show_preload_progress_bar: true,
     preload_audio: audio,
     preload_images: images,
     exclusions: {audio: true},
@@ -71,16 +75,20 @@ function initializeJsPsych(experiment) {
  * On success - calls returnStimuli()
  * On failure - displays an error message in the console
  */
-function loadStimuliAndRun(file) {
-  $.getJSON(file, initializeExperimentWithStimuli).fail(showConsoleError);
+function loadStimuliAndRun(file, expData) {
+  $.getJSON(file, (function(expData) {
+          return function(data) {
+             initializeExperimentWithStimuli(data, expData);
+          };
+       }(expData))).fail(showConsoleError);
 }
 
 /* Initialize an Experiment object with loaded stimuli and storage instance
  * and send the experiment to jsPsych.
  * All URL variables are also passed to the Experiment object.
  */
-function initializeExperimentWithStimuli(json) {
-  var experiment = new Experiment(_.extend(json, jsPsych.data.urlVariables()),
+function initializeExperimentWithStimuli(json, expData) {
+  var experiment = new Experiment(_.extend(json, expData, jsPsych.data.urlVariables()),
     storage);
   initializeJsPsych(experiment);
 }
