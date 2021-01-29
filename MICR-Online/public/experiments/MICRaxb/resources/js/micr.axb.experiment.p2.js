@@ -290,7 +290,7 @@ function Experiment(params, firebaseStorage) {
 
       var studyInstructions2 = {
         type: 'instructions',
-        pages: params.mainInstructionText,
+        pages: params.mainInstructionText_p2,
         data: {trial_role: 'instructions'},
         key_forward: ' ',
         show_clickable_nav: false  // shows both previous and next buttons
@@ -503,7 +503,7 @@ function Experiment(params, firebaseStorage) {
           saveDataToStorage(jsPsych.data.get().csv(), experimentData.storageLocation);
         },
         type: "html-keyboard-response",
-        stimulus: params.halfwayBreakMessage,
+        stimulus: params.halfwayBreakMessage_p2,
         choices: [" "],
         post_trial_gap: 0,
         data: {trial_role: 'break'},
@@ -550,11 +550,11 @@ function Experiment(params, firebaseStorage) {
     var redirect = {
         on_start: function() {
           // HTTP redirect:
-          window.location.replace("https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID="+participant.id);
+          window.location.replace("https://umich.qualtrics.com/jfe/form/SV_2adoeOyxynK5sfs?PROLIFIC_PID="+participant.id);
         },
         type: "html-keyboard-response",
         choices: jsPsych.NO_KEYS,
-        stimulus: "<div class=\"vertical-center\"><p>You are being redirected to Qualtrics.com.</p><p>If you are not redirected in 5 seconds, please click this link: https://umich.qualtrics.com/jfe/form/SV_b4bDMP9ZW7PuTzL?PROLIFIC_PID="+participant.id+".</p></div>."
+        stimulus: "<div class=\"vertical-center\"><p>You are being redirected to Qualtrics.com.</p><p>If you are not redirected in 5 seconds, please click this link: https://umich.qualtrics.com/jfe/form/SV_2adoeOyxynK5sfs?PROLIFIC_PID="+participant.id+".</p></div>."
     };
     timeline.push(redirect);
 
