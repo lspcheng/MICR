@@ -234,23 +234,77 @@ function Experiment(params, firebaseStorage) {
       }
       // timeline.push(debrief_block);
 
-      var tone_loop = {
-        timeline: [
-          toneTest,
-          debrief_block,
-        ],
-        loop_function: function(correct_trials){
+      var debrief_block_last = {
+        type: "html-keyboard-response",
+        choices: " ",
+        data: {trial_role: 'instructions'},
+        stimulus: function() {
+
           var trials = jsPsych.data.get().filter({trial_role: 'tonetest'}).last(6);
           var correct_trials = trials.filter({correct_response: true}).count();
 
-          if(correct_trials<5){
+          return "<div class=\"vertical-center\"><p><b>Your score was "+correct_trials+"/6.</b></p><p>If you scored below 5, please double-check your equipment and ensure that you are wearing properly functioning headphones. Please also make sure you are in a quiet location free of distractions, allowing you to concentrate on the task. </p><p><i>Press SPACE to continue to the main experiment.</i></p></div>";
+        }
+      }
+
+      var debrief_if_block = {
+        timeline:  [debrief_block],
+        conditional_function: function(){
+          // Get number of test trials thus far
+          var toneTrials = jsPsych.data.get().filter({trial_role: 'tonetest'});
+          var toneNum = toneTrials.count();
+
+          // If trial number is under 18 (i.e., 2 loops)...
+          if(toneNum < 18){
               return true;
-            } else {
+          } else {
+            return false;
+          }
+        }
+      }
+
+      var debrief_last_if_block = {
+        timeline:  [debrief_block_last],
+        conditional_function: function(){
+          // Get number of test trials thus far
+          var toneTrials = jsPsych.data.get().filter({trial_role: 'tonetest'});
+          var toneNum = toneTrials.count();
+
+          // If trial number is divisiable 18 or more (i.e., 3 loops)...
+          if(toneNum >= 18){
+              return true;
+          } else {
+            return false;
+          }
+        }
+      }
+
+      var tone_loop = {
+        timeline: [
+          toneTest,
+          debrief_if_block,
+          debrief_last_if_block,
+        ],
+        loop_function: function(correct_trials){
+          // Get number of tone trials thus far
+          var toneTrials = jsPsych.data.get().filter({trial_role: 'tonetest'});
+          var toneNum = toneTrials.count();
+
+          // Get number of correct tone trials in the last set
+          var trials = jsPsych.data.get().filter({trial_role: 'tonetest'}).last(6);
+          var correct_trials = trials.filter({correct_response: true}).count();
+
+          if(toneNum < 18){
+            if(correct_trials<5){
+              return true;
+            }
+          } else {
                 return false;
             }
           }
       }
       timeline.push(tone_loop);
+
 
       /* Enter fullscreen mode for trials */
       timeline.push({
