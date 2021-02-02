@@ -119,10 +119,8 @@ function Experiment(params, firebaseStorage) {
       initPreExperiment();
       initPractice();
       initBlock_wGuise("guise1");
-      // initBlock("guise2");
       initHalfway();
       initBlock_woGuise("guise1");
-      // initBlock("guise2");
       initPostExperiment();
       // console.log(timeline)
     }
@@ -159,14 +157,14 @@ function Experiment(params, firebaseStorage) {
 
       /**** Informed consent *****/
 
-      // var informedConsent = {
-      //   type:'external-html',
-      //   url: "micr.axb.consent.html",
-      //   data: {trial_role: 'consent'},
-      //   cont_btn: "start",
-      //   check_fn: check_consent
-      // };
-      // timeline.push(informedConsent);
+      var informedConsent = {
+        type:'external-html',
+        url: "micr.axb.consent.html",
+        data: {trial_role: 'consent'},
+        cont_btn: "start",
+        check_fn: check_consent
+      };
+      timeline.push(informedConsent);
 
       /**** Instructions *****/
 
