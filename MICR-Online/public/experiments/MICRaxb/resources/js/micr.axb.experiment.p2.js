@@ -63,8 +63,8 @@ function Experiment(params, firebaseStorage) {
   // experiment. Can be called at any time.
   this.addPropertiesTojsPsych = function () {
     jsPsych.data.addProperties({
-      participantId: participant.id
-      // , conditionId: condition.id
+      participantId: participant.id,
+      conditionId: condition.id
     });
     console.log(participant.id);
     // console.log(condition.id);
