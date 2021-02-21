@@ -3,27 +3,40 @@
 ## MICR_base
 MICR_base/
 
-## MICR-EEG
-### Project extras
+## EEG Experiment
+MICR-EEG/
+
 MICR_Documents/
 MICR_Surveys/
 
-### PsychoPy-related extras
-__pycache__/
-data/
 
-### Stimuli Files
+### Stimuli
 SentenceStim/
 DiphthongStim_varied/
 
+### Data
+data/
+__pycache__/
+
+
+
 
 ## MICR-Online
-### Stimuli Files & Data
-audio/
-expDataOutput/
 
-### Micellaneous
+
+### Stimuli Files & Data
+stimPrep/
+results/
+
 template/
+
+MICRnt/
+
+audio/
+images/
+*.consent.html
+
+
 
 # Logs
 logs
@@ -33,6 +46,7 @@ firebase-debug.log*
 
 # Firebase cache
 .firebase/
+.firebaserc
 
 # Firebase config
 
