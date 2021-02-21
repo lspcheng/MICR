@@ -1,7 +1,42 @@
-# Restrict access to folders
-audio/
+# Restrict access to following folders
+
+## MICR_base
+MICR_base/
+
+## EEG Experiment
+MICR-EEG/
+
+MICR_Documents/
+MICR_Surveys/
+
+
+### Stimuli
+SentenceStim/
+DiphthongStim_varied/
+
+### Data
+data/
+__pycache__/
+.DS_Store
+
+
+
+## MICR-Online
+
+
+### Stimuli Files & Data
+stimPrep/
+results/
+
 template/
-expDataOutput/
+
+MICRnt/
+
+audio/
+images/
+*.consent.html
+
+
 
 # Logs
 logs
@@ -11,6 +46,7 @@ firebase-debug.log*
 
 # Firebase cache
 .firebase/
+.firebaserc
 
 # Firebase config
 
@@ -21,3 +57,4 @@ firebase-debug.log*
 
 # dotenv environment variables file
 .env
+.Rproj.user
