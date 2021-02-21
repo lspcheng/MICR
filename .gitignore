@@ -17,7 +17,7 @@ DiphthongStim_varied/
 ### Data
 data/
 __pycache__/
-
+.DS_Store
 
 
 
