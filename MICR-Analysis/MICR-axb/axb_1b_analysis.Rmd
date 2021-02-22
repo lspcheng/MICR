@@ -4,6 +4,7 @@ output: html_notebook
 ---
 
 # Set up
+## Packages
 ```{r, warning=F}
 # Wrangling
 library(tidyverse)
@@ -17,7 +18,28 @@ library(ggplot2)
 library(ghibli)
 
 # Optional settings
-options(dplyr.summarise.inform=F) 
+options(dplyr.summarise.inform=F)
+```
+
+## Functions
+```{r, warning=F}
+# Standard error function
+std.error <- function(x, na.rm = T) {
+  sqrt(var(x, na.rm = na.rm)/length(x[complete.cases(x)]))
+}
+
+# ggplot theme
+gg_theme <- function() {
+  theme_bw() +
+  theme(plot.title=element_text(size=25),
+        plot.subtitle=element_text(size=15, face="italic"),
+        axis.title=element_text(size=20),
+        axis.text=element_text(size=15),
+        strip.background =element_rect(fill="white"),
+        strip.text = element_text(size=15))+
+  theme(legend.title = element_text(size=15, face="bold"),
+        legend.text=element_text(size=15))
+}
 ```
 
 # Perception data
@@ -324,3 +346,147 @@ datapoints.og-datapoints.final
 
 
 ## Plot Results for Visualization
+
+### Mean PropRS per Guise Condition
+```{r}
+# Get subj means per condition
+subj.means <- condata.test.final %>% #filter(participantId!='5e42f74f5b772a18434cabf7') %>%
+  group_by(participantId, step, vowel, speakerGuise) %>%
+  summarise(mean.Prop = mean(respRS))
+
+# Get group means and se per condition (by averaging speaker means)
+condition.means <- subj.means %>%
+  group_by(step, vowel, speakerGuise) %>%
+  summarise(grandM.Prop = mean(mean.Prop), se = std.error(mean.Prop))
+
+# Plot lineplot with error bars on step points
+byGuise_prop_plot <- condition.means %>%
+  ggplot(aes(x = step, y = grandM.Prop)) +
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=factor(speakerGuise), linetype=factor(speakerGuise)), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.Prop-se, ymax = grandM.Prop+se, 
+                                 colour = factor(speakerGuise))) +
+  facet_grid(~vowel) +
+  labs(y = "Proportion 'raised' response", x = "Continuum Step (UR to RS)", color="Guise",
+       linetype = "Guise", title="Raising Perception: By Guise") +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(6,4,3)]) +
+  gg_theme()
+byGuise_prop_plot
+```
+
+### Mean RT per Guise Condition
+```{r, warning=FALSE}
+# Get subj means per condition
+subj.means <- condata.test.final %>% filter(speaker=='S3') %>% #filter(participantId!='5e42f74f5b772a18434cabf7') %>%
+  group_by(participantId, step, vowel, speakerGuise) %>%
+  summarise(mean.rt = mean(rt))
+
+# Get group means and se per condition (by averaging speaker means)
+condition.means <- subj.means %>%
+  group_by(step, vowel, speakerGuise) %>%
+  summarise(grandM.rt = mean(mean.rt), se = std.error(mean.rt))
+
+# Plot lineplot with error bars on step points
+byGuise_rt_plot <- condition.means %>%
+  ggplot(aes(x = step, y = grandM.rt)) +
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=factor(speakerGuise), linetype=factor(speakerGuise)), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.rt-se, ymax = grandM.rt+se, colour = factor(speakerGuise))) +
+  facet_grid(~vowel) +
+  labs(y = "Response Time (ms)", x = "Continuum Step (UR to RS)", color="Guise",
+       linetype = "Guise", title="Reaction Time: By Guise") +
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(6,4,3)])+
+  gg_theme()
+byGuise_rt_plot
+```
+
+### Mean propRS per Word (and Guise)
+```{r}
+# Get subj means per condition
+subj.means <- condata.test.final %>% filter(speaker=="S3") %>%
+  group_by(participantId, step, vowel, speakerGuise, speaker, word) %>%
+  summarise(mean.Prop = mean(respRS))
+
+# Get group means and se per condition (by averaging speaker means)
+condition.means <- subj.means %>%
+  group_by(step, vowel, speakerGuise, speaker, word) %>%
+  summarise(grandM.Prop = mean(mean.Prop), se = std.error(mean.Prop))
+
+# AI
+byWord_prop_plot <- condition.means %>% filter(vowel=="AI") %>%
+  ggplot(aes(x = step, y = grandM.Prop)) +
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=factor(speakerGuise), linetype=factor(word)), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.Prop-se, ymax = grandM.Prop+se, colour = factor(speakerGuise))) +
+  facet_grid(speaker~word) +
+  labs(y = "Proportion 'raised' response", x = "Continuum Step (UR to RS)", color="Guise",
+       linetype = "Word", title="AI Raising Perception: By Word") +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(6,4,3)])+
+  gg_theme()
+byWord_prop_plot
+
+# AU
+byWord_prop_plot <- condition.means %>% filter(vowel=="AU") %>%
+  ggplot(aes(x = step, y = grandM.Prop)) +
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=factor(speakerGuise), linetype=factor(word)), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.Prop-se, ymax = grandM.Prop+se, colour = factor(speakerGuise))) +
+  facet_grid(speaker~word) +
+  labs(y = "Proportion 'raised' response", x = "Continuum Step (UR to RS)", color="Guise",
+       linetype = "Word", title="AU Raising Perception: By Word") +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(6,4,3)])+
+  gg_theme()
+byWord_prop_plot
+
+```
+
+### Mean propRS Plots by Individual (adapted from CantoMergers project)
+```{r, echo=F}
+# MI guise
+bySubj_prop_plot <- condata.test.final %>% filter(vowel=="AU") %>% filter(conditionId=="condA") %>%
+  ggplot(aes(x=step, y=respRS, color=speakerGuise)) +
+  geom_smooth(method="loess") +
+  facet_wrap(~participantId) +
+  geom_vline(xintercept = 0, alpha=0.5) +
+  geom_hline(yintercept =  0.5, alpha = 0.5) +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(title="AU Raising perception: By Participant", y="Proportion RS response", color="Guise", x="") +
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(3)])+
+  gg_theme()
+bySubj_prop_plot
+
+# CN guise
+bySubj_prop_plot <- condata.test.final %>% filter(vowel=="AU") %>% filter(conditionId=="condC") %>%
+  ggplot(aes(x=step, y=respRS, color=speakerGuise)) +
+  geom_smooth(method="loess") +
+  facet_wrap(~participantId) +
+  geom_vline(xintercept = 0, alpha=0.5) +
+  geom_hline(yintercept =  0.5, alpha = 0.5) +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(title="AU Raising perception: By Participant", y="Proportion RS response", color="Guise", x="") +
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(4)])+
+  gg_theme()
+bySubj_prop_plot
+
+# BL guise
+bySubj_prop_plot <- condata.test.final %>% filter(vowel=="AU") %>% filter(conditionId=="condE") %>%
+  ggplot(aes(x=step, y=respRS, color=speakerGuise)) +
+  geom_smooth(method="loess") +
+  facet_wrap(~participantId) +
+  geom_vline(xintercept = 0, alpha=0.5) +
+  geom_hline(yintercept =  0.5, alpha = 0.5) +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(title="AU Raising perception: By Participant", y="Proportion RS response", color="Guise", x="") +
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(2)])+
+  gg_theme()
+bySubj_prop_plot
+```
