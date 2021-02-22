@@ -9,6 +9,8 @@ output: html_notebook
 # Wrangling
 library(tidyverse)
 library(mgsub)
+library(naniar)
+
 
 # Statistics
 library(brms)
@@ -42,9 +44,9 @@ gg_theme <- function() {
 }
 ```
 
-# Perception data
-## Pre-Process Data for Analysis
-### Read in Results
+# Perception Data
+## Pre-Process Data
+### Read & Clean Results
 
 Read in the data from downloaded CSV files from Firebase. Also remove data from subjects who did not complete the study ("returned" on Prolific) or have been identified to be outliers, not following instructions, not fulfilling my participant requirements, etc. Outliers are dentified in a later section below (Outlier Check), while participant requirements are checked in the data from the questionnaire.
 
@@ -345,7 +347,7 @@ datapoints.og-datapoints.final
 ```
 
 
-## Plot Results for Visualization
+## Plot Data for Visualization
 
 ### Mean PropRS per Guise Condition
 ```{r}
@@ -490,3 +492,244 @@ bySubj_prop_plot <- condata.test.final %>% filter(vowel=="AU") %>% filter(condit
   gg_theme()
 bySubj_prop_plot
 ```
+
+# Questionnaire Data
+## Pre-Process Data
+### Read & Clean Results
+The Qualtrics output includes a text response file and a numerical response file. Because I want to use text for some questions (e.g. IK2, the word selection question) but numbers for other questions (e.g. familiarity scale questions), I need to work with both.
+
+I have downloaded the files and renamed them as '_text' and '_num" files. Specifically, file names have been renamed from the original Qualtrics download name to `final_lbq_num.csv` and `final_lbq_text.csv`.
+```{r}
+# List results files per subject
+filelist <- list.files(path="./data/axb_1b/questionnaire/", pattern=".csv",full.names=TRUE)
+
+# Read and Concatenate results
+# (1) Just read and concat
+#condata.read <- do.call(rbind, lapply(filelist, read.csv))
+
+# (2) Read, concat and extract part of filename
+quesdata.read <- do.call(rbind, lapply(filelist, function(x) cbind(read.csv(x), dataFormat=strsplit(gsub(".csv","",x), "_")[[1]][4])))
+
+# Check that newly extracted columns are correct (`num` or `text`)
+# quesdata.read$dataFormat
+```
+
+Remove the unnecessarily columns and rows. Also extract the question text while we're at it (before removing the rows) so that we can refer to the questions as necessary, but they won't be in the data to be analysed.
+```{r}
+# Remove metadata columns (first several)
+quesdata <- quesdata.read %>% 
+  select(-c(StartDate, EndDate, Status, IPAddress, Progress, Duration..in.seconds., Finished, RecordedDate, ResponseId, RecipientLastName, RecipientFirstName, RecipientEmail, ExternalReference, LocationLatitude, LocationLongitude, DistributionChannel, UserLanguage))
+
+# Question reference (if want to look back at question text)
+questions <- quesdata[c(1),]
+
+# Remove unecessary question header and test data rows
+# Also remove data from dropped subjects
+## TODO: Update with subject numbers as necessary
+
+quesdata <- quesdata %>%
+  # Remove irrelevant rows and removed data
+  subset(subjID != "Please check that your Prolific ID is correct, then press the 'next' button to continue with the survey." & subjID !="{\"ImportId\":\"QID78_TEXT\"}") %>%
+  subset(subjID != "preview1") %>%
+  droplevels() %>%
+  
+  # Add subject and condition info
+  rename(participantId = subjID) %>%
+  merge(., condata.tones) %>%
+  mutate(guiseCombination = case_when(conditionId == "condA" | conditionId == "condB" ~ "match",
+                                        conditionId == "condC" | conditionId == "condD" ~ "mismatch",
+                                        conditionId == "condE" | conditionId == "condF" ~ "baseline")) %>%
+  mutate(speakerOrder = case_when(conditionId == "condA" | conditionId == "condC" | conditionId == "condE" ~ "S3-S9",
+                                  conditionId == "condB" | conditionId == "condD" | conditionId == "condF" ~ "S9-S3")) %>%
+  
+    # Remove returned participants
+  subset(participantId != '5fcd0ee406bd7ab94ecc424c') %>%   # spokane + 50% too fast -- RETURNED
+  subset(participantId != '5e67f0321e4f0a0a657c1d08') %>%   # not michigan - florida to 22
+  subset(participantId != '5f9f96c7ea7f965f92f5d488') %>%   # not michigan - colorado to 18
+  subset(participantId != '5ffa01eb7dfb43387a868196') %>%   # not michigan - ny to 28
+  subset(participantId != '5fee8cf38ac18214460c59ed') %>%   # not michigan - pennsylvania to 15
+  droplevels()
+
+```
+
+#### Question Wording
+Here's the table of the question tags, numbers and text. This interactive table allows for sorting and searching! We can use this to check the exact wording of the questions—all of them as they were shown to the participant.
+
+```{r, eval=T, results='asis'}
+# Print questions for reference
+DT::datatable(questions, 
+              options=list(scrollX = TRUE,
+                           autoWidth = TRUE,
+                           columnDefs = list(list(width = '200px', targets = "_all"))))
+```
+
+#### Demographic Responses
+
+```{r}
+# Subset to demographic question columns
+quesdata.demo <- quesdata %>% filter(dataFormat == "text") %>%
+  mutate_if(is.character, as.factor) %>%
+  select(conditionId, participantId, guiseCombination, speakerOrder, 
+         Age, Gender, Ethnicity, SpHDisorder, SpHDisorder_2_TEXT, Degree, LingExp, FirstLang, 
+         Loc1_1:Loc6_5) %>%
+  
+  # Fix spelling errors and variation on demographic questions
+  mutate_at(vars(-conditionId, -speakerOrder),tolower) %>%
+  mutate_all(str_trim)
+
+# Check data
+quesdata.demo
+
+# Summary
+# summary(quesdata.demo)
+```
+
+#### Responses in Text Format
+```{r lbqdata-text}
+# Subset data to text format
+quesdata.text <- quesdata %>% filter(dataFormat == "text") %>%
+  select(participantId, conditionId, guiseCombination, speakerOrder, everything()) %>%
+  select(-c(Age, Gender, Ethnicity, SpHDisorder, SpHDisorder_2_TEXT, Degree, LingExp, FirstLang, 
+         Loc1_1:Loc6_5, expPurpose)) %>%
+  mutate_if(is.character, as.factor)
+
+# Check data
+quesdata.text
+```
+
+#### Responses in Numerical Format
+```{r lbqdata-num}
+# Subset data to num format
+quesdata.num <- quesdata %>% subset(dataFormat == "num") %>%
+  select(participantId, conditionId, guiseCombination, speakerOrder, everything()) %>%
+  select(-c(Age, Gender, Ethnicity, SpHDisorder, SpHDisorder_2_TEXT, Degree, LingExp, FirstLang, 
+         Loc1_1:Loc6_5, expPurpose)) %>%
+  mutate_at(vars(participantId:speakerOrder), as.factor) %>%
+  mutate(SC0=as.numeric(SC0)) %>%
+  mutate_if(~ all(grepl('^\\d+$', .x)), as.numeric)
+
+# Check data
+quesdata.num
+```
+
+### Check Results
+#### Check Demographic Responses
+```{r}
+# Full table
+ques.demo.sum <- quesdata.demo %>%
+  select(conditionId, Age, Gender, Ethnicity, Loc1_5)
+ques.demo.sum
+```
+
+##### Counts
+```{r}
+with(quesdata.demo, unique(Gender))
+```
+
+
+```{r}
+with(quesdata.demo, unique(Loc1_5))
+```
+
+```{r}
+with(quesdata.demo, unique(Ethnicity))
+```
+
+#### Clean Demographic Responses
+```{r}
+quesdata.demo <- quesdata.demo %>%
+  
+  mutate(Gender = mgsub(Gender, c("woman.*|female|cis female", "male|cis male", "non-binary|non binary|nonbinary"), c("f", "m", "nb"))) %>%
+  
+  mutate(Loc1_4 = mgsub(Loc1_4, c("michigan"), c("mi")), Loc2_4 = mgsub(Loc2_4, c("michigan"), c("mi")), Loc3_4 = mgsub(Loc3_4, c("michigan"), c("mi")), Loc4_4 = mgsub(Loc4_4, c("michigan"), c("mi")), Loc5_4 = mgsub(Loc5_4, c("michigan"), c("mi"))) %>%
+  
+  mutate(Ethnicity = mgsub(Ethnicity, c("caucasian|caucasion|american","african american|african-american", "middle easten"), c("white", "black", "middle-eastern"))) %>%
+  mutate(Ethnicity = mgsub(Ethnicity, c("asian/white","white/hispanic"), c("multiracial","multiracial"), fixed=TRUE)) %>%
+  mutate(Ethnicity = mgsub(Ethnicity, c(".*white.*", "black.*"), c("white", "black"))) %>%
+  
+  # Change vector classes from character class
+  mutate(Age=as.numeric(Age)) %>%
+  
+  # Select
+  select(conditionId, participantId, everything())
+
+quesdata.demo <- quesdata.demo %>%
+  
+  # Fix answers from the one 'alien' participant
+  mutate(Gender = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'm', Gender),
+         LingExp = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'none', LingExp),
+         Loc1_1 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '0', Loc1_1),
+         Loc1_2 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '1', Loc1_2),
+         Loc1_3 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'Zeeland', Loc1_3),
+         Loc1_4 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'Ottawa', Loc1_4),
+         Loc1_5 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'MI', Loc1_5),
+         Loc2_1 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '1', Loc2_1),
+         Loc2_2 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '2', Loc2_2),
+         Loc2_3 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'Sedona', Loc2_3),
+         Loc2_4 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '', Loc2_4),
+         Loc2_5 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'Arizona', Loc2_5),
+         Loc3_1 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '2', Loc3_1),
+         Loc3_2 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '14', Loc3_2),
+         Loc3_3 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'Glenn', Loc3_3),
+         Loc3_4 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'Allegan', Loc3_4),
+         Loc3_5 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'MI', Loc3_5),
+         Loc4_1 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '14', Loc4_1),
+         Loc4_2 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '18', Loc4_2),
+         Loc4_3 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'South Haven', Loc4_3),
+         Loc4_4 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'Van Buren', Loc4_4),
+         Loc5_5 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'MI', Loc4_5),
+         Loc5_1 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '18', Loc5_1),
+         Loc5_2 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '23', Loc5_2),
+         Loc5_3 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'Grand Rapids', Loc5_3),
+         Loc5_4 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'Kent', Loc5_4),
+         Loc5_5 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'MI', Loc5_5),
+         Loc6_1 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '23', Loc6_1),
+         Loc6_2 = ifelse(participantId=='5fc511c32b9bc60bc189b893', '34', Loc6_2),
+         Loc6_3 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'various... Grandville', Loc6_3),
+         Loc6_4 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'various... Kent', Loc6_4),
+         Loc6_5 = ifelse(participantId=='5fc511c32b9bc60bc189b893', 'various... MI', Loc6_5))
+  
+quesdata.demo
+#summary(quesdata.demo)
+
+```
+
+##### Counts
+```{r}
+# Ethnicity Counts
+ques.demo.ethn <- quesdata.demo %>%
+  group_by(Ethnicity) %>%
+  count()
+ques.demo.ethn
+```
+
+```{r lbqdata-demo-cond}
+# Descriptive stats by condition
+ques.demo.age <- quesdata.demo %>%
+  group_by(conditionId) %>%
+  summarise(n=length(conditionId), minAge = min(Age), maxAge = max(Age), meanAge = mean(Age), sdAge = sd(Age)) %>%
+  ungroup()
+ques.demo.age
+
+ques.demo.age <- quesdata.demo %>%
+  group_by(conditionId, Gender) %>%
+  summarise(n=length(conditionId), minAge = min(Age), maxAge = max(Age), meanAge = mean(Age), sdAge = sd(Age)) %>%
+  ungroup()
+ques.demo.age
+```
+##### Locations
+```{r}
+quesdata.loc <- quesdata.demo %>% select(participantId, starts_with("Loc"))
+quesdata.loc
+
+loc.code <- data.frame(Loc = unique(levels(quesdata.loc$Loc1_3))) %>%
+  rbind(data.frame(Loc = unique(levels(quesdata.loc$Loc2_3)))) %>%
+  rbind(data.frame(Loc = unique(levels(quesdata.loc$Loc3_3)))) %>%
+  rbind(data.frame(Loc = unique(levels(quesdata.loc$Loc4_3)))) %>%
+  rbind(data.frame(Loc = unique(levels(quesdata.loc$Loc5_3)))) %>%
+  rbind(data.frame(Loc = unique(levels(quesdata.loc$Loc6_3)))) %>%
+  unique()
+loc.code
+```
+
+### Finalize Results
