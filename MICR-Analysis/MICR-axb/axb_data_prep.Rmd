@@ -1,0 +1,41 @@
+---
+title: "MICR AXB Data Prep"
+output: html_notebook
+---
+
+# Stimuli Durations (Criteria for removing data)
+
+Calculate the timepoint (the number of sec/ms from the stimulus onset [time 0]) per stimulus that is a certain percentage (50%, 66.66%, 75%, 80%) through the AXB stimulus sound file. One of these values will be used as a boundary criterion for outliers that are "too fast" such that they clearly did not listen to the last AXB token before making their decision.
+
+In the end, 75% was selected as the lower boundary, as that point was clearly before having heard any part of the third token when checked in a random subset of stimuli. In some cases, the 80% point occurred partway through the onset of the third token, so the more conservative estimate of 75% was selected as a clear indicator that the listener did not listen to the last token before making a judgment. 
+
+In most cases, this resulted in very few removed data points. In some cases, this criterion helped to identify participants who did not follow the instructions and pressed buttons before listening to all three tokens.
+
+```{r axbdata-stimduration, warning=F}
+# Read duration-log of sound file durations
+stim.durations.read <- read.delim("./data/axb_prep/durationlog.txt", header=TRUE)
+
+#colnames(stim.durations.read) <- mgsub(colnames(stim.durations.read), c("seconddur", "milliseconddur"), c("dur_sec", "dur_ms"))
+
+# Identify files by condition and calculate the timepoint (both in sec and ms) per stimulus that is:
+#     50% (half), 66.66% (third), 75% (quart) and 80% (eighty) through the sound file
+stim.durations <- stim.durations.read %>%
+  `colnames<-`(mgsub(colnames(.), c("seconddur", "milliseconddur"), c("dur_sec", "dur_ms"))) %>%
+  separate(filename, c("speaker", "vowel", "sentNum", "order", "step"), sep="_") %>%
+  mutate(step = mgsub(step, c("Step-", ".wav"), c("",""))) %>%
+  mutate(half_dur_sec = dur_sec*0.5, half_dur_ms = dur_ms*0.5, third_dur_sec = (dur_sec*0.66667), third_dur_ms = (dur_ms*0.66667), quart_dur_sec = dur_sec*0.75, quart_dur_ms = dur_ms*0.75, eighty_dur_sec = dur_sec*0.8, eighty_dur_ms = dur_ms*0.8,)
+
+# Summarize the average percentage timepoints across all stimuli
+stim.durations.sum <- stim.durations %>%
+  summarize(mean_dur_sec = mean(dur_sec), min_dur_sec = min(dur_sec), max_dur_sec = max(dur_sec), max_half_sec = max(half_dur_sec), min_quart_sec = min(quart_dur_sec))
+# stim.durations.sum
+
+# Select final use stim duration
+stim.durations.final <- select(stim.durations, speaker, vowel, sentNum, order, step, dur_sec, dur_ms, quart_dur_sec, quart_dur_ms)
+
+# Print to check
+stim.durations.final
+
+# Save as Rdata file to be loaded into analyses
+save(stim.durations.final, file="./data/stim_durations.rData")
+```

@@ -1,0 +1,24 @@
+---
+title: "MICR AXB Combined Analysis"
+output: html_notebook
+---
+```{r}
+# Wrangling
+library(plyr)
+library(tidyverse)
+library(mgsub)
+
+# Stats
+library(lme4)
+library(boot)
+library(brms)
+
+# Plotting
+library(ggplot2)
+library(ghibli)
+
+# Standard error function
+std.error <- function(x, na.rm = T) {
+  sqrt(var(x, na.rm = na.rm)/length(x[complete.cases(x)]))
+}
+```
