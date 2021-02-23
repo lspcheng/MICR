@@ -3,6 +3,17 @@ title: "MICR AXB Data Prep"
 output: html_notebook
 ---
 
+# Ghibli Color Palatte
+
+```{r ghibli, eval=F}
+library(ghibli)
+
+# display palettes w/ names
+par(mfrow=c(9,3))
+for(i in names(ghibli_palettes)) print(ghibli_palette(i))
+
+```
+
 # Stimuli Durations (Criteria for removing data)
 
 Calculate the timepoint (the number of sec/ms from the stimulus onset [time 0]) per stimulus that is a certain percentage (50%, 66.66%, 75%, 80%) through the AXB stimulus sound file. One of these values will be used as a boundary criterion for outliers that are "too fast" such that they clearly did not listen to the last AXB token before making their decision.
