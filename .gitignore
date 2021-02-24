@@ -9,7 +9,7 @@ results/
 ## MICR-Analysis
 .RData
 .Rhistory
-MICR-Analysis/*.nb.html
+*.nb.html
 
 ## EEG Experiment
 MICR-EEG/
