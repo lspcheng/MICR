@@ -2,23 +2,1040 @@
 title: "MICR AXB Combined Analysis"
 output: html_notebook
 ---
-```{r}
+# Set up
+## Packages
+```{r, warning=F}
 # Wrangling
-library(plyr)
 library(tidyverse)
 library(mgsub)
 
-# Stats
+# Statistics/Numerical processing
+library(brms)
 library(lme4)
 library(boot)
-library(brms)
+
+# PCA
+library(FactoMineR) 
+library(factoextra) 
+library(GPArotation)
+library(paran)
 
 # Plotting
 library(ggplot2)
 library(ghibli)
 
+# Optional settings
+options(dplyr.summarise.inform=F) # Stop dplyr from printing summarise error (that isn't an error)
+select <- dplyr::select # Ensure that select() command is the dplyr command (clashes with MASS, which is imported/required by paran)
+```
+
+## Functions
+```{r, warning=F}
 # Standard error function
 std.error <- function(x, na.rm = T) {
   sqrt(var(x, na.rm = na.rm)/length(x[complete.cases(x)]))
 }
+
+# ggplot theme
+gg_theme <- function() {
+  theme_bw() +
+  theme(plot.title=element_text(size=25),
+        plot.subtitle=element_text(size=15, face="italic"),
+        axis.title=element_text(size=20),
+        axis.text=element_text(size=15),
+        strip.background =element_rect(fill="white"),
+        strip.text = element_text(size=15))+
+  theme(legend.title = element_text(size=15, face="bold"),
+        legend.text=element_text(size=15))
+}
+
+# color theme for guise plots
+guise_colors <- function(gg_object) {
+  gg_object +
+  scale_fill_manual(values=ghibli_palette("PonyoMedium")[c(6,4,3)])+
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(6,4,3)])
+}
+```
+
+#...
+# Combine Data
+## Pre-Process Data
+
+Get data from first data collection (1a) and second (1b). Merge processed questionnaire data with the processed AXB experiment data. (*NOTE: Removes any data that doesn't have data associated with the questionnaire*)
+```{r}
+### AXB Experiment 1a: Two Speakers, two guises
+exp_1a <- read.csv('data/axb_1a_exp_data.csv', skipNul=T)
+lbq_1a <- read.csv('data/axb_1a_lbq_data.csv', skipNul=T)
+
+## Check number of participants
+length(unique(exp_1a$participantId))
+length(unique(lbq_1a$participantId))
+
+## Merge data
+(axb_1a <- exp_1a %>% merge(lbq_1a, .) %>%  mutate(experimentId = '1a') %>% relocate(experimentId))
+```
+
+
+```{r}
+### AXB Experiment 1b: One Speaker, one guise
+exp_1b <- read.csv('data/axb_1b_exp_data.csv', skipNul=T)
+lbq_1b <- read.csv('data/axb_1b_lbq_data.csv', skipNul=T)
+
+(axb_1b <- exp_1b %>% merge(lbq_1b, .) %>%  mutate(experimentId = '1b') %>% relocate(experimentId))
+```
+
+### Full Combined Dataset
+```{r}
+# All perception + questionanire data for speaker = S3 (sMich)
+(axb_data <- axb_1a %>% rbind(., axb_1b) %>% filter(speaker=='S3') %>% select(-subject))
+```
+
+```{r}
+# Each subject's questionnaire data (one row per subject)
+(axb_bysubj <- axb_data %>% group_by(participantId) %>% filter(time_elapsed == min(time_elapsed)) %>% ungroup() %>%
+   relocate(speakerGuise, .after=speakerOrder) %>%
+   select(-tonesCorrect, -step:-ncol(.)))
+```
+
+Check the data to make sure everything is as expected.
+```{r}
+# Number of subjects
+axb_bysubj %>% group_by(experimentId, speakerGuise) %>% summarize(count = n())
+
+```
+
+```{r}
+colnames(axb_bysubj)
+```
+
+## Check Data (Interim)
+
+```{r}
+summary(axb_data)
+```
+
+```{r}
+axb_bysubj %>% group_by(experimentId) %>% summarize(count = n(), meanEQ = mean(EQscore))
+```
+
+### Plots
+#### Gender Distribution
+```{r, warning=F }
+# By ExperimentId
+axb_bysubj %>% ggplot(aes(x=Gender, fill=Gender)) +
+  geom_histogram(stat="count", alpha=0.8, na.rm=TRUE) +
+  facet_grid(speakerGuise~experimentId) +
+  scale_fill_manual(values=ghibli_palette("SpiritedMedium")[c(3,5,4)]) +
+  gg_theme()
+
+# Combined
+axb_bysubj %>% ggplot(aes(x=Gender, fill=Gender)) +
+  geom_histogram(stat="count", alpha=0.8, na.rm=TRUE) +
+  facet_grid(speakerGuise~.) +
+  scale_fill_manual(values=ghibli_palette("SpiritedMedium")[c(3,5,4)]) +
+  gg_theme()
+
+```
+
+#### Score Distributions
+##### EQ: Cog. Empathy
+```{r, warning=F}
+# By ExperimentId
+axb_bysubj %>% ggplot(aes(x=EQscore,fill=speakerGuise,color=speakerGuise)) %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count") +
+  facet_grid(~experimentId)
+
+# Combined Density
+axb_bysubj %>% ggplot(aes(x=EQscore,fill=speakerGuise,color=speakerGuise))  %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count")
+
+# Combined Boxplot
+axb_bysubj %>% ggplot(aes(x=speakerGuise, y=EQscore)) %>%
+  guise_colors() +
+  gg_theme() +
+  # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
+  geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
+
+```
+
+##### SA: Stereo. Awareness
+```{r, warning=F}
+# By ExperimentId
+axb_bysubj %>% ggplot(aes(x=SAscore,fill=speakerGuise,color=speakerGuise)) %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count") +
+  facet_grid(~experimentId)
+
+# Combined Density
+axb_bysubj %>% ggplot(aes(x=SAscore,fill=speakerGuise,color=speakerGuise))  %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count")
+
+# Combined Boxplot
+axb_bysubj %>% ggplot(aes(x=speakerGuise, y=SAscore)) %>%
+  guise_colors() +
+  gg_theme() +
+  # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
+  geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
+
+```
+
+##### CE: Can. Experience
+```{r, warning=F}
+# By ExperimentId
+axb_bysubj %>% ggplot(aes(x=CEscore,fill=speakerGuise,color=speakerGuise)) %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count") +
+  facet_grid(~experimentId)
+
+# Combined Density
+axb_bysubj %>% ggplot(aes(x=CEscore,fill=speakerGuise,color=speakerGuise))  %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count")
+
+# Combined Boxplot
+axb_bysubj %>% ggplot(aes(x=speakerGuise, y=CEscore)) %>%
+  guise_colors() +
+  gg_theme() +
+  # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
+  geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
+
+```
+
+
+
+## Dimensionality Reduction
+
+### PCA: Awareness & Experience
+
+```{r}
+# Check correlations, which motivate the use of PCA to reduce dimensionality
+with(quesdata.clean, cor.test(IK2.ai, IK2.au))
+
+# Test correlations of similar questions
+with(quesdata.clean, cor.test(Travel.Can_Visits, Travel.Can_Time))
+with(quesdata.clean, cor.test(SE1.Fam.oot_1, SE2.Freq.Overall_1))
+with(quesdata.clean, cor.test(SE2.Freq.Overall_1, SE2.Freq.Recent_1))
+with(quesdata.clean, cor.test(SE2.Freq.Overall_1, SE2.Freq.Child_1))
+with(quesdata.clean, cor.test(SE2.Freq.Recent_1, SE2.Freq.Child_1))
+```
+
+#### Run PCA
+
+Packages required for this PCA:
+* `PCA` command from `FactoMineR` library (see index for more info)
+* `paran` command from `paran` library
+* `Varimax` command from `GPArotations` library (https://stats.stackexchange.com/questions/59213/how-to-compute-varimax-rotated-principal-components-in-r)
+
+Packages for visualization of PCA
+* `fviz_pca_ind` and `fviz_pca_biplot` from `factoextra` 
+
+```{r lbqdata-pca2-prep}
+# (0) Select data for PCA — only numerical columns
+# names(quesdata.clean)
+
+# Medium trimmed set — removes general Canadian stereotype experience/knowledge, imitation, Sources of CE, hockey
+(quesdata.pca.med <- axb_bysubj %>% select(IK2.au, IK2.ai, 
+                                          SE1.Fam.oot_1, SE2.Freq.Recent_1:SE2.Freq.Overall_1, 
+                                          PE2.CanSpeakFreq.Recent_1:PE2.CanSpeakFreq.Overall_1,
+                                          ME4.CanHearFreq.Recent_1:ME4.CanHearFreq.Overall_1))
+
+```
+
+```{r}
+## (1) Run Parallel Analysis with `paran`
+# Standard way to decide on the number of factors or components needed in an FA or PCA.
+# Prints out a scree plot as well, with the randomized line + unadjusted line
+paran(quesdata.pca.med,
+      graph = TRUE, color = TRUE, 
+      col = c("black", "red", "blue"), lty = c(1, 2, 3), lwd = 1, legend = TRUE, 
+      file = "", width = 640, height = 640, grdevice = "png", seed = 0)
+```
+
+```{r, warning=F}
+## (2) Run PCA with `FactoMineR`
+# ncp = number of components; adjust after checking the parallel analysis output
+
+# FactoMineR PCA Commands
+#plbqPCA        # lists commands
+#plbqPCA$var    # variables
+#plbqPCA$ind    # individuals
+#plbqPCA$call   # summary stats
+
+lbqPCA <- PCA(quesdata.pca.med, scale.unit = T, ncp =2, graph=F)
+
+## Relevant Raw PCA Output
+# Eigenvalues & percent variance accounted for
+(eigenvalues <- lbqPCA$eig)
+
+# Eigenvectors (=Factor matrix, factor score coefficients; sometimes called the factor, but NOT factor scores)
+eigenvectors <- lbqPCA$var$coord
+
+# Factor loadings (eigenvectors scaled by the square root of their associated eigenvalues)
+# Calculate factor loadings using the output eigenvectors and eigenvalues
+rawLoadings <- sweep(lbqPCA$var$coord,2,sqrt(lbqPCA$eig[1:ncol(lbqPCA$var$coord),1]),FUN="/")
+
+# Factor scores for each subject and dimension (also: Individual coordinate scores; principle coordinates)
+rawScores <- lbqPCA$ind$coord
+
+```
+
+```{r}
+## (3) Conduct rotation on the PCA factor loadings with `GPArotation`
+# Rotations are typically done on the retained component factor loadings, not on all components nor on the eigenvectors
+# Performed for ease of interpretation, maximizing factor loadings
+(rotLoadings <- Varimax(rawLoadings)$loadings)
+
+# Recover Rotation matrix from loadings
+# Because the rotLoadings are calculated from rawLoadings %*% rotMatrix, can recover rotMatrix by rotLoadings "divided" by rawLoadings, which in matrix multiplication is multiplying by the inverse (transpose) 
+# Note: For some reason, can't call Varimax(rawLoadings)$rotmat (just get NULL); this recreates the same matrix from Varimax(rawLoadings)
+(rotMatrixL <- t(rawLoadings) %*% rotLoadings)
+
+# Calculate rotated factor scores
+# The formula simply multiplies the normalized variable scores with the rotation matrix to get rotated factor scores
+# First, z-score the raw scores using base R scale()
+# Then, matrix multiply the matrix of zScores with the rotation matrix
+# Result is a matrix with columns=components and rows=each subject
+zScores <- scale(rawScores)
+rotScores <- zScores %*% rotMatrixL
+```
+
+#### Plot PCA
+```{r}
+## (4) Data Visualization of Raw Scores with `factoextra`
+
+# Plot individual factor scores
+fviz_pca_ind(lbqPCA, col.ind = "#00AFBB", repel = TRUE)
+
+# Biplot, including individual scores and factor vectors
+fviz_pca_biplot(lbqPCA, label = "all", col.ind = "#00AFBB", col.var="black", ggtheme = theme_minimal())
+```
+
+```{r}
+## (5a) Manual Plots of Rotated Scores with `ggplot`
+
+## Create dataframes of the rotated factor loading and factor score matrices
+# Convert rotated factor loadings matrix to data frame; add variable number
+rotLoadingsData <- as.data.frame(rotLoadings)
+rotLoadingsData <- mutate(rotLoadingsData, variable = row.names(rotLoadings))
+rotLoadingsData <- mutate(rotLoadingsData, variable = factor(variable))
+
+# Convert rotated factor score matrix to data frame; add subject number
+rotScoreData <- as.data.frame(rotScores)
+rotScoreData <- rotScoreData %>% mutate(subject = 1:nrow(.))
+```
+
+
+```{r}
+## (5b) Manual Plots of Rotated Scores with `ggplot`
+## Create base plots
+pca_plot_theme <- function(gg_object) {
+  gg_object +
+  gg_theme() +
+  scale_x_continuous(lim=c(-3, 3),breaks=seq(-3,3,1)) +
+  scale_y_continuous(lim=c(-3.5, 3.5),breaks=seq(-3,3,1)) +
+  geom_hline(yintercept=0, linetype="dashed") +
+  geom_vline(xintercept=0, linetype="dashed") +
+  labs(x="Dim 1 (XX.X%)", y="Dim 2 (XX.X%)")
+}
+
+# Loading plot
+rotLoadingsData %>% ggplot(aes(x=Dim.1, y=Dim.2)) %>%
+  pca_plot_theme +
+  labs(title="Variables - PCA") +
+  geom_segment(data=rotLoadingsData, mapping=aes(x=0, y=0, xend=Dim.1*4, yend=Dim.2*4), arrow=arrow(), size=0.5, color="black") +
+  geom_text(data=rotLoadingsData, aes(x=Dim.1*4, y=Dim.2*4, label=variable), color="red",check_overlap=T)
+
+# Scatter plot of Individual factor scores
+rotScoreData %>% ggplot(aes(x=Dim.1, y=Dim.2)) %>%
+  pca_plot_theme +
+  labs(title="Individuals - PCA") +
+  geom_point(na.rm=TRUE, color="#00AFBB") +
+  geom_text(aes(label=subject),hjust=1.5,vjust=1.5, color="#00AFBB", check_overlap=T)
+
+## Merge loading and score plot = Biplot
+# Biplot of factor loadings + ind factor scores
+ggplot(rotScoreData, aes(x=Dim.1, y=Dim.2)) %>%
+  # Theming
+  pca_plot_theme +
+  labs(title="Biplot - PCA") +
+  # Individual plot
+  geom_point(na.rm=TRUE, color="#00AFBB") +
+  geom_text(aes(label=subject),hjust=1.5,vjust=1.5, color="#00AFBB", check_overlap=T)+
+  # Overlay loading plot (i.e. arrows)
+  geom_segment(data=rotLoadingsData, mapping=aes(x=0, y=0, xend=Dim.1*4, yend=Dim.2*4), arrow=arrow(), size=0.5, color="black") +
+  geom_text(data=rotLoadingsData, aes(x=Dim.1*4.5, y=Dim.2*4.5, label=variable), color="red",check_overlap=T, nudge_y = 0)
+
+```
+
+#### Interpret PCA
+```{r}
+## Interpret PCs (Dimensions) based on factor loadings
+rotLoadings.df <- as.data.frame(rotLoadings) %>%
+  rownames_to_column(., "Variables") %>%
+  rename(., "PC1"= "Dim.1", "PC2" = "Dim.2")
+rotLoadings.df
+```
+
+```{r}
+# PC1 Only Contributors
+rotLoadings.df %>% filter(abs(PC1) > 0.2)
+```
+
+
+```{r}
+# PC2 Only Contributors
+rotLoadings.df %>% filter(abs(PC2) > 0.2)
+```
+
+```{r, warning=F}
+# Check for overlapping contributors
+rotLoadings.df %>% filter(abs(PC2) > 0.2 & abs(PC1) > 0.2)
+
+# Check for non-contributors
+rotLoadings.df %>% filter(abs(PC2) < 0.2 & abs(PC1) < 0.2)
+```
+
+
+
+### Finalize Results w/ PCA
+
+```{r}
+# For Merging: Convert rotated factor score matrix to data frame; add participantId (assuming order of input dataframe)
+indPCAdata <- rotScoreData %>%
+  mutate(participantId = axb_bysubj$participantId) %>%
+  rename(CEscore_all = Dim.1) %>%
+  rename(SAscore_all = Dim.2)
+
+# Merge participant data with PC scores 
+# Only select the main relevant scores
+axb_subj_data <- axb_bysubj %>%
+  merge(., indPCAdata) %>%
+  mutate(MSscore_all = scale(SK2.MichvStand)) %>%
+  mutate(EQscore_all = scale(EQ.raws)) %>%
+  mutate_at(vars(Age), as.numeric) %>%
+  mutate_if(is.character, as.factor) %>%
+  select(-subject) %>%
+  select(experimentId, participantId, conditionId, guiseCombination, speakerGuise, speakerOrder, Age, Gender, Ethnicity, CEscore_all, SAscore_all, MSscore_all, EQscore_all, everything())
+  
+# Check data
+axb_subj_data
+# summary(axb_subj_data)
+
+# Write to file
+# write.csv(axb_subj_data, 'data/axb_combined_subj_data.csv', row.names=F)
+
+```
+
+```{r}
+axb_all_data <- axb_subj_data %>%
+  merge(., axb_data)%>%
+  relocate(CEscore_all:EQscore_all, .before=CEscore)
+
+# summary(axb_all_data)
+```
+
+# ...
+# Visualizations
+## Summarize Data (Final)
+
+### Score Plots
+#### Score Distributions
+##### EQ: Cog. Empathy
+```{r, warning=F}
+# Density By ExperimentId
+axb_subj_data %>% ggplot(aes(x=EQscore_all,fill=speakerGuise,color=speakerGuise)) %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count") +
+  facet_grid(~experimentId)
+
+# Combined Density
+axb_subj_data %>% ggplot(aes(x=EQscore_all,fill=speakerGuise,color=speakerGuise))  %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count")
+
+# Boxplot By ExperimentId
+axb_subj_data %>% ggplot(aes(x=speakerGuise, y=EQscore_all)) %>%
+  guise_colors() +
+  gg_theme() +
+  # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
+  geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE) +
+  facet_grid(~experimentId)
+
+# Combined Boxplot
+axb_subj_data %>% ggplot(aes(x=speakerGuise, y=EQscore_all)) %>%
+  guise_colors() +
+  gg_theme() +
+  # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
+  geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
+
+```
+
+##### SA: Stereo. Awareness
+```{r, warning=F}
+# Density By ExperimentId
+axb_subj_data %>% ggplot(aes(x=SAscore_all,fill=speakerGuise,color=speakerGuise)) %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count") +
+  facet_grid(~experimentId)
+
+# Combined Density
+axb_subj_data %>% ggplot(aes(x=SAscore_all,fill=speakerGuise,color=speakerGuise))  %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count")
+
+# Boxplot By ExperimentId
+axb_subj_data %>% ggplot(aes(x=speakerGuise, y=SAscore_all)) %>%
+  guise_colors() +
+  gg_theme() +
+  # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
+  geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE) +
+  facet_grid(~experimentId)
+
+# Combined Boxplot
+axb_subj_data %>% ggplot(aes(x=speakerGuise, y=SAscore_all)) %>%
+  guise_colors() +
+  gg_theme() +
+  # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
+  geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
+
+```
+
+##### CE: Can. Experience
+```{r, warning=F}
+# Density By ExperimentId
+axb_subj_data %>% ggplot(aes(x=CEscore_all,fill=speakerGuise,color=speakerGuise)) %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count") +
+  facet_grid(~experimentId)
+
+# Combined Density
+axb_subj_data %>% ggplot(aes(x=CEscore_all,fill=speakerGuise,color=speakerGuise))  %>%
+  guise_colors() +
+  gg_theme() +
+  geom_density(alpha=0.3) +
+  labs(title="", y="Count")
+
+# Boxplot By ExperimentId
+axb_subj_data %>% ggplot(aes(x=speakerGuise, y=CEscore_all)) %>%
+  guise_colors() +
+  gg_theme() +
+  # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
+  geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE) +
+  facet_grid(~experimentId)
+
+# Combined Boxplot
+axb_subj_data %>% ggplot(aes(x=speakerGuise, y=CEscore_all)) %>%
+  guise_colors() +
+  gg_theme() +
+  # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
+  geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
+
+```
+
+##### PCA Output Correlation
+```{r}
+
+axb_subj_data %>% ggplot(aes(y=CEscore, x=SAscore, color=speakerGuise, shape=speakerGuise)) %>% guise_colors() %>%
+  pca_plot_theme() +
+  scale_x_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  scale_y_continuous(lim=c(-3.5, 3.5),breaks=seq(-3,3,1)) +
+  labs(y="CE Scores (PC1)", x="SA Scores (PC2)", color="Participant Group", shape="Participant Group")+
+  geom_point(na.rm=TRUE, size=3, alpha=0.7) +
+  geom_smooth(method="lm")
+  
+
+
+#ggsave(path="plots", filename="CS-CE_distribution_plot.png", CSCE.biplot, width=16, height=8, units = "in" , dpi=72)
+
+```
+
+### Perception Plots
+```{r}
+proportion_plot_theme <- function(gg_object) {
+  gg_object %>% guise_colors() +
+  gg_theme() +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(y = "Proportion 'raised' response", x = "Continuum Step (UR to RS)", 
+       color="Guise", linetype = "Guise")
+}
+```
+
+
+#### PropRS by Guise
+##### Combined
+```{r}
+# Get subj means per condition
+subj.means <- axb_all_data %>% #filter(participantId!='5e42f74f5b772a18434cabf7') %>%
+  group_by(participantId, step, vowel, speakerGuise) %>%  summarise(mean.Prop = mean(respRS))
+
+# Get group means and se per condition (by averaging speaker means)
+condition.means <- subj.means %>%
+  group_by(step, vowel, speakerGuise) %>%  summarise(grandM.Prop = mean(mean.Prop), se = std.error(mean.Prop))
+
+# Plot lineplot with error bars on step points
+byGuise_prop_plot <- condition.means %>%
+  ggplot(aes(x = step, y = grandM.Prop))  %>% proportion_plot_theme +
+  labs(title="Raising Perception: By Guise") +
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=factor(speakerGuise), linetype=factor(speakerGuise)), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.Prop-se, ymax = grandM.Prop+se, 
+                                 colour = factor(speakerGuise))) +
+  facet_grid(~vowel)
+
+byGuise_prop_plot
+```
+
+###### By Experiment
+```{r}
+# Get subj means per condition
+subj.means <- axb_all_data %>% #filter(participantId!='5e42f74f5b772a18434cabf7') %>%
+  group_by(experimentId, participantId, step, vowel, speakerGuise) %>%  summarise(mean.Prop = mean(respRS))
+
+# Get group means and se per condition (by averaging speaker means)
+condition.means <- subj.means %>%
+  group_by(experimentId, step, vowel, speakerGuise) %>%  summarise(grandM.Prop = mean(mean.Prop), se = std.error(mean.Prop))
+
+# Plot lineplot with error bars on step points
+byGuise_prop_plot <- condition.means %>%
+  ggplot(aes(x = step, y = grandM.Prop))  %>% proportion_plot_theme +
+  labs(title="Raising Perception: By Guise") +
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=factor(speakerGuise), linetype=factor(speakerGuise)), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.Prop-se, ymax = grandM.Prop+se, 
+                                 colour = factor(speakerGuise))) +
+  facet_grid(experimentId~vowel)
+
+byGuise_prop_plot
+```
+
+
+
+#### RT by Guise
+##### Combined
+```{r, warning=FALSE}
+# Get subj means per condition
+subj.means <- axb_all_data %>% filter(speaker=='S3') %>% #filter(participantId!='5e42f74f5b772a18434cabf7') %>%
+  group_by(participantId, step, vowel, speakerGuise) %>%  summarise(mean.rt = mean(log(rt)))
+
+# Get group means and se per condition (by averaging speaker means)
+condition.means <- subj.means %>%
+  group_by(step, vowel, speakerGuise) %>%  summarise(grandM.rt = mean(mean.rt), se = std.error(mean.rt))
+
+# Plot lineplot with error bars on step points
+byGuise_rt_plot <- condition.means %>% 
+  ggplot(aes(x = step, y = grandM.rt)) %>% guise_colors() +
+  gg_theme() +
+  labs(y = "Log Response Time", x = "Continuum Step (UR to RS)", color="Guise",
+       linetype = "Guise", title="Reaction Time: By Guise") +
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=factor(speakerGuise), linetype=factor(speakerGuise)), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.rt-se, ymax = grandM.rt+se, colour = factor(speakerGuise))) +
+  facet_grid(~vowel)
+
+byGuise_rt_plot
+```
+
+##### By Experiment
+```{r, warning=FALSE}
+# Get subj means per condition
+subj.means <- axb_all_data %>% filter(speaker=='S3') %>% #filter(participantId!='5e42f74f5b772a18434cabf7') %>%
+  group_by(experimentId, participantId, step, vowel, speakerGuise) %>%  summarise(mean.rt = mean(log(rt)))
+
+# Get group means and se per condition (by averaging speaker means)
+condition.means <- subj.means %>%
+  group_by(experimentId, step, vowel, speakerGuise) %>%  summarise(grandM.rt = mean(mean.rt), se = std.error(mean.rt))
+
+# Plot lineplot with error bars on step points
+byGuise_rt_plot <- condition.means %>% 
+  ggplot(aes(x = step, y = grandM.rt)) %>% guise_colors() +
+  gg_theme() +
+  labs(y = "Log Response Time", x = "Continuum Step (UR to RS)", color="Guise",
+       linetype = "Guise", title="Reaction Time: By Guise") +
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=factor(speakerGuise), linetype=factor(speakerGuise)), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.rt-se, ymax = grandM.rt+se, colour = factor(speakerGuise))) +
+  facet_grid(experimentId~vowel)
+
+byGuise_rt_plot
+```
+
+#### PropRS by Word
+```{r}
+# Get subj means per condition
+subj.means <- axb_all_data %>% filter(speaker=="S3") %>%
+  group_by(participantId, step, vowel, speakerGuise, speaker, word) %>%  summarise(mean.Prop = mean(respRS))
+
+# Get group means and se per condition (by averaging speaker means)
+condition.means <- subj.means %>%
+  group_by(step, vowel, speakerGuise, speaker, word) %>%  summarise(grandM.Prop = mean(mean.Prop), se = std.error(mean.Prop))
+
+# AI
+byWord_prop_plot <- condition.means %>% filter(vowel=="AI") %>%
+  ggplot(aes(x = step, y = grandM.Prop)) %>% proportion_plot_theme +
+  labs(title="AI Raising Perception: By Word") +
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5, alpha=0.75) +
+  geom_line(aes(colour=factor(speakerGuise), linetype=factor(word)), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.Prop-se, ymax = grandM.Prop+se, colour = factor(speakerGuise))) +
+  facet_grid(speaker~word)
+byWord_prop_plot
+
+# AU
+byWord_prop_plot <- condition.means %>% filter(vowel=="AU") %>%
+  ggplot(aes(x = step, y = grandM.Prop)) %>% proportion_plot_theme +
+  labs(title="AU Raising Perception: By Word") +
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5, alpha=0.75) +
+  geom_line(aes(colour=factor(speakerGuise), linetype=factor(word)), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.Prop-se, ymax = grandM.Prop+se, colour = factor(speakerGuise))) +
+  facet_grid(speaker~word)
+byWord_prop_plot
+
+```
+
+#### PropRS by Individual (dev)
+(adapted from CantoMergers project)
+```{r, echo=F}
+# MI guise
+bySubj_prop_plot <- axb_all_data %>% filter(vowel=="AU") %>% filter(conditionId=="condA") %>%
+  ggplot(aes(x=step, y=respRS, color=speakerGuise)) +
+  geom_smooth(method="loess") +
+  facet_wrap(~participantId) +
+  geom_vline(xintercept = 0, alpha=0.5) +
+  geom_hline(yintercept =  0.5, alpha = 0.5) +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(title="AU Raising perception: By Participant", y="Proportion RS response", color="Guise", x="") +
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(3)])+
+  gg_theme()
+bySubj_prop_plot
+
+# CN guise
+bySubj_prop_plot <- axb_all_data %>% filter(vowel=="AU") %>% filter(conditionId=="condC") %>%
+  ggplot(aes(x=step, y=respRS, color=speakerGuise)) +
+  geom_smooth(method="loess") +
+  facet_wrap(~participantId) +
+  geom_vline(xintercept = 0, alpha=0.5) +
+  geom_hline(yintercept =  0.5, alpha = 0.5) +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(title="AU Raising perception: By Participant", y="Proportion RS response", color="Guise", x="") +
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(4)])+
+  gg_theme()
+bySubj_prop_plot
+
+# BL guise
+bySubj_prop_plot <- axb_all_data %>% filter(vowel=="AU") %>% filter(conditionId=="condE") %>%
+  ggplot(aes(x=step, y=respRS, color=speakerGuise)) +
+  geom_smooth(method="loess") +
+  facet_wrap(~participantId) +
+  geom_vline(xintercept = 0, alpha=0.5) +
+  geom_hline(yintercept =  0.5, alpha = 0.5) +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(title="AU Raising perception: By Participant", y="Proportion RS response", color="Guise", x="") +
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(2)])+
+  gg_theme()
+bySubj_prop_plot
+```
+
+# ...
+# Statistics
+## Single-Point Regression
+### Prepare DFs
+```{r}
+# Prep Data for Analysis
+
+# Add contrast variables
+axbdata.coded <- axb_all_data %>% filter(speaker=='S3') %>%
+  mutate(item = as.factor(item),
+         
+    # Create step-as-factor variable 
+        step.f=as.factor(step),
+         
+    # Deviation/Sum coding (compare to mean of factor)
+         MI.CN=case_when(speakerGuise=='MI' ~ -0.5,
+                         speakerGuise=='CN' ~ 0.5,
+                         TRUE ~ 0),
+         BL.CN=case_when(speakerGuise=='BL' ~ -0.5,
+                         speakerGuise=='CN' ~ 0.5,
+                         TRUE~0),
+         BL.MI=case_when(speakerGuise=='BL' ~ -0.5,
+                         speakerGuise=='MI' ~ 0.5,
+                         TRUE~0),
+         S3.S9=case_when(speaker=='S3' ~ -0.5,
+                         speaker=='S9' ~ 0.5,
+                          TRUE ~ 0),
+    
+    # Treatment/Baseline coding (compare to reference group)
+        guiseCN=case_when(speakerGuise=='CN' ~ 1,
+                         TRUE~0),
+        guiseMI=case_when(speakerGuise=='MI' ~ 1,
+                         TRUE~0),
+        speakerS9=case_when(speaker=='S9' ~ 1,
+                         TRUE~0),
+        speakerS3=case_when(speaker=='S3' ~ 1,
+                         TRUE~0)) #%>%
+  
+  # Select and reorder relevant columns
+  # select(experimentId, participantId:EQscore, respRS, raised_response, rt, rt_sec, 
+  #        item, vowel, step, speakerGuise, speaker, word, speakerOrder, conditionId, guiseName, 
+  #        step.f, guiseCN, guiseMI, speakerS9, speakerS3, BL.CN, BL.MI, MI.CN, S3.S9)
+```
+
+```{r}
+# # Select only midpoint data (step 0) for Speaker 3 (sMich)
+# axbdata.mid <- axbdata.coded %>% 
+#   filter(step == "0") %>% droplevels()  %>% filter(speaker == 'S3') %>%
+#   mutate_if(is.character, as.factor)
+# 
+# # Select only /au/
+# AUdata.mid <- axbdata.mid %>% filter(vowel=="AU")  %>% droplevels() 
+# 
+# # Print to check data
+# # AUdata.mid
+# # summary(AUdata.mid)
+```
+
+### Summarize Means 
+```{r, eval=F}
+# Get grand mean of propRS
+axbdata.coded %>% filter(step==0) %>% filter(vowel=='AU') %>%
+  group_by(experimentId, speakerGuise, vowel) %>% 
+  summarize(meanlogRS = logit(mean(respRS)), selogRS = std.error(logit(respRS)),  meanRS = mean(respRS), seRS = std.error(respRS))
+
+
+# Get grand mean of propRS
+axbdata.coded %>% filter(step==0) %>% filter(vowel=='AU') %>%
+  group_by(speakerGuise, vowel) %>% 
+  summarize(meanlogRS = logit(mean(respRS)), selogRS = std.error(logit(respRS)),  meanRS = mean(respRS), seRS = std.error(respRS))
+
+```
+
+### Basic Binomial Regression 
+
+#### Exp 1a
+```{r}
+# Old (1a) dataset
+axb.glm.au <- glmer(respRS ~ speakerGuise + (1 | participantId) + (1 | item),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = axbdata.coded %>% filter(step == "0") %>% filter(vowel=='AU') %>% filter(experimentId=="1a")) 
+
+summary(axb.glm.au)
+```
+
+#### Exp 1b
+```{r}
+# New (1b) dataset
+axb.glm.au <- glmer(respRS ~ speakerGuise + (1 | participantId) + (1 | item),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = axbdata.coded %>% filter(step == "1") %>% filter(vowel=='AU')  %>% filter(experimentId=="1b")) 
+summary(axb.glm.au)
+```
+
+#### Combined
+```{r}
+# Pooled dataset
+axb.glm.au <- glmer(respRS ~ speakerGuise + (1 | participantId) + (1 | item),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = axbdata.coded %>% filter(step == "0") %>% filter(vowel=='AU')) 
+summary(axb.glm.au)
+
+fixef(axb.glm.au)
+```
+
+```{r}
+# Pooled dataset
+axb.glm.au <- glmer(respRS ~ speakerGuise + (1 | participantId) + (1 | item),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = axbdata.coded %>% filter(step == "-1") %>% filter(vowel=='AU')) 
+summary(axb.glm.au)
+```
+
+```{r}
+# Pooled dataset
+axb.glm.au <- glmer(respRS ~ speakerGuise + (1 | participantId) + (1 | item),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = axbdata.coded %>% filter(step == "1") %>% filter(vowel=='AU')) 
+summary(axb.glm.au)
+```
+
+## Individual Score Regression (dev)
+
+### Prepare DFs
+```{r}
+
+axb_ind_data <- axbdata.coded %>% group_by(participantId, speakerGuise) %>%
+  summarize(log_propRS_obs = logit(mean(respRS)), 
+            propRS_obs = mean(respRS)) %>% 
+  mutate(log_BL.int = fixef(axb.glm.au)[[1]]) %>%
+  mutate(propRS_BL.int = inv_logit_scaled(log_BL.int)) %>%
+  
+  mutate(guiseBias_obs = ifelse(speakerGuise=='MI', -(propRS_obs - propRS_BL.int), (propRS_obs - propRS_BL.int))) %>%
+  relocate(guiseBias_obs, .after=speakerGuise)
+
+axb_ind_data
+```
+
+### Plot Visualizations
+```{r fig.width=10}
+# Plot observed values
+## in Proportions
+axb_ind_data %>% ggplot(aes(x=participantId, y=propRS_obs, color=speakerGuise)) %>% 
+  guise_colors() +
+  gg_theme() +
+  geom_point(size=5, alpha=0.7) + 
+  geom_abline(aes(slope=0, intercept = propRS_BL.int)) +
+  facet_grid(~speakerGuise) +
+  labs(y="Observed Proportion 'Raised'", x = "Participant", color = "Guise")
+
+
+# Boxplot
+axb_ind_data %>% ggplot(aes(x=speakerGuise, y=propRS_obs, color=speakerGuise)) %>%
+  guise_colors() +
+  gg_theme() +
+  geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
+  geom_boxplot(aes(fill = speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE) +
+  geom_jitter(size=5, alpha=0.3)
+  
+
+```
+
+
+```{r fig.width=10}
+axb_ind_data %>% ggplot(aes(x=participantId, y=guiseBias_obs, color=speakerGuise)) %>% 
+  guise_colors() +
+  gg_theme() +
+  geom_point(size=5, alpha=0.7) + 
+  geom_abline(aes(slope=0, intercept = 0)) +
+  facet_grid(~speakerGuise) +
+  labs(y="Guise Bias", x = "Participant", color = "Guise")
+
+```
+
+#### Copied (dev)
+```{r fig.width=10}
+
+ind.values.prop.long <- ind.values.prop %>%
+  pivot_longer(ind.guiseMI:ind.guiseCN, names_to = "speakerGuise", names_prefix = "ind.guise", values_to = "ind.prediction") %>%
+  mutate(ind.BLdev = ind.prediction-BL.Intercept) %>%
+  select(participantId, listener, speaker, speakerGuise, ind.prediction, BL.Intercept, ind.BLdev)
+ind.values.prop.long
+
+```
+
+```{r}
+axbdata.ind <- quesdata.final.all %>%
+  merge(., ind.values.prop.long)
+axbdata.ind
+
+summary(axbdata.ind)
+
+axbdata.mid.au <- filter(filter(axbdata, step==0), vowel=="AU") %>%
+  filter(speakerGuise!="BL") %>% droplevels()
+axbdata.mid.au
+```
+
+
+```{r}
+# Create dataframe of S3 AU midpoint for experimental participants
+axbdata.ind.mid.au <- axbdata.ind %>% 
+  merge(., axbdata.mid.au, all=TRUE) %>%
+  mutate(BL.mean.Prop = case_when(speaker=="S3" ~ 0.4978992,
+                                  speaker=="S9" ~ 0.5275424),
+         genderContr = case_when(Gender=="f" ~ -0.5,
+                                  Gender=="m" ~ 0.5),
+         guiseContr = case_when(speakerGuise=="CN" ~ -0.5,
+                                speakerGuise=="MI" ~ 0.5),
+         speakerContr = case_when(speaker=="S3" ~ -0.5,
+                                   speaker=="S9" ~ 0.5),
+         speakerS9Contr = case_when(speaker=="S3" ~ 0,
+                                   speaker=="S9" ~ 1),
+         speakerS3Contr = case_when(speaker=="S9" ~ 0,
+                                   speaker=="S3" ~ 1)) %>%
+  mutate_if(is.character, as.factor) %>%
+  group_by(participantId, listener, Gender, speakerGuise, genderContr, guiseContr, speaker, speakerContr, speakerS9Contr, speakerS3Contr) %>%
+  summarise(Age = mean(Age),
+            CEscore = mean(CEscore), CSscore = mean(CSscore), MSscore = mean(MSscore), EQscore = mean(EQscore), 
+            mean.Pred = mean(ind.prediction), BL.int = mean(BL.Intercept), mean.Prop = mean(respRS), BL.mean.Prop = mean(BL.mean.Prop)) %>%
+  mutate(EQgroups = case_when(between(EQscore, 0, 16) ~ "low",
+                              between(EQscore, 17, 32) ~ "mid-low",
+                              between(EQscore, 33, 48) ~ "mid",
+                              between(EQscore, 49, 64) ~ "mid-high",
+                              between(EQscore, 65, 80) ~ "high")) %>%
+  mutate(EQgroups.HL = case_when(between(EQscore, 0, 43) ~ "low",
+                              between(EQscore, 44, 80) ~ "high")) %>%
+  mutate(EQgroups.HML = case_when(between(EQscore, 0, 36) ~ "low",
+                                 between(EQscore, 37, 49) ~ "mid",
+                              between(EQscore, 50, 80) ~ "high")) %>%
+  mutate(CSgroups.HML = case_when(between(CSscore, -3, -0.5) ~ "low",
+                                 between(CSscore, -0.4999999, 0.4999999) ~ "mid",
+                              between(CSscore, 0.5, 3) ~ "high")) %>%
+  mutate(BL.diff.Pred = mean.Pred-BL.int, BL.diff.Prop = mean.Prop-BL.mean.Prop,
+         guiseBias.Pred = case_when(speakerGuise == "MI" ~ -(BL.diff.Pred),
+                                   TRUE ~ BL.diff.Pred),
+         guiseBias.Obs = case_when(speakerGuise == "MI" ~ -(BL.diff.Prop),
+                                   TRUE ~ BL.diff.Prop))
+
+# Center & scale the EQ variable
+#axbdata.ind.mid.au$EQscore.cen <- with(axbdata.ind.mid.au, EQscore-mean(EQscore))
+axbdata.ind.mid.au <- data.frame(axbdata.ind.mid.au, EQscore.z=scale(axbdata.ind.mid.au$EQscore))
+
+# Make factors
+axbdata.ind.mid.au$EQgroups <- factor(axbdata.ind.mid.au$EQgroups)
+axbdata.ind.mid.au$EQgroups.HL <- factor(axbdata.ind.mid.au$EQgroups.HL)
+axbdata.ind.mid.au$EQgroups.HML <- factor(axbdata.ind.mid.au$EQgroups.HML, levels = c("high", "mid", "low"))
+axbdata.ind.mid.au$CSgroups.HML <- factor(axbdata.ind.mid.au$CSgroups.HML, levels = c("high", "mid", "low"))
+
+axbdata.ind.mid.au <- axbdata.ind.mid.au %>% mutate(EQgroups.4 = as.numeric(cut_number(EQscore, 4))) %>%
+  mutate(EQgroups.4 = case_when(EQgroups.4 == 1 ~ "low",
+                                EQgroups.4 == 2 ~ "mid-low",
+                                EQgroups.4 == 3 ~ "mid-high",
+                                EQgroups.4 == 4 ~ "high"))
+axbdata.ind.mid.au$EQgroups.4 <- factor(axbdata.ind.mid.au$EQgroups.4, levels = c("high", "mid-high", "mid-low", "low"))
+
+axbdata.ind.mid.au <- axbdata.ind.mid.au %>% mutate(EQgroups.5 = as.numeric(cut_number(EQscore, 5))) %>%
+  mutate(EQgroups.5 = case_when(EQgroups.5 == 1 ~ "low",
+                                EQgroups.5 == 2 ~ "mid-low",
+                                EQgroups.5 == 3 ~ "mid",
+                                EQgroups.5 == 4 ~ "mid-high",
+                                EQgroups.5 == 5 ~ "high"))
+axbdata.ind.mid.au$EQgroups.5 <- factor(axbdata.ind.mid.au$EQgroups.5, levels = c("high", "mid-high","mid", "mid-low", "low"))
+
+
+# Check data
+axbdata.ind.mid.au
+summary(axbdata.ind.mid.au)
+
+#write_csv(axbdata.ind.mid.au, "axbdata_ind_au.csv")
+
 ```
