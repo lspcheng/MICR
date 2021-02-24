@@ -1,7 +1,15 @@
 # Restrict access to following folders
 
-## MICR_base
-MICR_base/
+## General
+__pycache__/
+.DS_Store
+data/
+results/
+
+## MICR-Analysis
+.RData
+.Rhistory
+MICR-Analysis/*.nb.html
 
 ## EEG Experiment
 MICR-EEG/
@@ -9,34 +17,20 @@ MICR-EEG/
 MICR_Documents/
 MICR_Surveys/
 
-
-### Stimuli
+### Stimuli & Data
 SentenceStim/
 DiphthongStim_varied/
 
-### Data
-data/
-__pycache__/
-.DS_Store
-
-
-
 ## MICR-Online
-
-
-### Stimuli Files & Data
+### Stimuli Files
 stimPrep/
-results/
-
-template/
-
-MICRnt/
-
 audio/
 images/
 *.consent.html
 
-
+### Other
+template/
+MICRnt/
 
 # Logs
 logs
