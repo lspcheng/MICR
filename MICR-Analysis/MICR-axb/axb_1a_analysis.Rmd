@@ -556,8 +556,7 @@ quesdata.read <- do.call(rbind, lapply(filelist, function(x) cbind(read.csv(x), 
 # Check that newly extracted columns are correct (`num` or `text`)
 # quesdata.read$dataFormat
 
-colnames(quesdata.read)
-
+# colnames(quesdata.read)
 ```
 
 Remove the unnecessarily columns and rows. Also extract the question text while we're at it (before removing the rows) so that we can refer to the questions as necessary, but they won't be in the data to be analysed.
@@ -574,6 +573,11 @@ quesdata <- quesdata %>%
   # Remove irrelevant rows and removed data
   subset(subjID != "Please check that your Prolific ID is correct, then press the 'next' button to continue with the survey." & subjID !="{\"ImportId\":\"QID78_TEXT\"}") %>%
   subset(subjID != "preview1") %>%
+  
+  # Fix incorrect subject numbers
+  mutate(subjID = gsub("5a5a507d76d1c60001ab2ac71c60001ab2ac7", "5a5a507d76d1c60001ab2ac7", subjID)) %>%
+  mutate(subjID = gsub("5f474877452857130314c9d11", "5f474877452857130314c9d1", subjID)) %>%
+  droplevels() %>%
 
   # Merge with perception data (for convenience, uses the minimal dataframe `condata.tones`)
   ## Adds subject and condition info + automatically drops subjects that were screened out based on perception experiment performance/returns
@@ -591,7 +595,7 @@ quesdata <- quesdata %>%
 #### Question Wording
 Here's the table of the question tags, numbers and text. This interactive table allows for sorting and searching! We can use this to check the exact wording of the questions—all of them as they were shown to the participant.
 
-```{r, eval=T, results='asis'}
+```{r, eval=F, results='asis'}
 # Print questions for reference
 DT::datatable(questions, 
               options=list(scrollX = TRUE,
@@ -630,7 +634,7 @@ with(quesdata.demo, unique(Gender))
 
 
 ```{r}
-with(quesdata.demo, unique(Loc2_4))
+with(quesdata.demo, unique(Loc1_4))
 ```
 
 ```{r}
@@ -643,7 +647,7 @@ quesdata.demo <- quesdata.demo %>%
   
   mutate(Gender = mgsub(Gender, c("woman.*|.*femal.*", "male|cis male", "non-binary|non binary|nonbinary"), c("f", "m", "nb"))) %>%
   
-  mutate_at(vars(starts_with("Loc") & ends_with("_4")), ~ mgsub(.x, c("michig.*"|"mi[/, ].*"), c("mi"))) %>%
+  mutate_at(vars(starts_with("Loc") & ends_with("_4")), ~ mgsub(.x, c("michig.*|mi[/, ].*"), c("mi"))) %>%
   
   mutate(Ethnicity = mgsub(Ethnicity, c("caucasian|caucasion|cauacasian|american|write|european|dutch.*","african american|african-american", "middle east.*", "latino", "biracial.*|multi.*|mixed"), c("white", "black", "middle-eastern", "hispanic", "multiracial"))) %>%
   mutate(Ethnicity = mgsub(Ethnicity, c("filipino/white","white/hispanic", "am. indian"), c("multiracial","multiracial", "native"), fixed=TRUE)) %>%
@@ -656,6 +660,7 @@ quesdata.demo <- quesdata.demo %>%
   select(conditionId, participantId, everything())
   
 quesdata.demo
+
 ```
 
 #### Descriptive Stats
