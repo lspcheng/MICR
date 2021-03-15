@@ -643,7 +643,7 @@ quesdata.demo <- quesdata.demo %>%
   
   mutate(Gender = mgsub(Gender, c("woman.*|female|cis female", "male|cis male", "non-binary|non binary|nonbinary"), c("f", "m", "nb"))) %>%
   
-  mutate_at(vars(starts_with("Loc") & ends_with("_4")), ~ mgsub(.x, c("michig.*"|"mi[/, ].*"), c("mi"))) %>%
+  mutate_at(vars(starts_with("Loc") & ends_with("_4")), ~ mgsub(.x, c("michig.*|mi[/, ].*"), c("mi"))) %>%
   
   mutate(Ethnicity = mgsub(Ethnicity, c("caucasian|caucasion|american|mezzogiorno","african american|african-american", "middle easten"), c("white", "black", "middle-eastern"))) %>%
   mutate(Ethnicity = mgsub(Ethnicity, c("asian/white","white/hispanic"), c("multiracial","multiracial"), fixed=TRUE)) %>%
