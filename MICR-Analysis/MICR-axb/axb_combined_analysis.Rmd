@@ -531,6 +531,8 @@ axb_all_data <- axb_subj_data %>%
   relocate(CEscore_all:EQscore_all, .before=CEscore)
 
 # summary(axb_all_data)
+
+save(axb_all_data, file="./data/axb_combined_data.rData")
 ```
 
 # ...
