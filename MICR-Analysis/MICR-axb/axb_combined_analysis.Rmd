@@ -518,9 +518,9 @@ axb_subj_data <- axb_bysubj %>%
   
 # Check data
 axb_subj_data
-# summary(axb_subj_data)
 
 # Write to file
+save(axb_subj_data, file="./data/axb_combined_subj_data.rData")
 # write.csv(axb_subj_data, 'data/axb_combined_subj_data.csv', row.names=F)
 
 ```
