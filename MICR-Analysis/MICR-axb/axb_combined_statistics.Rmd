@@ -107,6 +107,9 @@ proportion_plot_theme <- function(gg_object) {
 # Data Preparation
 
 ```{r}
+# Load combined dataset as "axb_all_data" dataframe
+load("./data/axb_combined_data.rData")
+
 axb_data_coded <- axb_all_data %>% filter(speaker=='S3') %>%
   
   # Treatment/Baseline coding (compare to reference group)
@@ -163,7 +166,10 @@ cont_au_glm_base <- glmer(respRS ~ step + speakerGuise + step:speakerGuise +
                     data = au_data_coded
                     ) 
 summary(cont_au_glm_base)
+```
 
+
+```{r}
 # No-interaction Model
 cont_au_glm_base2 <- glmer(respRS ~ step + speakerGuise  +
                        (1 | participantId) + (0 + step | participantId) +
@@ -198,7 +204,10 @@ cont_au_glm_relvl <- glmer(respRS ~ step + guiseRelvl + step:guiseRelvl +
                     data = au_data_coded
                     ) 
 summary(cont_au_glm_relvl)
+```
 
+
+```{r}
 # No-interaction Model
 cont_au_glm_relvl2 <- glmer(respRS ~ step + guiseRelvl  +
                        (1 | participantId) + (0 + step | participantId) +
@@ -236,6 +245,11 @@ anova(cont_au_glm_relvl3, cont_au_glm_relvl2)
 ( slope_cn <- slope_bl + fixef_au[[5]] )
 ( slope_mi <- slope_bl + fixef_au[[6]] )
 
+# Calculate x-intercepts per guise, i.e., where y=0, using the formula [y = ax + b]  ~  [x = -b/a]
+( xint_bl = -(int_bl / slope_bl) )
+( xint_cn = -(int_cn / slope_cn) )
+( xint_mi = -(int_mi / slope_mi) )
+
 ```
 
 ```{r}
@@ -245,14 +259,6 @@ au_data_coded %>% group_by(speakerGuise) %>%
   mutate(intercepts = c(int_bl, int_cn, int_mi),
          slopes = c(slope_bl, slope_cn, slope_mi)) %>%
   mutate(mean_int_diff = intercepts - logOddsRS)
-
-```
-
-```{r}
-# Calculate x-intercepts per guise, i.e., where y=0, using the formula [y = ax + b]  ~  [x = -b/a]
-( xint_bl = -(int_bl / slope_bl) )
-( xint_cn = -(int_cn / slope_cn) )
-( xint_mi = -(int_mi / slope_mi) )
 
 ```
 
@@ -298,33 +304,29 @@ au_pred_plot
 # ggsave(path="plots", filename="au_group_prop_pred.png", au_pred_plot, width=12, height=8, units = "in" , dpi=72)
 ```
 
-```{r include=F}
+```{r include=T}
 # Predict on original/actual data (Option 2: LogOdds)
-cont_au_pred_actual <-
-  filter(axb_data_coded, vowel=='AU') %>%
-  mutate(predictions =  predict(cont_au_glm, type = "link") )
-# cont_au_pred_actual
+cont_au_pred_actual <- au_data_coded %>%
+  mutate(predictions =  predict(cont_au_glm_base, type = "link") )
 
 cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions, color=speakerGuise)) %>% 
   guise_colors(3) +
   theme_minimal() +
   geom_smooth(method="glm", se=T) +
   # geom_point(alpha=0.1) +
-  geom_vline(xintercept = bl_x) +
-  geom_vline(xintercept = cn_x) +
-  geom_vline(xintercept = mi_x) + 
-  geom_vline(xintercept = bl_x, linetype="solid") +
-  geom_vline(xintercept = cn_x, linetype="dashed") +
-  geom_vline(xintercept = mi_x, linetype="dashed")
+  geom_vline(xintercept = xint_bl) +
+  geom_vline(xintercept = xint_cn) +
+  geom_vline(xintercept = xint_mi) + 
+  geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
 
 ```
 
 ```{r include=T}
 # Predict on original/actual data (Option 2: Proportions)
-cont_au_pred_actual <-
-  filter(axb_data_coded, vowel=='AU') %>%
-  mutate(predictions =  predict(cont_au_glm, type = "response") )
-# cont_au_pred_actual
+cont_au_pred_actual <-  au_data_coded %>%
+  mutate(predictions =  predict(cont_au_glm_base, type = "response") )
 
 au_pred_plot <-
 cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions, 
@@ -349,9 +351,9 @@ cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions,
   coord_cartesian(ylim = c(0.15, 0.85)) + 
   geom_smooth(method="loess", se=T, alpha=0.5) +
   # geom_point(alpha=0.1) + 
-  geom_vline(xintercept = bl_x, linetype="solid") +
-  geom_vline(xintercept = cn_x, linetype="dashed") +
-  geom_vline(xintercept = mi_x, linetype="dashed")
+  geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
 au_pred_plot
 
 ggsave(path="plots", filename="au_group_prop_cross_pred.png", au_pred_plot, width=12, height=8, units = "in" , dpi=72)
@@ -371,8 +373,8 @@ For these calculations:
 
 ```{r}
 # Extract individual coefficients (based on random effects)
-ranef_au <- ranef(cont_au_glm)[1] # raw adjustment values
-coef_au <- coef(cont_au_glm)[1] # individual co-efficients (adjustments already applied)
+ranef_au <- ranef(cont_au_glm_base)[1] # raw adjustment values
+coef_au <- coef(cont_au_glm_base)[1] # individual co-efficients (adjustments already applied)
 
 # Process coefficients
 coef_au <-
@@ -382,8 +384,8 @@ coef_au <-
   
   # Calculate xints per guise per individual (i.e., predicted patterns per guises that they didn't see)
   mutate(xint_bl = -(Intercept / step),
-         xint_cn = -((Intercept + guiseCN) / (step + step.guiseCN)),
-         xint_mi = -((Intercept + guiseMI) / (step + step.guiseMI)))
+         xint_cn = -((Intercept + speakerGuiseCN) / (step + step.speakerGuiseCN)),
+         xint_mi = -((Intercept + speakerGuiseMI) / (step + step.speakerGuiseMI)))
 ```
 
 ```{r}
@@ -404,9 +406,9 @@ xints_coef_au %>%
   theme_minimal() +
   theme(axis.text.y = element_blank()) +
   xlim(-2,2) +
-  geom_vline(xintercept = bl_x) +
-  geom_vline(xintercept = cn_x) +
-  geom_vline(xintercept = mi_x) +
+  geom_vline(xintercept = xint_bl) +
+  geom_vline(xintercept = xint_cn) +
+  geom_vline(xintercept = xint_mi) +
   geom_point(alpha=0.8)  
 
 ```
@@ -449,9 +451,8 @@ au_data_ind_coef_max <- au_data_coded %>% select(-step:-rt) %>%
   # Keep only the xint values of the guise that participants actually were assigned/completed
   filter(speakerGuise == guise_pred) %>%
   
-  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
-  mutate(xint_trans = xint_pred) %>% #as.vector(scale(xint_pred))) %>%
-  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  # Create normalized guise bias/shift effect size score
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
   
   # Remove extra rows by summarizing
   distinct() %>%
@@ -475,9 +476,8 @@ au_data_ind_coef <- au_data_coded %>% select(-step:-rt) %>%
   # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
   filter(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5) %>%
 
-  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
-  mutate(xint_trans = xint_pred) %>% #as.vector(scale(xint_pred))) %>%
-  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  # Create normalized guise bias/shift effect size score
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
   
   # Remove extra rows by summarizing
   distinct() %>%
@@ -519,7 +519,7 @@ setdiff(au_data_ind_coef_max, au_data_ind_coef) %>% select(-Age:-xint_pred)
 #### Exploratory Plots (2)
 ```{r}
 au_data_ind_coef %>% 
- ggplot(aes(x=xint_trans, fill=speakerGuise, color=speakerGuise)) %>%
+ ggplot(aes(x=xint_pred, fill=speakerGuise, color=speakerGuise)) %>%
   guise_colors(3) +
   theme_minimal() +
   theme(axis.text.y = element_blank()) +
@@ -528,16 +528,8 @@ au_data_ind_coef %>%
 
 ```{r}
 
-# au_data_ind_coef %>% ggplot(aes(x=xint_trans, y=guise_pred, color=guise_pred)) %>%
-# guise_colors(3) +
-#   theme_minimal() +
-#   coord_cartesian(xlim=c(-3, 3)) +
-#   theme(axis.text.y = element_blank()) +
-#   geom_jitter(alpha=0.5) +
-#   geom_boxplot(alpha=0)
-
 xint_distribution <-
-au_data_ind_coef %>% ggplot(aes(y=xint_trans, x=speakerGuise, color=speakerGuise, fill=speakerGuise)) %>%
+au_data_ind_coef %>% ggplot(aes(y=xint_pred, x=speakerGuise, color=speakerGuise, fill=speakerGuise)) %>%
   guise_colors(3) +
   labs(x='Guise', y='Crossover Point', color='Guise', fill='Guise') +
   gg_theme() +
@@ -631,18 +623,18 @@ indgroups_coef %>%
 ### Models
 ```{r}
 # Are the three guises different in xint? YES all differenet
-ind_au_lm_guise <- lm(xint_trans ~ speakerGuise, data=au_data_ind_coef)
+ind_au_lm_guise <- lm(xint_pred ~ speakerGuise, data=au_data_ind_coef)
 summary(ind_au_lm_guise)
 
 au_data_ind_coef$guiseRelvl = relevel(au_data_ind_coef$speakerGuise, ref="CN")
-ind_au_lm_guise_relvl <- lm(xint_trans ~ guiseRelvl, data=au_data_ind_coef)
+ind_au_lm_guise_relvl <- lm(xint_pred ~ guiseRelvl, data=au_data_ind_coef)
 summary(ind_au_lm_guise_relvl)
 ```
 
 
 ```{r}
 # Are the two guises different in xint? YES, they strongly go in opposite directions
-ind_au_lm <- lm(xint_trans ~ guiseContr,
+ind_au_lm <- lm(xint_pred ~ guiseContr,
                 data=au_data_ind_coef_noBL)
 summary(ind_au_lm)
 
@@ -986,7 +978,6 @@ ggplot() %>%
   
 ```
 
-
 ```{r}
 # Predict on actual data : 3 groups, roughly equal interval ranges
 
@@ -1040,7 +1031,6 @@ ggplot() %>%
 
   
 ```
-
 
 ```{r}
 # Predict on actual data : 4 groups, roughly equal sizes
@@ -1166,6 +1156,7 @@ Run individual regressions per participant and collect the intercept and slope, 
 
 ### Extract Individual Estimates
 ```{r}
+# Function to calculate xint for one participant
 calculate_xint <- function(df, id) {
   ind_data <- df %>% filter(participantId == id)
   ind_glm <- glmer(respRS ~ step + (1 | word),
@@ -1175,17 +1166,18 @@ calculate_xint <- function(df, id) {
   xint <- -(fixef(ind_glm)[[1]]) / fixef(ind_glm)[[2]]
 }
 
+# Function to collect all xints for participant in list
 get_ind_xints <- function(df, participant_col) {
   
   participant_list <- unique(as.character(participant_col))
 
   ind_xints <- data.frame(participantId=as.character(NA),
-                        xint=as.integer(NA),
+                        xint_pred=as.integer(NA),
                         stringsAsFactors=FALSE)
 
   for (participantId in participant_list) {
-    xint = calculate_xint(df, participantId)
-    ind_row = cbind.data.frame(participantId, xint)
+    xint_pred = calculate_xint(df, participantId)
+    ind_row = cbind.data.frame(participantId, xint_pred)
     ind_xints <- rbind(ind_xints, ind_row)
   }
 
@@ -1209,9 +1201,8 @@ au_data_ind_fixef_max <- au_data_coded %>% select(-step:-rt) %>%
   # Match xints to participant data
   merge(., xints_fixef_au) %>%
 
-  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
-  mutate(xint_trans = xint) %>% #scale(xint)) %>%
-  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  # Create normalized guise bias/shift effect size score
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
 
   # Remove extra rows by summarizing
   distinct() %>%
@@ -1231,11 +1222,10 @@ au_data_ind_fixef <- au_data_coded %>% select(-step:-rt) %>%
   merge(., xints_fixef_au) %>%
 
   # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
-  filter(xint > Q1-IQR*1.5 & xint < Q3+IQR*1.5) %>%
+  filter(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5) %>%
 
-  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
-  mutate(xint_trans = xint) %>% #scale(xint)) %>%
-  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  # Create normalized guise bias/shift effect size score
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
 
   # Remove extra rows by summarizing
   distinct() %>%
@@ -1264,19 +1254,19 @@ au_data_ind_fixef %>% group_by(speakerGuise) %>% count() %>%
 
 ```{r}
 # Check outlier removals
-setdiff(au_data_ind_fixef, au_data_ind_fixef_noBL) %>% select(-Age:-xint)
+setdiff(au_data_ind_fixef, au_data_ind_fixef_noBL) %>% select(-Age:-guiseRelvl)
 ```
 
 ```{r}
 # Check outlier removals
-setdiff(au_data_ind_fixef_max, au_data_ind_fixef) %>% select(-Age:-xint)
+setdiff(au_data_ind_fixef_max, au_data_ind_fixef) %>% select(-Age:-guiseRelvl)
 ```
 
 
 #### Exploratory Plots
 ```{r}
 au_data_ind_fixef %>% 
- ggplot(aes(x=xint_trans, fill=speakerGuise, color=speakerGuise)) %>%
+ ggplot(aes(x=xint_pred, fill=speakerGuise, color=speakerGuise)) %>%
   guise_colors(3) +
   theme_minimal() +
   theme(axis.text.y = element_blank()) +
@@ -1287,7 +1277,7 @@ au_data_ind_fixef %>%
 ```{r}
 
 xint_distribution <-
-au_data_ind_fixef %>% ggplot(aes(y=xint_trans, x=speakerGuise, color=speakerGuise, fill=speakerGuise)) %>%
+au_data_ind_fixef %>% ggplot(aes(y=xint_pred, x=speakerGuise, color=speakerGuise, fill=speakerGuise)) %>%
   guise_colors(3) +
   labs(x='Guise', y='Crossover Point', color='Guise', fill='Guise') +
   gg_theme() +
@@ -1382,17 +1372,17 @@ indgroups_fixef %>%
 ### Models
 ```{r}
 # Are the three guises different in xint? 
-ind_au_lm_fixef <- lm(xint_trans ~ speakerGuise, data=au_data_ind_fixef)
+ind_au_lm_fixef <- lm(xint_pred ~ speakerGuise, data=au_data_ind_fixef)
 summary(ind_au_lm_fixef)
 
 au_data_ind_fixef$guiseRelvl = relevel(au_data_ind_fixef$speakerGuise, ref="CN")
-ind_au_lm_fixef <- lm(xint_trans ~ guiseRelvl, data=au_data_ind_fixef)
+ind_au_lm_fixef <- lm(xint_pred ~ guiseRelvl, data=au_data_ind_fixef)
 summary(ind_au_lm_fixef)
 ```
 
 ```{r}
 # Are the two guises different in xint? Not significant
-ind_au_lm_fixef <- lm(xint_trans ~ guiseContr,
+ind_au_lm_fixef <- lm(xint_pred ~ guiseContr,
                       data=au_data_ind_fixef_noBL)
 summary(ind_au_lm_fixef)
 
@@ -2047,12 +2037,12 @@ cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions, color=speakerGuise)) %
   theme_minimal() +
   geom_smooth(method="glm", se=T) +
   # geom_point(alpha=0.1) +
-  geom_vline(xintercept = bl_x) +
-  geom_vline(xintercept = cn_x) +
-  geom_vline(xintercept = mi_x) + 
-  geom_vline(xintercept = bl_x, linetype="solid") +
-  geom_vline(xintercept = cn_x, linetype="dashed") +
-  geom_vline(xintercept = mi_x, linetype="dashed")
+  geom_vline(xintercept = xint_bl) +
+  geom_vline(xintercept = xint_cn) +
+  geom_vline(xintercept = xint_mi) + 
+  geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
 
 ```
 
@@ -2086,9 +2076,9 @@ cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions,
   coord_cartesian(ylim = c(0.15, 0.85)) + 
   geom_smooth(method="loess", se=T, alpha=0.5) +
   # geom_point(alpha=0.1) + 
-  geom_vline(xintercept = bl_x, linetype="solid") +
-  geom_vline(xintercept = cn_x, linetype="dashed") +
-  geom_vline(xintercept = mi_x, linetype="dashed")
+  geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
 au_pred_plot
 
 ggsave(path="plots", filename="au_group_prop_cross_pred.png", au_pred_plot, width=12, height=8, units = "in" , dpi=72)
@@ -2186,9 +2176,9 @@ xints_coef_au_bm %>%
   theme_minimal() +
   theme(axis.text.y = element_blank()) +
   xlim(-2,2) +
-  geom_vline(xintercept = bl_x) +
-  geom_vline(xintercept = cn_x) +
-  geom_vline(xintercept = mi_x) +
+  geom_vline(xintercept = xint_bl) +
+  geom_vline(xintercept = xint_cn) +
+  geom_vline(xintercept = xint_mi) +
   geom_point(alpha=0.5)  
 
 ```
@@ -2234,9 +2224,8 @@ au_data_ind_coef_bm_v1 <- au_data_coded %>%
   # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
   # filter(xint_pred > Q1-IQR*4 & xint_pred < Q3+IQR*4) %>%
 
-  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
-  mutate(xint_trans = xint_pred) %>% #as.vector(scale(xint_pred))) %>%
-  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  # Create normalized guise bias/shift effect size score
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
   
   # Remove extra rows by summarizing
   distinct() %>%
@@ -2267,9 +2256,8 @@ au_data_ind_coef_bm_v2 <- au_data_coded %>%
   # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
   filter(xint_pred > Q1-IQR*8 & xint_pred < Q3+IQR*8) %>%
 
-  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
-  mutate(xint_trans = xint_pred) %>% #as.vector(scale(xint_pred))) %>%
-  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  # Create normalized guise bias/shift effect size score
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
   
   # Remove extra rows by summarizing
   distinct() %>%
@@ -2301,9 +2289,8 @@ au_data_ind_coef_bm_v3 <- au_data_coded %>%
   # filter(xint_pred > Q1-IQR*4 & xint_pred < Q3+IQR*4) %>%
   filter(xint_pred > Q1-IQR*4 & xint_pred < Q3+IQR*4) %>%
   
-  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
-  mutate(xint_trans = xint_pred) %>% #as.vector(scale(xint_pred))) %>%
-  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  # Create normalized guise bias/shift effect size score
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
   
   # Remove extra rows by summarizing
   distinct() %>%
@@ -2335,9 +2322,8 @@ au_data_ind_coef_bm_v4 <- au_data_coded %>%
   # filter(xint_pred > Q1-IQR*4 & xint_pred < Q3+IQR*4) %>%
   filter(xint_pred > Q1-IQR*3 & xint_pred < Q3+IQR*3) %>%
   
-  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
-  mutate(xint_trans = xint_pred) %>% #as.vector(scale(xint_pred))) %>%
-  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  # Create normalized guise bias/shift effect size score
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
   
   # Remove extra rows by summarizing
   distinct() %>%
@@ -2368,9 +2354,8 @@ au_data_ind_coef_bm_v5 <- au_data_coded %>%
   # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
   filter(xint_pred > Q1-IQR*2 & xint_pred < Q3+IQR*2) %>%
   
-  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
-  mutate(xint_trans = xint_pred) %>% #as.vector(scale(xint_pred))) %>%
-  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  # Create normalized guise bias/shift effect size score
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
   
   # Remove extra rows by summarizing
   distinct() %>%
@@ -2401,9 +2386,8 @@ au_data_ind_coef_bm_v6 <- au_data_coded %>%
   # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
   filter(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5) %>%
   
-  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
-  mutate(xint_trans = xint_pred) %>% #as.vector(scale(xint_pred))) %>%
-  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  # Create normalized guise bias/shift effect size score
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
   
   # Remove extra rows by summarizing
   distinct() %>%
@@ -2463,7 +2447,7 @@ au_data_ind_coef_bm %>% group_by(speakerGuise) %>% count() %>%
 #### Exploratory Plots (2)
 ```{r}
 au_data_ind_coef_bm_v3 %>% 
- ggplot(aes(x=xint_trans, fill=speakerGuise, color=speakerGuise)) %>%
+ ggplot(aes(x=xint_pred, fill=speakerGuise, color=speakerGuise)) %>%
   guise_colors(3) +
   theme_minimal() +
   theme(axis.text.y = element_blank()) +
@@ -2476,17 +2460,17 @@ au_data_ind_coef_bm_v3 %>%
 
 ```{r}
 # Are the three guises different in xint? YES all differenet
-ind_au_lm_guise_bm <- lm(xint_trans ~ speakerGuise, data=au_data_ind_coef_bm_v3)
+ind_au_lm_guise_bm <- lm(xint_pred ~ speakerGuise, data=au_data_ind_coef_bm_v3)
 summary(ind_au_lm_guise_bm)
 
 au_data_ind_coef_bm$guiseRelvl = relevel(au_data_ind_coef_bm$speakerGuise, ref="CN")
-ind_au_lm_guise_bm_relvl <- lm(xint_trans ~ guiseRelvl, data=au_data_ind_coef_bm_v3)
+ind_au_lm_guise_bm_relvl <- lm(xint_pred ~ guiseRelvl, data=au_data_ind_coef_bm_v3)
 summary(ind_au_lm_guise_bm_relvl)
 ```
 
 ```{r}
 # Are the two guises different in xint? YES, they strongly go in opposite directions
-ind_au_lm <- lm(xint_trans ~ guiseContr,
+ind_au_lm <- lm(xint_pred ~ guiseContr,
                 data=au_data_ind_coef_bm_noBL_v3)
 summary(ind_au_lm)
 
