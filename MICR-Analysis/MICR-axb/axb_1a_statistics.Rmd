@@ -1,0 +1,3034 @@
+---
+title: "MICR AXB 1a Statistics"
+output: html_notebook
+---
+# Set up
+## Packages
+```{r, warning=F}
+# Wrangling
+library(tidyverse)
+library(mgsub)
+
+# Statistics/Numerical processing
+library(brms)
+library(lme4)
+library(boot)
+
+# Plotting
+library(ggplot2)
+library(ghibli)
+
+# Optional settings
+options(dplyr.summarise.inform=F) # Stop dplyr from printing summarise error (that isn't an error)
+select <- dplyr::select # Ensure that select() command is the dplyr command (clashes with MASS, which is imported/required by paran)
+```
+
+## Functions
+```{r, warning=F}
+# Standard error function
+std.error <- function(x, na.rm = T) {
+  sqrt(var(x, na.rm = na.rm)/length(x[complete.cases(x)]))
+}
+
+# general standardized ggplot theme
+gg_theme <- function() {
+  theme_bw() +
+  theme(plot.title=element_text(size=25),
+        plot.subtitle=element_text(size=15, face="italic"),
+        axis.title=element_text(size=20),
+        axis.text=element_text(size=15),
+        strip.background =element_rect(fill="white"),
+        strip.text = element_text(size=15))+
+  theme(legend.title = element_text(size=15, face="bold"),
+        legend.text=element_text(size=15))
+}
+
+# color theme for guise plots
+guise_colors <- function(gg_object, n_contrasts) {
+  if (n_contrasts == 3) {
+    col_values <- c(6,4,3)
+  } else if (n_contrasts == 2) {
+    col_values <- c(4,3)
+  } else {
+    return(print('Number of contrasts invalid: Must be either 3 or 2'))
+  }
+  
+   return (
+      gg_object +
+        scale_fill_manual(values=ghibli_palette("PonyoMedium")[col_values])+
+        scale_color_manual(values=ghibli_palette("PonyoMedium")[col_values])
+    )
+}
+
+# color theme and labels for interaction plots
+interaction_plot_theme <- function(gg_object, n_contrasts) {
+    if (n_contrasts == 3) {
+      col_values <- c(7,6,5)
+  } else if (n_contrasts == 4) {
+    col_values <- c(7,6,5,2)
+  } else {
+    return(print('Number of contrasts invalid: Must be either 3 or 4'))
+  }
+  return(
+      gg_object +
+        gg_theme() +
+        scale_color_manual(values=ghibli_palette("MononokeMedium")[col_values])+
+        scale_fill_manual(values=ghibli_palette("MononokeMedium")[col_values])+
+        scale_shape_manual(values=c(16,15,17,18))+
+        scale_linetype_manual(values=c("solid", "longdash", "dashed", "dotted"))+
+        labs(y = 'Guise Effect', x = 'Stereotype Familiarity', 
+             color = 'Empathy Quotient', fill = 'Empathy Quotient', 
+             shape = 'Empathy Quotient', linetype = 'Empathy Quotient')
+    )
+}
+
+## theme for pca plots
+pca_plot_theme <- function(gg_object) {
+  gg_object +
+  gg_theme() +
+  scale_x_continuous(lim=c(-3, 3),breaks=seq(-3,3,1)) +
+  scale_y_continuous(lim=c(-3.5, 3.5),breaks=seq(-3,3,1)) +
+  geom_hline(yintercept=0, linetype="dashed") +
+  geom_vline(xintercept=0, linetype="dashed") +
+  labs(x="Dim 1 (XX.X%)", y="Dim 2 (XX.X%)")
+}
+
+## theme for proportion plots
+proportion_plot_theme <- function(gg_object) {
+  gg_object %>% guise_colors(3) +
+  gg_theme() +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(y = "Proportion 'raised' response", x = "Continuum Step (UR to RS)", 
+       color="Guise", fill="Guise", linetype = "Guise")
+}
+```
+# Data Preparation
+
+```{r}
+### AXB Experiment 1a: Two Speakers, two guises
+exp_1a <- read.csv('data/axb_1a_exp_data.csv', skipNul=T)
+lbq_1a <- read.csv('data/axb_1a_lbq_data.csv', skipNul=T)
+
+## Check number of participants
+length(unique(exp_1a$participantId))
+length(unique(lbq_1a$participantId))
+
+## Merge data
+(axb_1a <- exp_1a %>% merge(lbq_1a, .) %>%  mutate(experimentId = '1a') %>% relocate(experimentId))
+```
+
+```{r}
+axb_1a_data_coded <- axb_1a %>%
+  
+  # Treatment/Baseline coding (compare to reference group)
+  mutate(guiseCN=case_when(speakerGuise=='CN' ~ 1,
+                         TRUE~0),
+        guiseMI=case_when(speakerGuise=='MI' ~ 1,
+                         TRUE~0),
+        
+        # Deviation/Contrast coding (compare MI to CN)
+        guiseContr=case_when(speakerGuise=='CN' ~ -1,
+                             speakerGuise=='MI' ~ 1,
+                             TRUE~0),
+        genderContr = case_when(Gender=='f' ~ -1,
+                                 Gender=='m' ~ 1,
+                                 TRUE ~ 0)) %>%
+  mutate(across(where(is.character), as.factor)) %>%
+  mutate(across(where(is.matrix), as.vector)) %>%
+  select(experimentId, participantId, speaker,speakerGuise, Age, Gender, CEscore:EQscore, 
+         step, vowel, word, order, respRS, rt, guiseCN, guiseMI, guiseContr, genderContr)
+
+colnames(axb_1a_data_coded)
+axb_1a_data_coded
+
+au_data_coded <- filter(axb_1a_data_coded, vowel=='AU')
+au_data_coded_S3 <- filter(axb_1a_data_coded, vowel=='AU') %>% filter(speaker=='S3')
+au_data_coded_S9 <- filter(axb_1a_data_coded, vowel=='AU') %>% filter(speaker=='S9')
+```
+
+#...
+# /au/ both
+## Continuous Step Regression
+### Models
+```{r include=F}
+# guiseCN + guiseMI: Base Model for extracting fixed effects and model coefficients (BL vs CN & MI)
+cont_au_glm <- glmer(respRS ~ step + guiseCN + guiseMI + step:guiseCN + step:guiseMI +
+                       speaker + speaker:guiseCN + speaker:guiseMI +
+                       speaker:step:guiseCN + speaker:step:guiseMI +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded
+                    ) 
+summary(cont_au_glm)
+```
+
+
+```{r}
+# speakerGuise: Base Model for extracting fixed effects and model coefficients (BL vs CN & MI)
+cont_au_glm_base <- glmer(respRS ~ step + speakerGuise + step:speakerGuise +
+                            speaker + speaker:speakerGuise + speaker:step:speakerGuise +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded
+                    ) 
+summary(cont_au_glm_base)
+```
+
+```{r}
+# speakerGuise: Releveled Comparison: CN guise vs. MI guise
+au_data_coded$guiseRelvl = relevel(au_data_coded$speakerGuise, ref="CN")
+
+# Max Model
+cont_au_glm_base_rlvl <- glmer(respRS ~ step + guiseRelvl + step:guiseRelvl +
+                            speaker + speaker:guiseRelvl + speaker:step:guiseRelvl +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded
+                    ) 
+summary(cont_au_glm_base_rlvl)
+```
+
+
+### Extract Group Estimates
+```{r}
+# Check intercept values
+fixef_au <- fixef(cont_au_glm_base)
+fixef_au
+```
+
+```{r}
+# Calculate intercepts per guise
+( int_bl <- fixef_au[[1]] )
+( int_cn <- int_bl + fixef_au[[3]] )
+( int_mi <- int_bl + fixef_au[[4]] )
+
+# Calculate slopes per guise
+( slope_bl <- fixef_au[[2]] )
+( slope_cn <- slope_bl + fixef_au[[5]] )
+( slope_mi <- slope_bl + fixef_au[[6]] )
+
+```
+
+```{r}
+# Double check intercept values to guise means
+au_data_coded_S3 %>% group_by(speakerGuise) %>%
+  summarize(propRS = mean(respRS), logOddsRS = logit_scaled(mean(respRS))) %>%
+  mutate(intercepts = c(int_bl, int_cn, int_mi),
+         slopes = c(slope_bl, slope_cn, slope_mi)) %>%
+  mutate(mean_int_diff = intercepts - logOddsRS)
+
+```
+
+```{r}
+# Calculate x-intercepts per guise, i.e., where y=0, using the formula [y = ax + b]  ~  [x = -b/a]
+( xint_bl = -(int_bl / slope_bl) )
+( xint_cn = -(int_cn / slope_cn) )
+( xint_mi = -(int_mi / slope_mi) )
+
+```
+
+#### Prediction Plots
+```{r}
+# Predict on all unique combinations (Option 1)
+cont_au_pred <- 
+  expand.grid(
+    participantId = NA,
+    word = NA,
+    speaker = unique(au_data_coded$speaker),
+    step = unique(au_data_coded$step),
+    speakerGuise = unique(au_data_coded$speakerGuise)
+  )
+cont_au_pred
+  
+cont_au_pred$pred_logOdds <- predict(cont_au_glm_base, newdata=cont_au_pred, type = "link", re.form=NA)
+cont_au_pred$pred_prop <- predict(cont_au_glm_base, newdata=cont_au_pred, type = "response", re.form=NA)
+
+cont_au_pred %>% ggplot(aes(x=step, y=pred_logOdds, color=speakerGuise)) %>% 
+  guise_colors(3) +
+  theme_minimal() +
+  facet_grid(~speaker) +
+  geom_smooth(method="lm", formula = 'y ~ x') +
+  # geom_smooth(method="loess") +
+  geom_point(alpha=0.8) + 
+  geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
+
+cont_au_pred %>% ggplot(aes(x=step, y=pred_prop, color=speakerGuise, fill=speakerGuise)) %>% 
+  guise_colors(3) +
+  theme_minimal() +
+  facet_grid(~speaker) +
+  # geom_smooth(method="lm", formula = 'y ~ x') +
+  geom_smooth(method="loess", alpha=0.3) +
+  geom_point(alpha=0.8) + 
+  geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
+```
+
+
+```{r include=T}
+# Predict on original/actual data (Option 2: Proportions)
+cont_au_pred_actual <-
+  au_data_coded %>%
+  mutate(predictions =  predict(cont_au_glm, type = "response") )
+# cont_au_pred_actual
+
+au_pred_plot <-
+cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions, 
+                                   color=speakerGuise, fill=speakerGuise, linetype=speakerGuise)) %>% 
+  proportion_plot_theme() +
+  facet_grid(speaker~vowel) +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  coord_cartesian(ylim = c(0.15, 0.85)) + 
+  geom_smooth(method="loess", se=T, alpha=0.5)
+au_pred_plot
+
+au_pred_plot <-
+cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions, 
+                                   color=speakerGuise, fill=speakerGuise, linetype=speakerGuise)) %>% 
+  proportion_plot_theme() +
+  facet_grid(speaker~vowel) +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  coord_cartesian(ylim = c(0.15, 0.85)) + 
+  geom_smooth(method="loess", se=T, alpha=0.5) +
+  # geom_point(alpha=0.1) + 
+    geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
+au_pred_plot
+```
+
+#...
+# /au/ S3
+## Continuous Step Regression
+### Models
+```{r include=F}
+# guiseCN + guiseMI: Base Model for extracting fixed effects and model coefficients (BL vs CN & MI)
+cont_au_glm <- glmer(respRS ~ step + guiseCN + guiseMI + step:guiseCN + step:guiseMI +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S3
+                    ) 
+summary(cont_au_glm)
+```
+
+```{r}
+# speakerGuise: Base Model for extracting fixed effects and model coefficients (BL vs CN & MI)
+cont_au_glm_base <- glmer(respRS ~ step + speakerGuise + step:speakerGuise +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S3
+                    ) 
+summary(cont_au_glm_base)
+
+# No-interaction Model
+cont_au_glm_base2 <- glmer(respRS ~ step + speakerGuise  +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S3
+                    ) 
+anova(cont_au_glm_base2, cont_au_glm_base)
+
+# No-Guise Model
+cont_au_glm_base3 <- glmer(respRS ~ step  +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S3
+                    ) 
+anova(cont_au_glm_base3, cont_au_glm_base2)
+```
+
+```{r}
+# speakerGuise: Releveled Comparison: CN guise vs. MI guise
+au_data_coded_S3$guiseRelvl = relevel(au_data_coded_S3$speakerGuise, ref="CN")
+
+# Max Model
+cont_au_glm_relvl <- glmer(respRS ~ step + guiseRelvl + step:guiseRelvl +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S3
+                    ) 
+summary(cont_au_glm_relvl)
+
+# No-interaction Model
+cont_au_glm_relvl2 <- glmer(respRS ~ step + guiseRelvl  +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S3
+                    ) 
+anova(cont_au_glm_relvl2, cont_au_glm_relvl)
+
+# No-guise Model
+cont_au_glm_relvl3 <- glmer(respRS ~ step  +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S3
+                    ) 
+anova(cont_au_glm_relvl3, cont_au_glm_relvl2)
+```
+
+
+### Extract Group Estimates
+```{r}
+# Check intercept values
+fixef_au <- fixef(cont_au_glm_base)
+fixef_au
+```
+
+```{r}
+# Calculate intercepts per guise
+( int_bl <- fixef_au[[1]] )
+( int_cn <- int_bl + fixef_au[[3]] )
+( int_mi <- int_bl + fixef_au[[4]] )
+
+# Calculate slopes per guise
+( slope_bl <- fixef_au[[2]] )
+( slope_cn <- slope_bl + fixef_au[[5]] )
+( slope_mi <- slope_bl + fixef_au[[6]] )
+
+```
+
+```{r}
+# Double check intercept values to guise means
+au_data_coded_S3 %>% group_by(speakerGuise) %>%
+  summarize(propRS = mean(respRS), logOddsRS = logit_scaled(mean(respRS))) %>%
+  mutate(intercepts = c(int_bl, int_cn, int_mi),
+         slopes = c(slope_bl, slope_cn, slope_mi)) %>%
+  mutate(mean_int_diff = intercepts - logOddsRS)
+
+```
+
+```{r}
+# Calculate x-intercepts per guise, i.e., where y=0, using the formula [y = ax + b]  ~  [x = -b/a]
+( xint_bl = -(int_bl / slope_bl) )
+( xint_cn = -(int_cn / slope_cn) )
+( xint_mi = -(int_mi / slope_mi) )
+
+```
+
+#### Prediction Plots
+```{r include=F}
+# Predict on all unique combinations (Option 1)
+cont_au_pred <- 
+  expand.grid(
+    participantId = NA,
+    word = NA,
+    step = unique(au_data_coded_S3$step),
+    speakerGuise = unique(au_data_coded_S3$speakerGuise)
+  )
+cont_au_pred
+  
+cont_au_pred$pred_logOdds <- predict(cont_au_glm_base, newdata=cont_au_pred, type = "link", re.form=NA)
+cont_au_pred$pred_prop <- predict(cont_au_glm_base, newdata=cont_au_pred, type = "response", re.form=NA)
+
+cont_au_pred %>% ggplot(aes(x=step, y=pred_logOdds, color=speakerGuise)) %>% 
+  guise_colors(3) +
+  theme_minimal() +
+  geom_smooth(method="lm", formula = 'y ~ x') +
+  # geom_smooth(method="loess") +
+  geom_point(alpha=0.8) + 
+  geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
+
+cont_au_pred %>% ggplot(aes(x=step, y=pred_prop, color=speakerGuise, fill=speakerGuise)) %>% 
+  guise_colors(3) +
+  theme_minimal() +
+  # geom_smooth(method="lm", formula = 'y ~ x') +
+  geom_smooth(method="loess", alpha=0.3) +
+  geom_point(alpha=0.8) + 
+  geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
+```
+
+
+```{r include=T}
+# Predict on original/actual data (Option 2: Proportions)
+cont_au_pred_actual <-
+  au_data_coded_S3 %>%
+  mutate(predictions =  predict(cont_au_glm, type = "response") )
+# cont_au_pred_actual
+
+au_pred_plot <-
+cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions, 
+                                   color=speakerGuise, fill=speakerGuise, linetype=speakerGuise)) %>% 
+  proportion_plot_theme() +
+  facet_grid(~vowel) +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  coord_cartesian(ylim = c(0.15, 0.85)) + 
+  geom_smooth(method="loess", se=T, alpha=0.5)
+au_pred_plot
+
+au_pred_plot <-
+cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions, 
+                                   color=speakerGuise, fill=speakerGuise, linetype=speakerGuise)) %>% 
+  proportion_plot_theme() +
+  facet_grid(~vowel) +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  coord_cartesian(ylim = c(0.15, 0.85)) + 
+  geom_smooth(method="loess", se=T, alpha=0.5) +
+  # geom_point(alpha=0.1) + 
+    geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
+au_pred_plot
+```
+# .
+## Coef Ind Regression
+### Extract Individual Estimates
+For these calculations:
+* yint_bl = Intercept
+* slope_bl = step
+* yint_cn = Intercept + guiseCN
+* slope_cn = step + step.guiseCN
+* xint_bl = yint_bl / slope_bl
+* xint_cn = yint_cn / slope_cn
+
+```{r}
+# Extract individual coefficients (based on random effects)
+ranef_au <- ranef(cont_au_glm)[1] # raw adjustment values
+coef_au <- coef(cont_au_glm)[1] # individual co-efficients (adjustments already applied)
+
+# Process coefficients
+coef_au <-
+  data.frame(coef_au) %>% rownames_to_column("participantId") %>% 
+  rename_with( ~gsub("participantId.","", .x), starts_with("participantId.")) %>%
+  rename_with( ~gsub("^\\.|\\.$","", .x)) %>%
+  
+  # Calculate xints per guise per individual (i.e., predicted patterns per guises that they didn't see)
+  mutate(xint_bl = -(Intercept / step),
+         xint_cn = -((Intercept + guiseCN) / (step + step.guiseCN)),
+         xint_mi = -((Intercept + guiseMI) / (step + step.guiseMI)))
+```
+
+```{r}
+xints_coef_au <-
+  coef_au %>% select(participantId, xint_bl, xint_cn, xint_mi) %>%
+  pivot_longer(., xint_bl:xint_mi, names_to="guise_pred", names_prefix="xint_", values_to="xint_pred", 
+               names_transform = list(guise_pred = toupper)) %>%
+  mutate_if(is.character,as.factor)
+xints_coef_au
+```
+
+#### Exploratory Plots (1)
+```{r}
+xints_coef_au %>%
+ ggplot(aes(y=participantId, x=xint_pred, color=guise_pred)) %>% 
+  guise_colors(3) +
+  theme_minimal() +
+  theme(axis.text.y = element_blank()) +
+  xlim(-2,2) +
+  geom_vline(xintercept = xint_bl) +
+  geom_vline(xintercept = xint_cn) +
+  geom_vline(xintercept = xint_mi) +
+  geom_point(alpha=0.8)  
+
+```
+
+```{r}
+xints_coef_au %>% ggplot(aes(y=xint_pred, x=guise_pred, color=guise_pred)) %>% guise_colors(3) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_jitter(alpha=0.5) +
+  geom_boxplot(alpha=0.8)
+  
+xints_coef_au %>% ggplot(aes(x=xint_pred, y=reorder(guise_pred, desc(guise_pred)), color=guise_pred)) %>% guise_colors(3) +
+  theme_minimal() +
+  labs(y="guise_pred") +
+  coord_cartesian(xlim=c(-3, 3)) +
+  geom_jitter(alpha=0.3) +
+  geom_boxplot(alpha=0.8)
+  # geom_violin(alpha=0.8)
+
+  
+```
+
+### Process Data + Outliers
+```{r}
+Q1 <- quantile(xints_coef_au$xint_pred, .25)
+Q3 <- quantile(xints_coef_au$xint_pred, .75)
+IQR <- IQR(xints_coef_au$xint_pred)
+
+au_data_ind_coef <- au_data_coded_S3 %>% select(-step:-rt) %>% 
+  # Match xints to participant data
+  merge(., xints_coef_au) %>%
+  
+  # Filter out BL participants and predictions (for now..., may use for comparison or calculating measure)
+  filter(speakerGuise!='BL') %>%
+  
+  # Keep only the xint values of the guise that participants actually were assigned/completed
+  filter(speakerGuise == guise_pred) %>%
+  
+  # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
+  filter(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5) %>%
+  # filter(xint_pred > Q1-IQR*2 & xint_pred < Q3+IQR*2) %>%
+  
+  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
+  mutate(xint_trans = as.vector(scale(xint_pred))) %>%
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  
+  # Remove extra rows by summarizing
+  distinct() %>%
+  droplevels()
+  
+au_data_ind_coef
+summary(au_data_ind_coef)
+```
+
+
+```{r}
+# Check Data numbers
+au_data_ind_coef %>% group_by(experimentId, speakerGuise) %>% count() %>%
+  merge(., au_data_ind_coef %>% 
+          group_by(experimentId, speakerGuise) %>% 
+          summarize(across(where(is.numeric), mean))
+        ) %>% select(-MSscore, -guiseCN:-genderContr)
+
+au_data_ind_coef %>% group_by(speakerGuise) %>% count() %>%
+  merge(., au_data_ind_coef %>% 
+          group_by(speakerGuise) %>% 
+          summarize(across(where(is.numeric), mean))
+        ) %>% select(-MSscore, -guiseCN:-genderContr)
+```
+
+```{r}
+# Check number of participants with only 1 data point (other was filtered out as outlier)
+# au_data_ind_coef %>% group_by(participantId, experimentId, speakerGuise) %>%
+#   count() %>%
+#   filter(n!=2) 
+
+# Check number of BL participants, filtered out
+au_data_coded_S3 %>% select(-step:-rt) %>% 
+  # Match xints to participant data
+  merge(., xints_coef_au) %>% 
+  filter(speakerGuise=='BL') %>%
+  group_by(participantId, experimentId, speakerGuise) %>%
+  count() # 40
+  
+# Check number of participants as outliers, filtered out
+au_data_coded_S3 %>% select(-step:-rt) %>% 
+  # Match xints to participant data
+  merge(., xints_coef_au) %>% 
+  distinct() %>%
+  filter(speakerGuise!='BL') %>%
+  filter(speakerGuise == guise_pred) %>%
+  filter(xint_pred < Q1-IQR*1.5 | xint_pred > Q3+IQR*1.5) %>%   # flipped criteria to outside edges
+  group_by(participantId, experimentId, speakerGuise) %>% count() %>% # 20 participants
+  group_by(experimentId, speakerGuise) %>% count() # 3 CN / 5 MI
+
+```
+
+#### Exploratory Plots (2)
+```{r}
+au_data_ind_coef %>% 
+ ggplot(aes(x=xint_trans, fill=speakerGuise, color=speakerGuise)) +
+  theme_minimal() +
+  theme(axis.text.y = element_blank()) +
+  geom_density(alpha=0.4, binwidth=0.1)
+```
+
+```{r}
+au_data_ind_coef %>% ggplot(aes(y=xint_trans, x=guise_pred, color=guise_pred)) %>% guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_jitter(alpha=0.5) +
+  geom_boxplot(alpha=0)
+  
+au_data_ind_coef %>% ggplot(aes(y=guiseShift, x=guise_pred, color=guise_pred)) %>% guise_colors(2)+
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_jitter(alpha=0.5) +
+  geom_boxplot(alpha=0)
+
+```
+
+```{r}
+au_data_ind_coef %>% ggplot(aes(y=guiseShift, x=SAscore, color=guise_pred)) %>% guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method='lm', se=T, alpha=0.25, fullrange=T) #+
+  # facet_grid(~guise_pred)
+```
+
+
+```{r}
+au_data_ind_coef %>% ggplot(aes(y=guiseShift, x=EQscore, color=guise_pred)) %>% guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method='lm', se=T, alpha=0.25, fullrange=T) #+
+  # facet_grid(~guise_pred)
+
+```
+
+```{r}
+indgroups_coef <- 
+  au_data_ind_coef %>% 
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high"))) #%>%
+  # group_by(EQgroups) %>% summarize(n=n(), meanEQ = mean(EQscore),min = min(EQscore),max = max(EQscore), range=max(EQscore)-min(EQscore))
+
+# Facet guise + EQ
+indgroups_coef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+
+# Facet EQ
+indgroups_coef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(~EQgroups) +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+
+# No Facet
+indgroups_coef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+  
+```
+
+### Models
+```{r}
+# Are the two guises different in xint? YES --- they go in opposite directions
+ind_au_lm <- lm(xint_trans ~ guiseContr,
+                data=au_data_ind_coef)
+summary(ind_au_lm)
+```
+
+
+```{r}
+# Are the size of individual guise shift effects mediated by individual SA / EQ score? 
+
+# Basic model: No sig, but getting there
+ind_au_lm <- lm(guiseShift ~ SAscore * EQscore,
+                data=au_data_ind_coef)
+summary(ind_au_lm)
+```
+
+```{r}
+# Medium model: No but similarly getting there
+ind_au_lm <- lm(guiseShift ~ guiseContr + SAscore * EQscore +
+                  guiseContr:SAscore + speakerGuise:EQscore + 
+                  guiseContr:SAscore:EQscore, 
+                  data=au_data_ind_coef)
+summary(ind_au_lm)
+```
+
+```{r}
+# Max model: More again, after adding in other controls
+ind_au_lm_coef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                  SAscore * EQscore +
+                  guiseContr:SAscore + guiseContr:EQscore + 
+                  guiseContr:SAscore:EQscore, 
+                  data=au_data_ind_coef)
+summary(ind_au_lm_coef)
+
+```
+#### Comparisons
+```{r}
+# Model comparison ---  Key variables
+
+# Max model:
+ind_au_lm_coef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef)
+
+# No 3-way w/ Guise:
+ind_au_lm_coef2 <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef2, ind_au_lm_coef)
+
+# No 2-way w/ Guise:
+ind_au_lm_coef3 <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef3, ind_au_lm_coef2)
+
+# No *key* 2-way interaction: ***Yes! Sig.***
+ind_au_lm_coef4 <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore + EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef4, ind_au_lm_coef3)
+
+# No EQ: Nope
+ind_au_lm_coef5a <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef5a, ind_au_lm_coef4)
+
+# No SA: Nope
+ind_au_lm_coef5b <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef5b, ind_au_lm_coef4)
+
+# No SA or EQ: Nope
+ind_au_lm_coef5c <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef5c, ind_au_lm_coef4)
+
+```
+
+```{r}
+# Model comparison ---  Control variables
+
+# Max model:
+ind_au_lm_coef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef)
+
+# No controls model: Doesn't make a big difference, but including controls does improve model fit (R^2)
+ind_au_lm_coef.e <- lm(guiseShift ~ guiseContr +
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef.e)
+anova(ind_au_lm_coef.e, ind_au_lm_coef)
+
+# Single removals: None make significant differences, but trending, other than CE
+# No CE model:
+ind_au_lm_coef.a <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef.a, ind_au_lm_coef)
+
+# No age model:
+ind_au_lm_coef.b <- lm(guiseShift ~ guiseContr + genderContr + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef.b, ind_au_lm_coef)
+
+# No Gen model:
+ind_au_lm_coef.c <- lm(guiseShift ~ guiseContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef.c, ind_au_lm_coef)
+
+# No guise model:
+ind_au_lm_coef.d <- lm(guiseShift ~ genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef.d, ind_au_lm_coef)
+
+```
+
+```{r}
+# Model comparison --- More than max
+
+# Max model:
+ind_au_lm_coef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef)
+
+# Plus Gender model: Gets worse! (R^2)
+ind_au_lm_coef.A <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore + 
+                       genderContr:SAscore + genderContr:EQscore + 
+                       genderContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef.A)
+anova(ind_au_lm_coef.A, ind_au_lm_coef)
+
+# Plus Gender:Guise model: Gets bettter again + some significance appears!
+ind_au_lm_coef.B <- lm(guiseShift ~ guiseContr * genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore + 
+                       genderContr:SAscore + genderContr:EQscore + 
+                       genderContr:SAscore:EQscore +
+                       guiseContr:genderContr:SAscore + guiseContr:genderContr:EQscore + 
+                       guiseContr:genderContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef.B)
+anova(ind_au_lm_coef.B, ind_au_lm_coef)
+```
+
+
+#### Prediction Plots
+##### Main Effects
+```{r}
+ind_au_pred <- au_data_ind_coef
+ind_au_pred$pred_guiseShift <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+
+ggplot(aes(x=SAscore, y=pred_guiseShift, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=SAscore, y=pred_guiseShift), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+```
+
+```{r}
+ind_au_pred <- au_data_ind_coef
+ind_au_pred$pred_guiseShift <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+
+ggplot(aes(x=scale(Age), y=pred_guiseShift, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=pred_guiseShift), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+
+ggplot(aes(x=scale(Age), y=SAscore, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=SAscore), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+ggplot(aes(x=scale(Age), y=EQscore, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=EQscore), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+```
+
+##### Interactions
+```{r}
+# Check data values in prep for predictions
+au_data_ind_coef %>% 
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high"))) %>%
+  group_by(EQgroups) %>% summarize(n=n(), meanEQ = mean(EQscore),min = min(EQscore),max = max(EQscore), range=max(EQscore)-min(EQscore))
+
+# str(au_data_ind_coef)
+```
+
+```{r}
+# Predict on all unique combinations (Option 1)
+ind_au_pred <- 
+  expand.grid(
+    guiseContr = unique(au_data_ind_coef$guiseContr),
+    genderContr = mean(au_data_ind_coef$genderContr),
+    Age = mean(au_data_ind_coef$Age),
+    CEscore = mean(au_data_ind_coef$CEscore),
+    SAscore = unique(au_data_ind_coef$SAscore),
+    EQscore = c(-1.09149875, 0.09118241, 1.32078756)
+  )
+  
+ind_au_pred$pred_xint <- predict(ind_au_lm_coef, newdata=ind_au_pred, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_coef, newdata=ind_au_pred, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(speakerGuise = ifelse(guiseContr == -1, 'CN', 'MI')) %>%
+  mutate(EQgroups = case_when(EQscore == -1.09149875 ~ "low",
+                                EQscore == 0.09118241 ~ "mid",
+                                EQscore == 1.32078756 ~ "high")) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high")))
+
+# Facet by EQ
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_coef) +
+  geom_line(aes(x=SAscore, y=pred_xint, color=EQgroups), 
+               se=T, alpha=0.5, size=1, data=ind_au_pred)
+
+# Guise Facet
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_coef) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# No Facet
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_coef) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
+
+```{r}
+# Predict on actual data
+
+ind_au_pred <- au_data_ind_coef
+ind_au_pred$pred_xint <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high")))
+
+
+# Guise + EQ Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# Guise Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# Facet by EQ
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# No Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
+
+```{r}
+# Predict on actual data 
+
+ind_au_pred <- au_data_ind_coef
+ind_au_pred$pred_xint <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(EQgroups = as.numeric(cut_interval(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                              EQgroups == 2 & EQscore < 0 ~ "mid-low",
+                              EQgroups == 2 & EQscore > 0 ~ "mid-high",
+                              EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid-low", "mid-high", "high")))
+
+
+# Guise + EQ Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# Guise Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# Facet by EQ
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# No Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
+
+
+# .
+## (alt) Fixef Ind Regression
+Run individual regressions per participant and collect the intercept and slope, which would conceptually be less skewed towards the group means compared to the coefficients from the full model.
+
+### Extract Individual Estimates
+```{r}
+calculate_xint <- function(df, id) {
+  ind_data <- df %>% filter(participantId == id)
+  ind_glm <- glmer(respRS ~ step + (1 | word),
+                 family = "binomial", 
+                 control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                 data = ind_data)
+  xint <- -(fixef(ind_glm)[[1]]) / fixef(ind_glm)[[2]]
+}
+
+get_ind_xints <- function(df, participant_col) {
+  
+  participant_list <- unique(as.character(participant_col))
+
+  ind_xints <- data.frame(participantId=as.character(NA),
+                        xint=as.integer(NA),
+                        stringsAsFactors=FALSE)
+
+  for (participantId in participant_list) {
+    xint = calculate_xint(df, participantId)
+    ind_row = cbind.data.frame(participantId, xint)
+    ind_xints <- rbind(ind_xints, ind_row)
+  }
+
+  ind_xints <- ind_xints %>% na.omit() %>% mutate_if(is.character, as.factor)
+}
+```
+
+```{r}
+( xints_fixef_au <- get_ind_xints(au_data_coded, au_data_coded$participantId) )
+```
+
+### Process Data + Outliers
+```{r}
+Q1 <- quantile(xints_fixef_au$xint, .25)
+Q3 <- quantile(xints_fixef_au$xint, .75)
+IQR <- IQR(xints_fixef_au$xint)
+
+au_data_ind_fixef <- au_data_coded %>% select(-step:-rt) %>%
+  # Match xints to participant data
+  merge(., xints_fixef_au) %>%
+  # Filter out BL participants and predictions (for now..., may use for comparison or calculating measure)
+  filter(speakerGuise!='BL') %>%
+
+  # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
+  filter(xint > Q1-IQR*1.5 & xint < Q3+IQR*1.5) %>%
+
+  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
+  mutate(xint_trans = scale(xint)) %>%
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+
+  # Remove extra rows by summarizing
+  distinct() %>%
+  droplevels()
+
+au_data_ind_fixef
+summary(au_data_ind_fixef)
+```
+
+```{r}
+# Check Data numbers
+au_data_ind_fixef %>% group_by(experimentId, speakerGuise) %>% count() %>%
+  merge(., au_data_ind_fixef %>% 
+          group_by(experimentId, speakerGuise) %>% 
+          summarize(across(where(is.numeric), mean))
+        ) %>% select(-MSscore, -guiseCN:-genderContr)
+
+au_data_ind_fixef %>% group_by(speakerGuise) %>% count() %>%
+  merge(., au_data_ind_fixef %>% 
+          group_by(speakerGuise) %>% 
+          summarize(across(where(is.numeric), mean))
+        ) %>% select(-MSscore, -guiseCN:-genderContr)
+```
+
+```{r}
+# Check number of participants with only 1 data point (other was filtered out as outlier)
+# au_data_ind_coef %>% group_by(participantId, experimentId, speakerGuise) %>%
+#   count() %>%
+#   filter(n!=2) 
+
+# Check number of BL participants, filtered out
+au_data_coded %>% select(-step:-rt) %>% 
+  # Match xints to participant data
+  merge(., xints_fixef_au) %>% 
+  filter(speakerGuise=='BL') %>%
+  group_by(participantId, experimentId, speakerGuise) %>%
+  count() # 73
+  
+# Check number of participants as outliers, filtered out
+au_data_coded %>% select(-step:-rt) %>% 
+  # Match xints to participant data
+  merge(., xints_fixef_au) %>% 
+  distinct() %>%
+  filter(speakerGuise!='BL') %>%
+  filter(xint < Q1-IQR*1.5 | xint > Q3+IQR*1.5) %>%   # flipped criteria to outside edges
+  group_by(participantId, experimentId, speakerGuise) %>% count() %>% # 11 participants
+  group_by(experimentId, speakerGuise) %>% count() # 7 CN (4 from 1a, vs 3) / 4 MI (2 from 1a, vs 2)
+
+```
+
+#### Exploratory Plots
+```{r}
+au_data_ind_fixef %>% 
+ ggplot(aes(x=xint_trans, fill=speakerGuise, color=speakerGuise)) +
+  theme_minimal() +
+  theme(axis.text.y = element_blank()) +
+  geom_density(alpha=0.4, binwidth=0.1)
+```
+
+
+```{r}
+au_data_ind_fixef %>% 
+ ggplot(aes(y=speakerGuise, x=xint_trans, color=speakerGuise)) %>%
+  guise_colors(2) +
+  theme_minimal() +
+  theme(axis.text.y = element_blank()) +
+  coord_cartesian(xlim=c(-3, 3)) +
+  geom_jitter(alpha=0.3)+
+  geom_boxplot(alpha=0)
+
+au_data_ind_fixef %>% ggplot(aes(y=xint_trans, x=speakerGuise, color=speakerGuise)) %>%
+  guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_jitter(alpha=0.3) +
+  geom_boxplot(alpha=0)
+
+au_data_ind_fixef %>% ggplot(aes(y=guiseShift, x=speakerGuise, color=speakerGuise)) %>%
+  guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_jitter(alpha=0.3) +
+  geom_boxplot(alpha=0)
+
+
+```
+
+
+```{r}
+au_data_ind_fixef %>% ggplot(aes(y=guiseShift, x=SAscore, color=speakerGuise)) %>% guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method='lm', se=T, alpha=0.25, fullrange=T)
+```
+
+
+```{r}
+au_data_ind_fixef %>% ggplot(aes(y=guiseShift, x=EQscore, color=speakerGuise)) %>% guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method='lm', se=T, alpha=0.25, fullrange=T) #+
+  # facet_grid(~guise_pred)
+
+```
+
+```{r}
+indgroups_fixef <- 
+  au_data_ind_fixef %>% 
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high"))) #%>%
+  # group_by(EQgroups) %>% summarize(n=n(), meanEQ = mean(EQscore),min = min(EQscore),max = max(EQscore), range=max(EQscore)-min(EQscore))
+
+# Facet guise + EQ
+indgroups_fixef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+
+# Facet EQ
+indgroups_fixef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(~EQgroups) +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+
+# No Facet
+indgroups_fixef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+  
+```
+
+### Models
+```{r}
+# Are the two guises different in xint? Not significant
+ind_au_lm_fixef <- lm(xint_trans ~ guiseContr,
+                      data=au_data_ind_fixef)
+summary(ind_au_lm_fixef)
+```
+
+```{r}
+# Are the size of individual guise shift effects mediated by individual SA / EQ score? 
+
+# Basic model: A little bit
+ind_au_lm_fixef <- lm(guiseShift ~ SAscore * EQscore,
+                      data=au_data_ind_fixef)
+summary(ind_au_lm_fixef)
+```
+
+
+```{r}
+# Medium model: Similar
+ind_au_lm_fixef <- lm(guiseShift ~ guiseContr + SAscore * EQscore +
+                  guiseContr:SAscore + speakerGuise:EQscore + 
+                  guiseContr:SAscore:EQscore, 
+                  data=au_data_ind_fixef)
+summary(ind_au_lm_fixef)
+```
+
+```{r}
+# Max model: A little more = small, but definitely stable
+ind_au_lm_fixef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                  SAscore * EQscore +
+                  guiseContr:SAscore + guiseContr:EQscore + 
+                  guiseContr:SAscore:EQscore, 
+                  data=au_data_ind_fixef)
+summary(ind_au_lm_fixef)
+
+```
+
+#### Comparisons
+
+
+```{r}
+# Model comparison --- More than max
+
+# Max model:
+ind_au_lm_fixef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_fixef)
+summary(ind_au_lm_fixef)
+
+# Plus Gender model: Gets worse! (R^2)
+ind_au_lm_fixef.A <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore + 
+                       genderContr:SAscore + genderContr:EQscore + 
+                       genderContr:SAscore:EQscore, 
+                     data=au_data_ind_fixef)
+summary(ind_au_lm_fixef.A)
+anova(ind_au_lm_fixef.A, ind_au_lm_fixef)
+
+# Plus Gender:Guise model: Gets bettter again + some significance appears!
+ind_au_lm_fixef.B <- lm(guiseShift ~ guiseContr * genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore + 
+                       genderContr:SAscore + genderContr:EQscore + 
+                       genderContr:SAscore:EQscore +
+                       guiseContr:genderContr:SAscore + guiseContr:genderContr:EQscore + 
+                       guiseContr:genderContr:SAscore:EQscore, 
+                     data=au_data_ind_fixef)
+summary(ind_au_lm_fixef.B)
+anova(ind_au_lm_fixef.B, ind_au_lm_fixef)
+```
+
+#### Prediction Plot
+##### Main Effects
+```{r}
+ind_au_pred <- au_data_ind_fixef
+ind_au_pred$pred_guiseShift <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+
+ggplot(aes(x=SAscore, y=pred_guiseShift, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=SAscore, y=pred_guiseShift), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+```
+
+```{r}
+ind_au_pred <- au_data_ind_fixef
+ind_au_pred$pred_guiseShift <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+
+ggplot(aes(x=scale(Age), y=pred_guiseShift, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=pred_guiseShift), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+
+ggplot(aes(x=scale(Age), y=SAscore, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=SAscore), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+ggplot(aes(x=scale(Age), y=EQscore, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=EQscore), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+```
+
+##### Interactions
+```{r}
+# Check data values in prep for predictions
+au_data_ind_fixef %>% 
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high"))) %>%
+  group_by(EQgroups) %>% summarize(n=n(), meanEQ = mean(EQscore),min = min(EQscore),max = max(EQscore), range=max(EQscore)-min(EQscore))
+
+# str(au_data_ind_fixef)
+```
+
+```{r}
+# Predict on all unique combinations (Option 1)
+ind_au_pred <- 
+  expand.grid(
+    guiseContr = unique(au_data_ind_fixef$guiseContr),
+    genderContr = mean(au_data_ind_fixef$genderContr),
+    Age = mean(au_data_ind_fixef$Age),
+    CEscore = mean(au_data_ind_fixef$CEscore),
+    SAscore = unique(au_data_ind_fixef$SAscore),
+    EQscore = c(-1.09149875, 0.09118241, 1.32078756)
+  )
+  
+ind_au_pred$pred_xint <- predict(ind_au_lm_fixef, newdata=ind_au_pred, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_fixef, newdata=ind_au_pred, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(speakerGuise = ifelse(guiseContr == -1, 'CN', 'MI')) %>%
+  mutate(EQgroups = case_when(EQscore == -1.09149875 ~ "low",
+                                EQscore == 0.09118241 ~ "mid",
+                                EQscore == 1.32078756 ~ "high")) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high")))
+
+# Facet by EQ
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_fixef) +
+  geom_line(aes(x=SAscore, y=pred_xint, color=EQgroups), 
+               se=T, alpha=0.5, size=1, data=ind_au_pred)
+
+# Guise Facet
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_fixef) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# No Facet
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_fixef) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
+
+```{r}
+# Predict on actual data
+
+ind_au_pred <- au_data_ind_fixef
+ind_au_pred$pred_xint <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high")))
+
+
+# Guise + EQ Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# Guise Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# Facet by EQ
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# No Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
+
+```{r}
+# Predict on actual data 
+
+ind_au_pred <- au_data_ind_fixef
+ind_au_pred$pred_xint <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(EQgroups = as.numeric(cut_interval(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                              EQgroups == 2 & EQscore < 0 ~ "mid-low",
+                              EQgroups == 2 & EQscore > 0 ~ "mid-high",
+                              EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid-low", "mid-high", "high")))
+
+
+# Guise + EQ Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# Guise Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# Facet by EQ
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# No Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
+
+# ...
+# /au/ S9
+## Continuous Step Regression
+### Models
+```{r}
+# speakerGuise: Base Model for extracting fixed effects and model coefficients (BL vs CN & MI)
+cont_au_glm_base <- glmer(respRS ~ step + speakerGuise + step:speakerGuise +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S9
+                    ) 
+summary(cont_au_glm_base)
+
+# No-interaction Model
+cont_au_glm_base2 <- glmer(respRS ~ step + speakerGuise  +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S9
+                    ) 
+anova(cont_au_glm_base2, cont_au_glm_base)
+
+# No-Guise Model
+cont_au_glm_base3 <- glmer(respRS ~ step  +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S9
+                    ) 
+anova(cont_au_glm_base3, cont_au_glm_base2)
+```
+
+```{r}
+# speakerGuise: Releveled Comparison: CN guise vs. MI guise
+au_data_coded_S9$guiseRelvl = relevel(au_data_coded_S9$speakerGuise, ref="CN")
+
+# Max Model
+cont_au_glm_relvl <- glmer(respRS ~ step + guiseRelvl + step:guiseRelvl +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S9
+                    ) 
+summary(cont_au_glm_relvl)
+
+# No-interaction Model
+cont_au_glm_relvl2 <- glmer(respRS ~ step + guiseRelvl  +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S9
+                    ) 
+anova(cont_au_glm_relvl2, cont_au_glm_relvl)
+
+# No-guise Model
+cont_au_glm_relvl3 <- glmer(respRS ~ step  +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded_S9
+                    ) 
+anova(cont_au_glm_relvl3, cont_au_glm_relvl2)
+```
+
+
+### Extract Group Estimates
+```{r}
+# Check intercept values
+fixef_au <- fixef(cont_au_glm_base)
+fixef_au
+```
+
+```{r}
+# Calculate intercepts per guise
+( int_bl <- fixef_au[[1]] )
+( int_cn <- int_bl + fixef_au[[3]] )
+( int_mi <- int_bl + fixef_au[[4]] )
+
+# Calculate slopes per guise
+( slope_bl <- fixef_au[[2]] )
+( slope_cn <- slope_bl + fixef_au[[5]] )
+( slope_mi <- slope_bl + fixef_au[[6]] )
+
+```
+
+```{r}
+# Double check intercept values to guise means
+au_data_coded_S9 %>% group_by(speakerGuise) %>%
+  summarize(propRS = mean(respRS), logOddsRS = logit_scaled(mean(respRS))) %>%
+  mutate(intercepts = c(int_bl, int_cn, int_mi),
+         slopes = c(slope_bl, slope_cn, slope_mi)) %>%
+  mutate(mean_int_diff = intercepts - logOddsRS)
+
+```
+
+```{r}
+# Calculate x-intercepts per guise, i.e., where y=0, using the formula [y = ax + b]  ~  [x = -b/a]
+( xint_bl = -(int_bl / slope_bl) )
+( xint_cn = -(int_cn / slope_cn) )
+( xint_mi = -(int_mi / slope_mi) )
+
+```
+
+#### Prediction Plots
+```{r}
+# Predict on all unique combinations (Option 1)
+cont_au_pred <- 
+  expand.grid(
+    participantId = NA,
+    word = NA,
+    step = unique(au_data_coded_S9$step),
+    speakerGuise = unique(au_data_coded_S9$speakerGuise)
+  )
+cont_au_pred
+  
+cont_au_pred$pred_logOdds <- predict(cont_au_glm_base, newdata=cont_au_pred, type = "link", re.form=NA)
+cont_au_pred$pred_prop <- predict(cont_au_glm_base, newdata=cont_au_pred, type = "response", re.form=NA)
+
+cont_au_pred %>% ggplot(aes(x=step, y=pred_logOdds, color=speakerGuise)) %>% 
+  guise_colors(3) +
+  theme_minimal() +
+  geom_smooth(method="lm", formula = 'y ~ x') +
+  # geom_smooth(method="loess") +
+  geom_point(alpha=0.8) + 
+  geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
+
+cont_au_pred %>% ggplot(aes(x=step, y=pred_prop, color=speakerGuise, fill=speakerGuise)) %>% 
+  guise_colors(3) +
+  theme_minimal() +
+  # geom_smooth(method="lm", formula = 'y ~ x') +
+  geom_smooth(method="loess", alpha=0.3) +
+  geom_point(alpha=0.8) + 
+  geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
+```
+
+```{r include=T}
+# Predict on original/actual data (Option 2: Proportions)
+cont_au_pred_actual <-
+  au_data_coded_S9 %>%
+  mutate(predictions =  predict(cont_au_glm, type = "response") )
+# cont_au_pred_actual
+
+au_pred_plot <-
+cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions, 
+                                   color=speakerGuise, fill=speakerGuise, linetype=speakerGuise)) %>% 
+  proportion_plot_theme() +
+  facet_grid(~vowel) +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  coord_cartesian(ylim = c(0.15, 0.85)) + 
+  geom_smooth(method="loess", se=T, alpha=0.5)
+au_pred_plot
+
+au_pred_plot <-
+cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions, 
+                                   color=speakerGuise, fill=speakerGuise, linetype=speakerGuise)) %>% 
+  proportion_plot_theme() +
+  facet_grid(~vowel) +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  coord_cartesian(ylim = c(0.15, 0.85)) + 
+  geom_smooth(method="loess", se=T, alpha=0.5) +
+  # geom_point(alpha=0.1) + 
+    geom_vline(xintercept = xint_bl, linetype="solid") +
+  geom_vline(xintercept = xint_cn, linetype="dashed") +
+  geom_vline(xintercept = xint_mi, linetype="dashed")
+au_pred_plot
+```
+
+# .
+## Coef Ind Regression
+### Extract Individual Estimates
+For these calculations:
+* yint_bl = Intercept
+* slope_bl = step
+* yint_cn = Intercept + guiseCN
+* slope_cn = step + step.guiseCN
+* xint_bl = yint_bl / slope_bl
+* xint_cn = yint_cn / slope_cn
+
+```{r}
+# Extract individual coefficients (based on random effects)
+ranef_au <- ranef(cont_au_glm)[1] # raw adjustment values
+coef_au <- coef(cont_au_glm)[1] # individual co-efficients (adjustments already applied)
+
+# Process coefficients
+coef_au <-
+  data.frame(coef_au) %>% rownames_to_column("participantId") %>% 
+  rename_with( ~gsub("participantId.","", .x), starts_with("participantId.")) %>%
+  rename_with( ~gsub("^\\.|\\.$","", .x)) %>%
+  
+  # Calculate xints per guise per individual (i.e., predicted patterns per guises that they didn't see)
+  mutate(xint_bl = -(Intercept / step),
+         xint_cn = -((Intercept + guiseCN) / (step + step.guiseCN)),
+         xint_mi = -((Intercept + guiseMI) / (step + step.guiseMI)))
+```
+
+```{r}
+xints_coef_au <-
+  coef_au %>% select(participantId, xint_bl, xint_cn, xint_mi) %>%
+  pivot_longer(., xint_bl:xint_mi, names_to="guise_pred", names_prefix="xint_", values_to="xint_pred", 
+               names_transform = list(guise_pred = toupper)) %>%
+  mutate_if(is.character,as.factor)
+xints_coef_au
+```
+
+#### Exploratory Plots (1)
+```{r}
+xints_coef_au %>%
+ ggplot(aes(y=participantId, x=xint_pred, color=guise_pred)) %>% 
+  guise_colors(3) +
+  theme_minimal() +
+  theme(axis.text.y = element_blank()) +
+  xlim(-2,2) +
+  geom_vline(xintercept = xint_bl) +
+  geom_vline(xintercept = xint_cn) +
+  geom_vline(xintercept = xint_mi) +
+  geom_point(alpha=0.8)  
+
+```
+
+```{r}
+xints_coef_au %>% ggplot(aes(y=xint_pred, x=guise_pred, color=guise_pred)) %>% guise_colors(3) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_jitter(alpha=0.5) +
+  geom_boxplot(alpha=0.8)
+  
+xints_coef_au %>% ggplot(aes(x=xint_pred, y=reorder(guise_pred, desc(guise_pred)), color=guise_pred)) %>% guise_colors(3) +
+  theme_minimal() +
+  labs(y="guise_pred") +
+  coord_cartesian(xlim=c(-3, 3)) +
+  geom_jitter(alpha=0.3) +
+  geom_boxplot(alpha=0.8)
+  # geom_violin(alpha=0.8)
+
+  
+```
+
+### Process Data + Outliers
+```{r}
+Q1 <- quantile(xints_coef_au$xint_pred, .25)
+Q3 <- quantile(xints_coef_au$xint_pred, .75)
+IQR <- IQR(xints_coef_au$xint_pred)
+
+au_data_ind_coef <- au_data_coded_S9 %>% select(-step:-rt) %>% 
+  # Match xints to participant data
+  merge(., xints_coef_au) %>%
+  
+  # Filter out BL participants and predictions (for now..., may use for comparison or calculating measure)
+  filter(speakerGuise!='BL') %>%
+  
+  # Keep only the xint values of the guise that participants actually were assigned/completed
+  filter(speakerGuise == guise_pred) %>%
+  
+  # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
+  filter(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5) %>%
+  # filter(xint_pred > Q1-IQR*2 & xint_pred < Q3+IQR*2) %>%
+  
+  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
+  mutate(xint_trans = as.vector(scale(xint_pred))) %>%
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+  
+  # Remove extra rows by summarizing
+  distinct() %>%
+  droplevels()
+  
+au_data_ind_coef
+summary(au_data_ind_coef)
+```
+
+
+```{r}
+# Check Data numbers
+au_data_ind_coef %>% group_by(experimentId, speakerGuise) %>% count() %>%
+  merge(., au_data_ind_coef %>% 
+          group_by(experimentId, speakerGuise) %>% 
+          summarize(across(where(is.numeric), mean))
+        ) %>% select(-MSscore, -guiseCN:-genderContr)
+
+au_data_ind_coef %>% group_by(speakerGuise) %>% count() %>%
+  merge(., au_data_ind_coef %>% 
+          group_by(speakerGuise) %>% 
+          summarize(across(where(is.numeric), mean))
+        ) %>% select(-MSscore, -guiseCN:-genderContr)
+```
+
+```{r}
+# Check number of participants with only 1 data point (other was filtered out as outlier)
+# au_data_ind_coef %>% group_by(participantId, experimentId, speakerGuise) %>%
+#   count() %>%
+#   filter(n!=2) 
+
+# Check number of BL participants, filtered out
+au_data_coded_S9 %>% select(-step:-rt) %>% 
+  # Match xints to participant data
+  merge(., xints_coef_au) %>% 
+  filter(speakerGuise=='BL') %>%
+  group_by(participantId, experimentId, speakerGuise) %>%
+  count() # 40
+  
+# Check number of participants as outliers, filtered out
+au_data_coded_S9 %>% select(-step:-rt) %>% 
+  # Match xints to participant data
+  merge(., xints_coef_au) %>% 
+  distinct() %>%
+  filter(speakerGuise!='BL') %>%
+  filter(speakerGuise == guise_pred) %>%
+  filter(xint_pred < Q1-IQR*1.5 | xint_pred > Q3+IQR*1.5) %>%   # flipped criteria to outside edges
+  group_by(participantId, experimentId, speakerGuise) %>% count() %>% # 20 participants
+  group_by(experimentId, speakerGuise) %>% count() # 3 CN / 5 MI
+
+```
+
+#### Exploratory Plots (2)
+```{r}
+au_data_ind_coef %>% 
+ ggplot(aes(x=xint_trans, fill=speakerGuise, color=speakerGuise)) +
+  theme_minimal() +
+  theme(axis.text.y = element_blank()) +
+  geom_density(alpha=0.4, binwidth=0.1)
+```
+
+```{r}
+au_data_ind_coef %>% ggplot(aes(y=xint_trans, x=guise_pred, color=guise_pred)) %>% guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_jitter(alpha=0.5) +
+  geom_boxplot(alpha=0)
+  
+au_data_ind_coef %>% ggplot(aes(y=guiseShift, x=guise_pred, color=guise_pred)) %>% guise_colors(2)+
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_jitter(alpha=0.5) +
+  geom_boxplot(alpha=0)
+
+```
+
+```{r}
+au_data_ind_coef %>% ggplot(aes(y=guiseShift, x=SAscore, color=guise_pred)) %>% guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method='lm', se=T, alpha=0.25, fullrange=T) #+
+  # facet_grid(~guise_pred)
+```
+
+
+```{r}
+au_data_ind_coef %>% ggplot(aes(y=guiseShift, x=EQscore, color=guise_pred)) %>% guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method='lm', se=T, alpha=0.25, fullrange=T) #+
+  # facet_grid(~guise_pred)
+
+```
+
+```{r}
+indgroups_coef <- 
+  au_data_ind_coef %>% 
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high"))) #%>%
+  # group_by(EQgroups) %>% summarize(n=n(), meanEQ = mean(EQscore),min = min(EQscore),max = max(EQscore), range=max(EQscore)-min(EQscore))
+
+# Facet guise + EQ
+indgroups_coef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+
+# Facet EQ
+indgroups_coef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(~EQgroups) +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+
+# No Facet
+indgroups_coef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+  
+```
+
+### Models
+```{r}
+# Are the two guises different in xint? YES --- they go in opposite directions
+ind_au_lm <- lm(xint_trans ~ guiseContr,
+                data=au_data_ind_coef)
+summary(ind_au_lm)
+```
+
+
+```{r}
+# Are the size of individual guise shift effects mediated by individual SA / EQ score? 
+
+# Basic model: No sig, but getting there
+ind_au_lm <- lm(guiseShift ~ SAscore * EQscore,
+                data=au_data_ind_coef)
+summary(ind_au_lm)
+```
+
+```{r}
+# Medium model: No but similarly getting there
+ind_au_lm <- lm(guiseShift ~ guiseContr + SAscore * EQscore +
+                  guiseContr:SAscore + speakerGuise:EQscore + 
+                  guiseContr:SAscore:EQscore, 
+                  data=au_data_ind_coef)
+summary(ind_au_lm)
+```
+
+```{r}
+# Max model: More again, after adding in other controls
+ind_au_lm_coef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                  SAscore * EQscore +
+                  guiseContr:SAscore + guiseContr:EQscore + 
+                  guiseContr:SAscore:EQscore, 
+                  data=au_data_ind_coef)
+summary(ind_au_lm_coef)
+
+```
+#### Comparisons
+```{r include=F}
+# Model comparison ---  Key variables
+
+# Max model:
+ind_au_lm_coef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef)
+
+# No 3-way w/ Guise:
+ind_au_lm_coef2 <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef2, ind_au_lm_coef)
+
+# No 2-way w/ Guise:
+ind_au_lm_coef3 <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef3, ind_au_lm_coef2)
+
+# No *key* 2-way interaction: ***Yes! Sig.***
+ind_au_lm_coef4 <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore + EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef4, ind_au_lm_coef3)
+
+# No EQ: Nope
+ind_au_lm_coef5a <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef5a, ind_au_lm_coef4)
+
+# No SA: Nope
+ind_au_lm_coef5b <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef5b, ind_au_lm_coef4)
+
+# No SA or EQ: Nope
+ind_au_lm_coef5c <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef5c, ind_au_lm_coef4)
+
+```
+
+```{r include=F}
+# Model comparison ---  Control variables
+
+# Max model:
+ind_au_lm_coef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef)
+
+# No controls model: Doesn't make a big difference, but including controls does improve model fit (R^2)
+ind_au_lm_coef.e <- lm(guiseShift ~ guiseContr +
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef.e)
+anova(ind_au_lm_coef.e, ind_au_lm_coef)
+
+# Single removals: None make significant differences, but trending, other than CE
+# No CE model:
+ind_au_lm_coef.a <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef.a, ind_au_lm_coef)
+
+# No age model:
+ind_au_lm_coef.b <- lm(guiseShift ~ guiseContr + genderContr + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef.b, ind_au_lm_coef)
+
+# No Gen model:
+ind_au_lm_coef.c <- lm(guiseShift ~ guiseContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef.c, ind_au_lm_coef)
+
+# No guise model:
+ind_au_lm_coef.d <- lm(guiseShift ~ genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+anova(ind_au_lm_coef.d, ind_au_lm_coef)
+
+```
+
+```{r}
+# Model comparison --- More than max
+
+# Max model:
+ind_au_lm_coef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef)
+
+# Plus Gender model: Gets worse! (R^2)
+ind_au_lm_coef.A <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore + 
+                       genderContr:SAscore + genderContr:EQscore + 
+                       genderContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef.A)
+anova(ind_au_lm_coef.A, ind_au_lm_coef)
+
+# Plus Gender:Guise model: Gets bettter again + some significance appears!
+ind_au_lm_coef.B <- lm(guiseShift ~ guiseContr * genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore + 
+                       genderContr:SAscore + genderContr:EQscore + 
+                       genderContr:SAscore:EQscore +
+                       guiseContr:genderContr:SAscore + guiseContr:genderContr:EQscore + 
+                       guiseContr:genderContr:SAscore:EQscore, 
+                     data=au_data_ind_coef)
+summary(ind_au_lm_coef.B)
+anova(ind_au_lm_coef.B, ind_au_lm_coef)
+```
+
+
+#### Prediction Plots
+##### Main Effects
+```{r}
+ind_au_pred <- au_data_ind_coef
+ind_au_pred$pred_guiseShift <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+
+ggplot(aes(x=SAscore, y=pred_guiseShift, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  facet_grid(~speakerGuise) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=SAscore, y=pred_guiseShift), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+```
+
+```{r}
+ind_au_pred <- au_data_ind_coef
+ind_au_pred$pred_guiseShift <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+
+ggplot(aes(x=scale(Age), y=pred_guiseShift, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=pred_guiseShift), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+
+ggplot(aes(x=scale(Age), y=SAscore, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=SAscore), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+ggplot(aes(x=scale(Age), y=EQscore, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=EQscore), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+```
+
+##### Interactions
+```{r}
+# Check data values in prep for predictions
+au_data_ind_coef %>% 
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high"))) %>%
+  group_by(EQgroups) %>% summarize(n=n(), meanEQ = mean(EQscore),min = min(EQscore),max = max(EQscore), range=max(EQscore)-min(EQscore))
+
+# str(au_data_ind_coef)
+```
+
+```{r include=F}
+# Predict on all unique combinations (Option 1)
+ind_au_pred <- 
+  expand.grid(
+    guiseContr = unique(au_data_ind_coef$guiseContr),
+    genderContr = mean(au_data_ind_coef$genderContr),
+    Age = mean(au_data_ind_coef$Age),
+    CEscore = mean(au_data_ind_coef$CEscore),
+    SAscore = unique(au_data_ind_coef$SAscore),
+    EQscore = c(-1.09149875, 0.09118241, 1.32078756)
+  )
+  
+ind_au_pred$pred_xint <- predict(ind_au_lm_coef, newdata=ind_au_pred, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_coef, newdata=ind_au_pred, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(speakerGuise = ifelse(guiseContr == -1, 'CN', 'MI')) %>%
+  mutate(EQgroups = case_when(EQscore == -1.09149875 ~ "low",
+                                EQscore == 0.09118241 ~ "mid",
+                                EQscore == 1.32078756 ~ "high")) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high")))
+
+# Facet by EQ
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_coef) +
+  geom_line(aes(x=SAscore, y=pred_xint, color=EQgroups), 
+               se=T, alpha=0.5, size=1, data=ind_au_pred)
+
+# Guise Facet
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_coef) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# No Facet
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_coef) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
+
+```{r}
+# Predict on actual data
+
+ind_au_pred <- au_data_ind_coef
+ind_au_pred$pred_xint <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high")))
+
+
+# Guise + EQ Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# Guise Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# Facet by EQ
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# No Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
+
+```{r}
+# Predict on actual data 
+
+ind_au_pred <- au_data_ind_coef
+ind_au_pred$pred_xint <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_coef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(EQgroups = as.numeric(cut_interval(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                              EQgroups == 2 & EQscore < 0 ~ "mid-low",
+                              EQgroups == 2 & EQscore > 0 ~ "mid-high",
+                              EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid-low", "mid-high", "high")))
+
+
+# Guise + EQ Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# Guise Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# Facet by EQ
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# No Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
+
+
+# .
+## (alt) Fixef Ind Regression
+Run individual regressions per participant and collect the intercept and slope, which would conceptually be less skewed towards the group means compared to the coefficients from the full model.
+
+### Extract Individual Estimates
+```{r}
+calculate_xint <- function(df, id) {
+  ind_data <- df %>% filter(participantId == id)
+  ind_glm <- glmer(respRS ~ step + (1 | word),
+                 family = "binomial", 
+                 control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                 data = ind_data)
+  xint <- -(fixef(ind_glm)[[1]]) / fixef(ind_glm)[[2]]
+}
+
+get_ind_xints <- function(df, participant_col) {
+  
+  participant_list <- unique(as.character(participant_col))
+
+  ind_xints <- data.frame(participantId=as.character(NA),
+                        xint=as.integer(NA),
+                        stringsAsFactors=FALSE)
+
+  for (participantId in participant_list) {
+    xint = calculate_xint(df, participantId)
+    ind_row = cbind.data.frame(participantId, xint)
+    ind_xints <- rbind(ind_xints, ind_row)
+  }
+
+  ind_xints <- ind_xints %>% na.omit() %>% mutate_if(is.character, as.factor)
+}
+```
+
+```{r}
+( xints_fixef_au <- get_ind_xints(au_data_coded_S9, au_data_coded_S9$participantId) )
+```
+
+### Process Data + Outliers
+```{r}
+Q1 <- quantile(xints_fixef_au$xint, .25)
+Q3 <- quantile(xints_fixef_au$xint, .75)
+IQR <- IQR(xints_fixef_au$xint)
+
+au_data_ind_fixef <- au_data_coded_S9 %>% select(-step:-rt) %>%
+  # Match xints to participant data
+  merge(., xints_fixef_au) %>%
+  # Filter out BL participants and predictions (for now..., may use for comparison or calculating measure)
+  filter(speakerGuise!='BL') %>%
+
+  # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
+  filter(xint > Q1-IQR*1.5 & xint < Q3+IQR*1.5) %>%
+
+  # Z-score the xint values for comparability + create normalized guise bias/shift effect size score
+  mutate(xint_trans = scale(xint)) %>%
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_trans, xint_trans)) %>%
+
+  # Remove extra rows by summarizing
+  distinct() %>%
+  droplevels()
+
+au_data_ind_fixef
+summary(au_data_ind_fixef)
+```
+
+```{r}
+# Check Data numbers
+au_data_ind_fixef %>% group_by(experimentId, speakerGuise) %>% count() %>%
+  merge(., au_data_ind_fixef %>% 
+          group_by(experimentId, speakerGuise) %>% 
+          summarize(across(where(is.numeric), mean))
+        ) %>% select(-MSscore, -guiseCN:-genderContr)
+
+au_data_ind_fixef %>% group_by(speakerGuise) %>% count() %>%
+  merge(., au_data_ind_fixef %>% 
+          group_by(speakerGuise) %>% 
+          summarize(across(where(is.numeric), mean))
+        ) %>% select(-MSscore, -guiseCN:-genderContr)
+```
+
+```{r}
+# Check number of participants with only 1 data point (other was filtered out as outlier)
+# au_data_ind_coef %>% group_by(participantId, experimentId, speakerGuise) %>%
+#   count() %>%
+#   filter(n!=2) 
+
+# Check number of BL participants, filtered out
+au_data_coded_S9 %>% select(-step:-rt) %>% 
+  # Match xints to participant data
+  merge(., xints_fixef_au) %>% 
+  filter(speakerGuise=='BL') %>%
+  group_by(participantId, experimentId, speakerGuise) %>%
+  count() # 73
+  
+# Check number of participants as outliers, filtered out
+au_data_coded_S9 %>% select(-step:-rt) %>% 
+  # Match xints to participant data
+  merge(., xints_fixef_au) %>% 
+  distinct() %>%
+  filter(speakerGuise!='BL') %>%
+  filter(xint < Q1-IQR*1.5 | xint > Q3+IQR*1.5) %>%   # flipped criteria to outside edges
+  group_by(participantId, experimentId, speakerGuise) %>% count() %>% # 11 participants
+  group_by(experimentId, speakerGuise) %>% count() # 7 CN (4 from 1a, vs 3) / 4 MI (2 from 1a, vs 2)
+
+```
+
+#### Exploratory Plots
+```{r}
+au_data_ind_fixef %>% 
+ ggplot(aes(x=xint_trans, fill=speakerGuise, color=speakerGuise)) +
+  theme_minimal() +
+  theme(axis.text.y = element_blank()) +
+  geom_density(alpha=0.4, binwidth=0.1)
+```
+
+
+```{r}
+au_data_ind_fixef %>% 
+ ggplot(aes(y=speakerGuise, x=xint_trans, color=speakerGuise)) %>%
+  guise_colors(2) +
+  theme_minimal() +
+  theme(axis.text.y = element_blank()) +
+  coord_cartesian(xlim=c(-3, 3)) +
+  geom_jitter(alpha=0.3)+
+  geom_boxplot(alpha=0)
+
+au_data_ind_fixef %>% ggplot(aes(y=xint_trans, x=speakerGuise, color=speakerGuise)) %>%
+  guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_jitter(alpha=0.3) +
+  geom_boxplot(alpha=0)
+
+au_data_ind_fixef %>% ggplot(aes(y=guiseShift, x=speakerGuise, color=speakerGuise)) %>%
+  guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_jitter(alpha=0.3) +
+  geom_boxplot(alpha=0)
+
+
+```
+
+
+```{r}
+au_data_ind_fixef %>% ggplot(aes(y=guiseShift, x=SAscore, color=speakerGuise)) %>% guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method='lm', se=T, alpha=0.25, fullrange=T)
+```
+
+
+```{r}
+au_data_ind_fixef %>% ggplot(aes(y=guiseShift, x=EQscore, color=speakerGuise)) %>% guise_colors(2) +
+  theme_minimal() +
+  coord_cartesian(ylim=c(-3, 3)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method='lm', se=T, alpha=0.25, fullrange=T) #+
+  # facet_grid(~guise_pred)
+
+```
+
+```{r}
+indgroups_fixef <- 
+  au_data_ind_fixef %>% 
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high"))) #%>%
+  # group_by(EQgroups) %>% summarize(n=n(), meanEQ = mean(EQscore),min = min(EQscore),max = max(EQscore), range=max(EQscore)-min(EQscore))
+
+# Facet guise + EQ
+indgroups_fixef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+
+# Facet EQ
+indgroups_fixef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(~EQgroups) +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+
+# No Facet
+indgroups_fixef %>%
+  ggplot(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups))  +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(method='lm', se=T, alpha=0.2, fullrange=T, size=2)
+  
+```
+
+### Models
+```{r}
+# Are the two guises different in xint? Not significant
+ind_au_lm_fixef <- lm(xint_trans ~ guiseContr,
+                      data=au_data_ind_fixef)
+summary(ind_au_lm_fixef)
+```
+
+```{r}
+# Are the size of individual guise shift effects mediated by individual SA / EQ score? 
+
+# Basic model: A little bit
+ind_au_lm_fixef <- lm(guiseShift ~ SAscore * EQscore,
+                      data=au_data_ind_fixef)
+summary(ind_au_lm_fixef)
+```
+
+
+```{r}
+# Medium model: Similar
+ind_au_lm_fixef <- lm(guiseShift ~ guiseContr + SAscore * EQscore +
+                  guiseContr:SAscore + speakerGuise:EQscore + 
+                  guiseContr:SAscore:EQscore, 
+                  data=au_data_ind_fixef)
+summary(ind_au_lm_fixef)
+```
+
+```{r}
+# Max model: A little more = small, but definitely stable
+ind_au_lm_fixef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                  SAscore * EQscore +
+                  guiseContr:SAscore + guiseContr:EQscore + 
+                  guiseContr:SAscore:EQscore, 
+                  data=au_data_ind_fixef)
+summary(ind_au_lm_fixef)
+
+```
+
+#### Comparisons
+
+
+```{r}
+# Model comparison --- More than max
+
+# Max model:
+ind_au_lm_fixef <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore, 
+                     data=au_data_ind_fixef)
+summary(ind_au_lm_fixef)
+
+# Plus Gender model: Gets worse! (R^2)
+ind_au_lm_fixef.A <- lm(guiseShift ~ guiseContr + genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore + 
+                       genderContr:SAscore + genderContr:EQscore + 
+                       genderContr:SAscore:EQscore, 
+                     data=au_data_ind_fixef)
+summary(ind_au_lm_fixef.A)
+anova(ind_au_lm_fixef.A, ind_au_lm_fixef)
+
+# Plus Gender:Guise model: Gets bettter again + some significance appears!
+ind_au_lm_fixef.B <- lm(guiseShift ~ guiseContr * genderContr + scale(Age) + CEscore + 
+                       SAscore * EQscore +
+                       guiseContr:SAscore + guiseContr:EQscore + 
+                       guiseContr:SAscore:EQscore + 
+                       genderContr:SAscore + genderContr:EQscore + 
+                       genderContr:SAscore:EQscore +
+                       guiseContr:genderContr:SAscore + guiseContr:genderContr:EQscore + 
+                       guiseContr:genderContr:SAscore:EQscore, 
+                     data=au_data_ind_fixef)
+summary(ind_au_lm_fixef.B)
+anova(ind_au_lm_fixef.B, ind_au_lm_fixef)
+```
+
+#### Prediction Plot
+##### Main Effects
+```{r}
+ind_au_pred <- au_data_ind_fixef
+ind_au_pred$pred_guiseShift <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+
+ggplot(aes(x=SAscore, y=pred_guiseShift, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  facet_grid(~speakerGuise) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=SAscore, y=pred_guiseShift), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+```
+
+```{r}
+ind_au_pred <- au_data_ind_fixef
+ind_au_pred$pred_guiseShift <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+
+ggplot(aes(x=scale(Age), y=pred_guiseShift, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=pred_guiseShift), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+
+ggplot(aes(x=scale(Age), y=SAscore, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=SAscore), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+ggplot(aes(x=scale(Age), y=EQscore, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  geom_jitter(size=5, alpha=0.75) +
+  geom_smooth(aes(x=scale(Age), y=EQscore), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+
+```
+
+##### Interactions
+```{r}
+# Check data values in prep for predictions
+au_data_ind_fixef %>% 
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high"))) %>%
+  group_by(EQgroups) %>% summarize(n=n(), meanEQ = mean(EQscore),min = min(EQscore),max = max(EQscore), range=max(EQscore)-min(EQscore))
+
+# str(au_data_ind_fixef)
+```
+
+```{r include=F}
+# Predict on all unique combinations (Option 1)
+ind_au_pred <- 
+  expand.grid(
+    guiseContr = unique(au_data_ind_fixef$guiseContr),
+    genderContr = mean(au_data_ind_fixef$genderContr),
+    Age = mean(au_data_ind_fixef$Age),
+    CEscore = mean(au_data_ind_fixef$CEscore),
+    SAscore = unique(au_data_ind_fixef$SAscore),
+    EQscore = c(-1.09149875, 0.09118241, 1.32078756)
+  )
+  
+ind_au_pred$pred_xint <- predict(ind_au_lm_fixef, newdata=ind_au_pred, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_fixef, newdata=ind_au_pred, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(speakerGuise = ifelse(guiseContr == -1, 'CN', 'MI')) %>%
+  mutate(EQgroups = case_when(EQscore == -1.09149875 ~ "low",
+                                EQscore == 0.09118241 ~ "mid",
+                                EQscore == 1.32078756 ~ "high")) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high")))
+
+# Facet by EQ
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_fixef) +
+  geom_line(aes(x=SAscore, y=pred_xint, color=EQgroups), 
+               se=T, alpha=0.5, size=1, data=ind_au_pred)
+
+# Guise Facet
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_fixef) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# No Facet
+ggplot() +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  scale_fill_manual(values=ghibli_palette("MononokeMedium")[c(7,6,5)])+
+  gg_theme() +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=indgroups_fixef) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
+
+```{r}
+# Predict on actual data
+
+ind_au_pred <- au_data_ind_fixef
+ind_au_pred$pred_xint <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(EQgroups = as.numeric(cut_number(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                                EQgroups == 2 ~ "mid",
+                                EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid", "high")))
+
+
+# Guise + EQ Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# Guise Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# Facet by Gender + EQ
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(Gender~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# Facet by EQ
+ggplot() %>%
+  interaction_plot_theme(3) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# No Facet
+ggplot() %>%
+  interaction_plot_theme(3) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
+
+```{r}
+# Predict on actual data 
+
+ind_au_pred <- au_data_ind_fixef
+ind_au_pred$pred_xint <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[1]]
+ind_au_pred$pred_se <- predict(ind_au_lm_fixef.B, type = "response", 
+                                 re.form=NA, se=T)[[2]]
+ind_au_pred <- ind_au_pred %>%
+  mutate(EQgroups = as.numeric(cut_interval(EQscore, 3))) %>%
+  mutate(EQgroups = case_when(EQgroups == 1 ~ "low",
+                              EQgroups == 2 & EQscore < 0 ~ "mid-low",
+                              EQgroups == 2 & EQscore > 0 ~ "mid-high",
+                              EQgroups == 3 ~ "high")) %>%
+  relocate(EQgroups, .after=Gender) %>%
+  mutate(EQgroups = factor(EQgroups, levels  = c("low", "mid-low", "mid-high", "high")))
+
+
+# Guise + EQ Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(speakerGuise~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# Guise Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(~speakerGuise) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+# Guise Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(~Gender) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# Facet by EQ
+ggplot() %>%
+  interaction_plot_theme(4) +
+  facet_grid(~EQgroups) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+
+# No Facet
+ggplot() %>%
+  interaction_plot_theme(4) +
+  geom_point(aes(x=SAscore, y=guiseShift, color=EQgroups, shape=EQgroups), 
+             size=5, alpha=0.75, data=ind_au_pred) +
+  geom_smooth(aes(x=SAscore, y=pred_xint, color=EQgroups),
+              method='lm', se=T, alpha=0.5, fullrange=T, size=1, data=ind_au_pred)
+
+  
+```
