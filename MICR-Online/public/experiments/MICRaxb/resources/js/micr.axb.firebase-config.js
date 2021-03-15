@@ -35,6 +35,14 @@ var database = firebase.database();
 * FIREBASE HELPER FUNCTIONS
 **************************************************************************/
 
+function setCount(experimentId,count){
+  var experimentRef = database.ref(experimentId);
+  experimentRef.set({
+      'Condition' : count
+  });
+  console.log("Updated " + experimentId + " condition counter to " + count + "(" + count%3 + ").");
+}
+
 function saveDataToStorage(filedata, dataRef){
     console.log("Saving progress...");
     var uploadRef = dataRef.putString(filedata);
