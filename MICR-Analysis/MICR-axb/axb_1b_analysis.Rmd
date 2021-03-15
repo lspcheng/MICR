@@ -1118,11 +1118,13 @@ quesdata.final %>% select(participantId, conditionId, guiseCombination, Age, Gen
 quesdata.final %>% group_by(guiseCombination) %>% mutate(EK1.CanSpeak = ifelse(EK1.CanSpeak==1, "yes", "no")) %>%
 count(EK1.CanSpeak) %>%
   pivot_wider(names_from = EK1.CanSpeak, values_from = n) %>%
+  mutate(prop.yes = yes/(yes+no))  %>%
   mutate(question="SpeakDiff") %>% relocate(question)
 
 quesdata.final %>% group_by(guiseCombination) %>% mutate(EK2.CanPron = ifelse(EK2.CanPron==1, "yes", "no")) %>%
 count(EK2.CanPron) %>%
   pivot_wider(names_from = EK2.CanPron, values_from = n)  %>%
+  mutate(prop.yes = yes/(yes+no))  %>%
   mutate(question="PronounceDiff") %>% relocate(question)
 
 quesdata.final %>% group_by(guiseCombination) %>% mutate(EK3.CanAI = ifelse(EK3.CanAI==1, "yes", "no")) %>%
