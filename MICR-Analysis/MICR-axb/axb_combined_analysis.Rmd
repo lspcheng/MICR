@@ -172,6 +172,46 @@ axb_bysubj %>% group_by(experimentId) %>% summarize(count = n(), meanEQ = mean(E
 ```
 
 ### Plots
+#### Yes/No Questions
+```{r}
+# Overall total
+yn_prop <-
+axb_bysubj %>% mutate(EK3.CanAI = ifelse(EK3.CanAI==1, "yes", "no")) %>% count(EK3.CanAI) %>%
+  pivot_wider(names_from = EK3.CanAI, values_from = n) %>% 
+  mutate(prop.yes = yes/(yes+no))  %>%
+  mutate(question="aiDiff") %>% relocate(question) %>%
+  rbind(.,axb_bysubj %>% mutate(EK4.CanAU = ifelse(EK4.CanAU==1, "yes", "no")) %>% 
+          count(EK4.CanAU) %>%
+          pivot_wider(names_from = EK4.CanAU, values_from = n) %>% 
+          mutate(prop.yes = yes/(yes+no))  %>%
+          mutate(question="auDiff") %>% relocate(question)
+  ) %>%
+  rbind(.,axb_bysubj %>% mutate(EK1.CanSpeak = ifelse(EK1.CanSpeak==1, "yes", "no")) %>% 
+          count(EK1.CanSpeak) %>%
+          pivot_wider(names_from = EK1.CanSpeak, values_from = n) %>% 
+          mutate(prop.yes = yes/(yes+no))  %>%
+          mutate(question="speakDiff") %>% relocate(question)
+  ) %>%
+  rbind(.,axb_bysubj %>% mutate(EK2.CanPron = ifelse(EK2.CanPron==1, "yes", "no")) %>% 
+          count(EK2.CanPron) %>%
+          pivot_wider(names_from = EK2.CanPron, values_from = n) %>% 
+          mutate(prop.yes = yes/(yes+no))  %>%
+          mutate(question="pronDiff") %>% relocate(question)
+  ) %>%
+  
+  ggplot(aes(y=prop.yes, x=question, color=question, label=round(prop.yes,2))) +
+  geom_bar(aes(fill=question),stat="identity") +
+  geom_label(nudge_y=-0.05) +
+  scale_y_continuous(limits=c(0,1), breaks=seq(0,1,0.1)) +
+  gg_theme() +
+  labs(x="Question", y="Proportion 'yes'", color="Question") +
+  theme(legend.position = "none")
+yn_prop
+
+ggsave(path="plots", filename="ynQues_prop.png", yn_prop, width=9, height=6, units = "in" , dpi=72)
+
+```
+
 #### Gender Distribution
 ```{r, warning=F }
 # By ExperimentId
