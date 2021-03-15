@@ -390,7 +390,7 @@ byGuise_prop_plot
 # Get subj means per condition
 subj.means <- condata.test.final %>% filter(speaker=='S3') %>% #filter(participantId!='5e42f74f5b772a18434cabf7') %>%
   group_by(participantId, step, vowel, speakerGuise) %>%
-  summarise(mean.rt = mean(log(rt)))
+  summarise(mean.rt = mean(rt))
 
 # Get group means and se per condition (by averaging speaker means)
 condition.means <- subj.means %>%
@@ -404,6 +404,7 @@ byGuise_rt_plot <- condition.means %>%
   geom_line(aes(colour=factor(speakerGuise), linetype=factor(speakerGuise)), lwd=1) +
   geom_errorbar(width = .25, aes(ymin = grandM.rt-se, ymax = grandM.rt+se, colour = factor(speakerGuise))) +
   facet_grid(~vowel) +
+  scale_y_log10() +
   labs(y = "Log Response Time", x = "Continuum Step (UR to RS)", color="Guise",
        linetype = "Guise", title="Reaction Time: By Guise") +
   scale_color_manual(values=ghibli_palette("PonyoMedium")[c(6,4,3)])+
