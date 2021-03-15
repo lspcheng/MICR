@@ -50,10 +50,42 @@ gg_theme <- function() {
 }
 
 # color theme for guise plots
-guise_colors <- function(gg_object) {
-  gg_object +
-  scale_fill_manual(values=ghibli_palette("PonyoMedium")[c(6,4,3)])+
-  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(6,4,3)])
+guise_colors <- function(gg_object, n_contrasts) {
+  if (n_contrasts == 3) {
+    col_values <- c(6,4,3)
+  } else if (n_contrasts == 2) {
+    col_values <- c(4,3)
+  } else {
+    return(print('Number of contrasts invalid: Must be either 3 or 2'))
+  }
+  
+   return (
+      gg_object +
+        scale_fill_manual(values=ghibli_palette("PonyoMedium")[col_values])+
+        scale_color_manual(values=ghibli_palette("PonyoMedium")[col_values])
+    )
+}
+
+# color theme and labels for interaction plots
+interaction_plot_theme <- function(gg_object, n_contrasts) {
+    if (n_contrasts == 3) {
+      col_values <- c(7,6,5)
+  } else if (n_contrasts == 4) {
+    col_values <- c(7,6,5,2)
+  } else {
+    return(print('Number of contrasts invalid: Must be either 3 or 4'))
+  }
+  return(
+      gg_object +
+        gg_theme() +
+        scale_color_manual(values=ghibli_palette("MononokeMedium")[col_values])+
+        scale_fill_manual(values=ghibli_palette("MononokeMedium")[col_values])+
+        scale_shape_manual(values=c(16,15,17,18))+
+        scale_linetype_manual(values=c("solid", "longdash", "dashed", "dotted"))+
+        labs(y = 'Guise Effect', x = 'Stereotype Familiarity', 
+             color = 'Empathy Quotient', fill = 'Empathy Quotient', 
+             shape = 'Empathy Quotient', linetype = 'Empathy Quotient')
+    )
 }
 
 ## theme for pca plots
@@ -69,12 +101,12 @@ pca_plot_theme <- function(gg_object) {
 
 ## theme for proportion plots
 proportion_plot_theme <- function(gg_object) {
-  gg_object %>% guise_colors() +
+  gg_object %>% guise_colors(3) +
   gg_theme() +
   coord_cartesian(ylim=c(0, 1)) +
   scale_x_continuous(breaks = -3:3) +
   labs(y = "Proportion 'raised' response", x = "Continuum Step (UR to RS)", 
-       color="Guise", linetype = "Guise")
+       color="Guise", fill="Guise", linetype = "Guise")
 }
 ```
 
@@ -171,14 +203,14 @@ axb_bysubj %>% ggplot(aes(x=EQscore,fill=speakerGuise,color=speakerGuise)) %>%
 
 # Combined Density
 axb_bysubj %>% ggplot(aes(x=EQscore,fill=speakerGuise,color=speakerGuise))  %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count")
 
 # Combined Boxplot
 axb_bysubj %>% ggplot(aes(x=speakerGuise, y=EQscore)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
   geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
@@ -189,7 +221,7 @@ axb_bysubj %>% ggplot(aes(x=speakerGuise, y=EQscore)) %>%
 ```{r, warning=F}
 # By ExperimentId
 axb_bysubj %>% ggplot(aes(x=SAscore,fill=speakerGuise,color=speakerGuise)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count") +
@@ -197,14 +229,14 @@ axb_bysubj %>% ggplot(aes(x=SAscore,fill=speakerGuise,color=speakerGuise)) %>%
 
 # Combined Density
 axb_bysubj %>% ggplot(aes(x=SAscore,fill=speakerGuise,color=speakerGuise))  %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count")
 
 # Combined Boxplot
 axb_bysubj %>% ggplot(aes(x=speakerGuise, y=SAscore)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
   geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
@@ -215,7 +247,7 @@ axb_bysubj %>% ggplot(aes(x=speakerGuise, y=SAscore)) %>%
 ```{r, warning=F}
 # By ExperimentId
 axb_bysubj %>% ggplot(aes(x=CEscore,fill=speakerGuise,color=speakerGuise)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count") +
@@ -223,14 +255,14 @@ axb_bysubj %>% ggplot(aes(x=CEscore,fill=speakerGuise,color=speakerGuise)) %>%
 
 # Combined Density
 axb_bysubj %>% ggplot(aes(x=CEscore,fill=speakerGuise,color=speakerGuise))  %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count")
 
 # Combined Boxplot
 axb_bysubj %>% ggplot(aes(x=speakerGuise, y=CEscore)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
   geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
@@ -470,7 +502,7 @@ axb_all_data <- axb_subj_data %>%
 ```{r, warning=F}
 # Density By ExperimentId
 axb_subj_data %>% ggplot(aes(x=EQscore_all,fill=speakerGuise,color=speakerGuise)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count") +
@@ -478,14 +510,14 @@ axb_subj_data %>% ggplot(aes(x=EQscore_all,fill=speakerGuise,color=speakerGuise)
 
 # Combined Density
 axb_subj_data %>% ggplot(aes(x=EQscore_all,fill=speakerGuise,color=speakerGuise))  %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count")
 
 # Boxplot By ExperimentId
 axb_subj_data %>% ggplot(aes(x=speakerGuise, y=EQscore_all)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
   geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE) +
@@ -493,7 +525,7 @@ axb_subj_data %>% ggplot(aes(x=speakerGuise, y=EQscore_all)) %>%
 
 # Combined Boxplot
 axb_subj_data %>% ggplot(aes(x=speakerGuise, y=EQscore_all)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
   geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
@@ -504,7 +536,7 @@ axb_subj_data %>% ggplot(aes(x=speakerGuise, y=EQscore_all)) %>%
 ```{r, warning=F}
 # Density By ExperimentId
 axb_subj_data %>% ggplot(aes(x=SAscore_all,fill=speakerGuise,color=speakerGuise)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count") +
@@ -512,14 +544,14 @@ axb_subj_data %>% ggplot(aes(x=SAscore_all,fill=speakerGuise,color=speakerGuise)
 
 # Combined Density
 axb_subj_data %>% ggplot(aes(x=SAscore_all,fill=speakerGuise,color=speakerGuise))  %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count")
 
 # Boxplot By ExperimentId
 axb_subj_data %>% ggplot(aes(x=speakerGuise, y=SAscore_all)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
   geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE) +
@@ -527,7 +559,7 @@ axb_subj_data %>% ggplot(aes(x=speakerGuise, y=SAscore_all)) %>%
 
 # Combined Boxplot
 axb_subj_data %>% ggplot(aes(x=speakerGuise, y=SAscore_all)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
   geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
@@ -538,7 +570,7 @@ axb_subj_data %>% ggplot(aes(x=speakerGuise, y=SAscore_all)) %>%
 ```{r, warning=F}
 # Density By ExperimentId
 axb_subj_data %>% ggplot(aes(x=CEscore_all,fill=speakerGuise,color=speakerGuise)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count") +
@@ -546,14 +578,14 @@ axb_subj_data %>% ggplot(aes(x=CEscore_all,fill=speakerGuise,color=speakerGuise)
 
 # Combined Density
 axb_subj_data %>% ggplot(aes(x=CEscore_all,fill=speakerGuise,color=speakerGuise))  %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count")
 
 # Boxplot By ExperimentId
 axb_subj_data %>% ggplot(aes(x=speakerGuise, y=CEscore_all)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
   geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE) +
@@ -561,7 +593,7 @@ axb_subj_data %>% ggplot(aes(x=speakerGuise, y=CEscore_all)) %>%
 
 # Combined Boxplot
 axb_subj_data %>% ggplot(aes(x=speakerGuise, y=CEscore_all)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   # geom_violin(aes(fill = speakerGuise, color=speakerGuise), alpha=0.3, na.rm=TRUE) +
   geom_boxplot(aes(fill = speakerGuise, color=speakerGuise), width=0.5, alpha=0.3, na.rm=TRUE)
@@ -569,25 +601,147 @@ axb_subj_data %>% ggplot(aes(x=speakerGuise, y=CEscore_all)) %>%
 ```
 
 ##### PCA Output Correlation
+
 ```{r}
-
-axb_subj_data %>% ggplot(aes(y=CEscore, x=SAscore, color=speakerGuise, shape=speakerGuise)) %>% guise_colors() %>%
+pca_dist_plot <-
+axb_subj_data %>% ggplot(aes(y=CEscore, x=SAscore)) %>% 
   pca_plot_theme() +
+  theme(legend.position="bottom") +
   scale_x_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
-  scale_y_continuous(lim=c(-3.5, 3.5),breaks=seq(-3,3,1)) +
-  labs(y="CE Scores (PC1)", x="SA Scores (PC2)", color="Participant Group", shape="Participant Group")+
-  geom_point(na.rm=TRUE, size=3, alpha=0.7) +
-  geom_smooth(method="lm")
-  
+  scale_y_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  labs(y="CanEx Scores", x="StereoFam Scores", color="Participant Group", shape="Participant Group")+
+  geom_point(na.rm=TRUE, size=5, alpha=0.5) +
+  geom_smooth(method='lm', color="blue")
+pca_dist_plot
+
+ggsave(path="plots", filename="scores_CESA_distributions.png", pca_dist_plot, width=9, height=6, units = "in" , dpi=72)
+
+```
+
+```{r}
+pca_dist_plot <-
+axb_subj_data %>% ggplot(aes(y=EQscore, x=SAscore)) %>% 
+  pca_plot_theme() +
+  theme(legend.position="bottom") +
+  scale_x_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  scale_y_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  labs(y="EQ Scores", x="StereoFam Scores", color="Participant Group", shape="Participant Group")+
+  geom_point(na.rm=TRUE, size=5, alpha=0.5) +
+  geom_smooth(method='lm', color="blue")
+pca_dist_plot
+
+ggsave(path="plots", filename="scores_EQSA_distributions.png", pca_dist_plot, width=9, height=6, units = "in" , dpi=72)
+```
 
 
-#ggsave(path="plots", filename="CS-CE_distribution_plot.png", CSCE.biplot, width=16, height=8, units = "in" , dpi=72)
+```{r}
+pca_dist_plot <-
+axb_subj_data %>% ggplot(aes(y=CEscore, x=SAscore)) %>% guise_colors(3) %>%
+  pca_plot_theme() +
+  theme(legend.position="bottom") +
+  scale_x_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  scale_y_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  labs(y="CanEx Scores", x="StereoFam Scores", color="Participant Group", shape="Participant Group")+
+  geom_point(aes(color=speakerGuise, shape=speakerGuise), na.rm=TRUE, size=5, alpha=0.7) +
+  geom_smooth(method='lm', color="grey")
+pca_dist_plot
 
+# ggsave(path="plots", filename="PCA_distributions.png", pca_dist_plot, width=12, height=8, units = "in" , dpi=72)
+
+# Add Marginal distributions
+ggMarginal(pca_dist_plot, type = c("boxplot"), margins = c("both"), size=6, alpha=0.3, groupFill=TRUE, groupColour=TRUE)
+
+pca_dist_plot_marg <-
+ggMarginal(pca_dist_plot, type = c("density"), margins = c("both"), size=6, alpha=0.15, groupFill=TRUE, groupColour=TRUE)
+pca_dist_plot_marg
+
+ggsave(path="plots", filename="scores_CESA_distributions_density.png", pca_dist_plot_marg, width=9, height=8, units = "in" , dpi=72)
+
+```
+
+```{r}
+score_cor <-
+axb_subj_data %>% ggplot(aes(y=EQscore, x=SAscore)) %>% guise_colors(3) %>%
+  pca_plot_theme() +
+  theme(legend.position="bottom") +
+  scale_x_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  scale_y_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  labs(y="EQ Scores", x="StereoFam Scores", color="Participant Group", shape="Participant Group")+
+  geom_point(aes(color=speakerGuise, shape=speakerGuise), na.rm=TRUE, size=5, alpha=0.7) +
+  geom_smooth(method='lm', color="grey")
+
+score_cor_marg <-
+ggMarginal(score_cor, type = c("density"), margins = c("both"), size=6, alpha=0.15, groupFill=TRUE, groupColour=TRUE)
+score_cor_marg
+
+ggsave(path="plots", filename="scores_EQSA_distributions_density.png", score_cor_marg, width=9, height=8, units = "in" , dpi=72)
+
+```
+
+```{r}
+axb_subj_data %>% ggplot(aes(y=EQscore, x=CEscore)) %>% guise_colors(3) %>%
+  pca_plot_theme() +
+  theme(legend.position="bottom") +
+  scale_x_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  scale_y_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  labs(y="EQ Scores", x="CanEx Scores", color="Participant Group", shape="Participant Group")+
+  geom_point(aes(color=speakerGuise, shape=speakerGuise), na.rm=TRUE, size=5, alpha=0.7) +
+  geom_smooth(method='lm')
 ```
 
 ### Perception Plots
 #### PropRS by Guise
 ##### Combined
+```{r}
+
+# Get subj means per condition
+subj.means <- axb_all_data %>% 
+  filter(step==0 | step==-1 | step == 1) %>%
+  filter(vowel=='AU') %>%
+  group_by(participantId, step, vowel, speakerGuise) %>%  summarise(mean.Prop = mean(respRS)) %>%
+  mutate(step = as.factor(step))
+
+# Get group means and se per condition (by averaging speaker means)
+condition.means <- subj.means %>%
+  group_by(step, vowel, speakerGuise) %>%  summarise(grandM.Prop = mean(mean.Prop), se = std.error(mean.Prop))
+
+
+# Plot model predicted values
+## in Proportions
+au.mid.plot <- ggplot() + 
+  
+  # Subject observed means
+  geom_jitter(aes(x=speakerGuise, y=mean.Prop, color=speakerGuise), alpha=0.3, size=3, width = 0.25, data=subj.means) +
+  #geom_pointrange(aes(x=speakerGuise, y=mean.Prop, ymin=lower_subj, ymax=upper_subj, color=speakerGuise), position = position_jitter(), alpha=0.5, data=subj.means) +
+  
+  # Group predicted means
+  geom_bar(aes(x=speakerGuise, y=grandM.Prop, fill=speakerGuise), alpha=0.5, stat="identity", position=position_dodge(), data=condition.means) + 
+  geom_errorbar(aes(x=speakerGuise, y=grandM.Prop, 
+                    ymin=grandM.Prop-se, ymax=grandM.Prop+se, color=speakerGuise), 
+                    size=1.5, width=0.3, data=condition.means) +
+  
+  labs(y="Proportion RS Response", x = "Guise", color = "Guise", fill="Guise") +
+  theme(plot.title = (element_text(face = "bold", hjust=0.5, size=15))) +
+  coord_cartesian(ylim=c(0.0, 1.0)) +
+  facet_grid(~step) +
+  theme_bw() +
+  scale_color_manual(values=ghibli_palette("PonyoMedium")[c(6,4,3)])+
+  scale_fill_manual(values=ghibli_palette("PonyoMedium")[c(6,4,3)])+
+  theme(axis.title=element_text(size=35),
+        axis.text=element_text(size=30),
+        strip.background =element_rect(fill="white"),
+        strip.text = element_text(size=30))+
+  theme(legend.title = element_text(size=30, face="bold"),
+        legend.text=element_text(size=30))
+au.mid.plot
+
+ggsave(path="plots", filename="AU_ambiguous_barplot.png", au.mid.plot, width=16, height=8, units = "in" , dpi=72)
+
+
+```
+
+
+
 ```{r}
 # Get subj means per condition
 subj.means <- axb_all_data %>% #filter(speakerGuise!='BL') %>% #filter(participantId!='5e42f74f5b772a18434cabf7') %>%
@@ -651,12 +805,13 @@ condition.means <- subj.means %>%
 
 # Plot lineplot with error bars on step points
 byGuise_rt_plot <- condition.means %>% 
-  ggplot(aes(x = step, y = grandM.rt)) %>% guise_colors() +
+  ggplot(aes(x = step, y = grandM.rt)) %>% guise_colors(3) +
   gg_theme() +
   labs(y = "Log Response Time", x = "Continuum Step (UR to RS)", color="Guise",
        linetype = "Guise", title="Reaction Time: By Guise") +
   geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
   geom_line(aes(colour=factor(speakerGuise), linetype=factor(speakerGuise)), lwd=1) +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
   geom_errorbar(width = .25, aes(ymin = grandM.rt-se, ymax = grandM.rt+se, colour = factor(speakerGuise))) +
   facet_grid(~vowel)
 
@@ -675,12 +830,13 @@ condition.means <- subj.means %>%
 
 # Plot lineplot with error bars on step points
 byGuise_rt_plot <- condition.means %>% 
-  ggplot(aes(x = step, y = grandM.rt)) %>% guise_colors() +
+  ggplot(aes(x = step, y = grandM.rt)) %>% guise_colors(3) +
   gg_theme() +
   labs(y = "Log Response Time", x = "Continuum Step (UR to RS)", color="Guise",
        linetype = "Guise", title="Reaction Time: By Guise") +
   geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
   geom_line(aes(colour=factor(speakerGuise), linetype=factor(speakerGuise)), lwd=1) +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
   geom_errorbar(width = .25, aes(ymin = grandM.rt-se, ymax = grandM.rt+se, colour = factor(speakerGuise))) +
   facet_grid(experimentId~vowel)
 
