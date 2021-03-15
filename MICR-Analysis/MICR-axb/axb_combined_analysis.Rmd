@@ -22,6 +22,7 @@ library(paran)
 
 # Plotting
 library(ggplot2)
+library(ggExtra)
 library(ghibli)
 
 # Optional settings
@@ -235,7 +236,7 @@ axb_bysubj %>% ggplot(aes(x=Gender, fill=Gender)) +
 ```{r, warning=F}
 # By ExperimentId
 axb_bysubj %>% ggplot(aes(x=EQscore,fill=speakerGuise,color=speakerGuise)) %>%
-  guise_colors() +
+  guise_colors(3) +
   gg_theme() +
   geom_density(alpha=0.3) +
   labs(title="", y="Count") +
@@ -794,14 +795,19 @@ condition.means <- subj.means %>%
 # Plot lineplot with error bars on step points
 byGuise_prop_plot <- condition.means %>%
   ggplot(aes(x = step, y = grandM.Prop))  %>% proportion_plot_theme +
-  labs(title="Raising Perception: By Guise") +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
+  facet_grid(~vowel) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  coord_cartesian(ylim = c(0.2, 0.8)) + 
+  # labs(title="Raising Perception: By Guise") +
+  # geom_point(aes(y = mean.Prop, color = speakerGuise), alpha=0.5, data=subj.means) +
   geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
-  geom_line(aes(colour=factor(speakerGuise), linetype=factor(speakerGuise)), lwd=1) +
-  geom_errorbar(width = .25, aes(ymin = grandM.Prop-se, ymax = grandM.Prop+se, 
-                                 colour = factor(speakerGuise))) +
-  facet_grid(~vowel)
-
+  geom_line(aes(colour=speakerGuise, linetype=speakerGuise), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.Prop-se, ymax = grandM.Prop+se,
+                                 colour = factor(speakerGuise)))
 byGuise_prop_plot
+
+ggsave(path="plots", filename="aiau_group_prop_obs.png", byGuise_prop_plot, width=12, height=8, units = "in" , dpi=72)
 
 ### Do individual analysis of both step -1 and 1 --- those are where we found group effects
 ### Bayesian model averaging ---- what if anything can I generalize from these models
@@ -825,6 +831,7 @@ byGuise_prop_plot <- condition.means %>%
   geom_line(aes(colour=factor(speakerGuise), linetype=factor(speakerGuise)), lwd=1) +
   geom_errorbar(width = .25, aes(ymin = grandM.Prop-se, ymax = grandM.Prop+se, 
                                  colour = factor(speakerGuise))) +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
   facet_grid(experimentId~vowel)
 
 byGuise_prop_plot
