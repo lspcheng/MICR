@@ -1872,6 +1872,57 @@ ind_int_plot
 ggsave(path="plots", filename="au_ind_guiseshift_fixef_facet_pred.png", ind_int_plot, width=12, height=8, units = "in" , dpi=72)
 ```
 
+
+# .
+## Crossover Point Comparisons
+
+```{r}
+au_data_ind_xints <-
+  rbind(au_data_ind_coef %>% mutate(pred_type = as.factor("coef")) %>% 
+          select(-guise_pred),
+        au_data_ind_fixef %>% mutate(pred_type = as.factor("fixef"))
+  ) %>%
+  select(participantId, experimentId, speakerGuise, guiseShift, pred_type) %>%
+  pivot_wider(names_from = pred_type, values_from = guiseShift) 
+au_data_ind_xints
+```
+
+```{r}
+# Check correlation of model coefficients vs. individual model estimates
+with(au_data_ind_xints, 
+     cor.test(coef, fixef, na.rm=T))
+
+# Plot correlation
+au_data_ind_xints %>% 
+  ggplot(aes(x=coef, y=fixef)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw()
+```
+
+
+```{r}
+# With outlier removal
+ggplot() +
+  geom_point(aes(x=participantId, y=guiseShift), data=au_data_ind_coef) +
+  
+  geom_point(aes(x=participantId, y=guiseShift), color='blue', alpha=0.3, data=au_data_ind_fixef) +
+  facet_wrap(~speakerGuise, ncol=1) +
+  theme_bw()
+
+```
+
+```{r}
+# With all data (no outlier removal)
+ggplot() +
+  geom_point(aes(x=participantId, y=guiseShift), data=au_data_ind_coef_max) +
+  
+  geom_point(aes(x=participantId, y=guiseShift), color='blue', alpha=0.3, data=au_data_ind_fixef_max) +
+  facet_wrap(~speakerGuise, ncol=1) +
+  theme_bw()
+
+```
+
 # .
 ## Schematic Visualizations
 ### Continuum Plot
