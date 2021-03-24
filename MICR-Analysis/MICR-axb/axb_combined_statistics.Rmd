@@ -143,18 +143,6 @@ ai_data_coded <- filter(axb_data_coded, vowel=='AI')
 ### Frequentist (glmer)
 
 #### Models
-```{r include=F}
-# guiseCN + guiseMI: Base Model for extracting fixed effects and model coefficients (BL vs CN & MI)
-cont_au_glm <- glmer(respRS ~ step + guiseCN + guiseMI + step:guiseCN + step:guiseMI +
-                       (1 | participantId) + (0 + step | participantId) +
-                       (1 | word) + (0 + step | word),
-                    family = "binomial", 
-                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
-                    data = au_data_coded
-                    ) 
-summary(cont_au_glm)
-```
-
 
 ```{r}
 # speakerGuise: Base Model for extracting fixed effects and model coefficients (BL vs CN & MI)
@@ -474,7 +462,7 @@ au_data_ind_coef <- au_data_coded %>% select(-step:-rt) %>%
   filter(speakerGuise == guise_pred) %>%
   
   # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
-  filter(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5) %>%
+  filter(xint_pred > Q1-IQR*3 & xint_pred < Q3+IQR*3) %>%
 
   # Create normalized guise bias/shift effect size score
   mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
