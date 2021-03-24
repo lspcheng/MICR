@@ -285,7 +285,7 @@ View(condata.test.outliers)
 # C
 # 85/168 #0.5059524 subj 5699d25625d9e9000db0c7cc **BUT ALSO IN COND E???
 14/168 #0.08333333 subj 5e42f74f5b772a18434cabf7 --- all were longer; can keep if necessary
-4/168 #0.02380952 subj 5a68d1c1c0d83600010821e0
+# 4/168 #0.02380952 subj 5a68d1c1c0d83600010821e0
 
 # E
 # 168/168 #0.5059524 subj 5699d25625d9e9000db0c7cc **BUT ALSO IN COND C???
