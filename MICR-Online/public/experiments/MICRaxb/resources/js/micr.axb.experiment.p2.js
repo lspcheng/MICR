@@ -55,7 +55,7 @@ function Experiment(params, firebaseStorage) {
   var condition = {
     // id: params.condition
     // id: condition_list[condition_count % 3]
-    id: 'condA'
+    id: 'condC'
   }
   console.log(condition.id);
 
