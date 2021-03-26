@@ -2188,6 +2188,9 @@ au_data_ind_fixef_max <- au_data_coded %>% select(-step:-rt) %>%
   # Create normalized guise bias/shift effect size score
   mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
 
+  mutate(slope_out = ifelse(slope_pred < slope_lower & slope_pred > -slope_lower, TRUE, FALSE)) %>%
+  mutate(xint_out = ifelse(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5, FALSE, TRUE)) %>%
+  
   # Remove extra rows by summarizing
   distinct() %>%
   droplevels()
@@ -2206,7 +2209,10 @@ au_data_ind_fixef <- au_data_coded %>% select(-step:-rt) %>%
   merge(., xints_fixef_au) %>%
 
   # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
-  filter(xint_pred > Q1-IQR*3 & xint_pred < Q3+IQR*3) %>%
+  mutate(slope_out = ifelse(slope_pred < slope_lower & slope_pred > -slope_lower, TRUE, FALSE)) %>%
+  mutate(xint_out = ifelse(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5, FALSE, TRUE)) %>%
+  # filter(slope_out != TRUE | xint_out != TRUE) %>%
+  filter(slope_out != TRUE) %>%
 
   # Create normalized guise bias/shift effect size score
   mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
