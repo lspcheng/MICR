@@ -1,29 +1,38 @@
 # Restrict access to following folders
 
-## MICR_base
-MICR_base/
+## General
+__pycache__/
+.DS_Store
+data/
+results/
+plots/
+checks_and_diagnostics/
 
-## MICR-EEG
-### Project extras
+## MICR-Analysis
+.RData
+.Rhistory
+*nb.html
+
+## EEG Experiment
+MICR-EEG/
+
 MICR_Documents/
 MICR_Surveys/
 
-### PsychoPy-related extras
-__pycache__/
-data/
-
-### Stimuli Files
+### Stimuli & Data
 SentenceStim/
 DiphthongStim_varied/
 
-
 ## MICR-Online
-### Stimuli Files & Data
+### Stimuli Files
+stimPrep/
 audio/
-expDataOutput/
+images/
+*.consent.html
 
-### Micellaneous
+### Other
 template/
+MICRnt/
 
 # Logs
 logs
@@ -33,6 +42,7 @@ firebase-debug.log*
 
 # Firebase cache
 .firebase/
+.firebaserc
 
 # Firebase config
 
