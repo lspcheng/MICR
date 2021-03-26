@@ -454,8 +454,9 @@ ggsave(path="plots", filename="au_group_prop_cross_pred.png", au_pred_plot, widt
 
 
 # .
-## Coef Ind Regression
+## Coef Ind w/ Guise
 ### Extract Individual Estimates
+
 For these calculations:
 * yint_bl = Intercept
 * slope_bl = step
@@ -2458,6 +2459,8 @@ anova(ind_au_lm_fixef.D, ind_au_lm_fixef)
 
 #### Prediction Plots
 ##### Main Effect
+
+###### Guise
 ```{r}
 ind_au_pred <- au_data_ind_fixef_noBL
 ind_au_pred$pred_guiseShift <- predict(ind_au_lm_fixef, type = "response", 
@@ -2475,12 +2478,24 @@ ggplot(aes(x=guiseContr, y=pred_guiseShift, color=speakerGuise), data=ind_au_pre
 
 ```
 
+###### SA
 ```{r}
 ind_au_pred <- au_data_ind_fixef_noBL
 ind_au_pred$pred_guiseShift <- predict(ind_au_lm_fixef, type = "response", 
                                  re.form=NA, se=T)[[1]]
 ind_au_pred$pred_se <- predict(ind_au_lm_fixef, type = "response", 
                                  re.form=NA, se=T)[[2]]
+
+sf_plot <-
+ggplot(aes(x=SAscore_all, y=pred_guiseShift, color=speakerGuise), data=ind_au_pred) %>%
+  guise_colors(2) +
+  gg_theme() +
+  facet_grid(Gender~speakerGuise) +
+  labs(x = 'Stereotype Familiarity', y='Guise Effect', color='Guise') +
+  geom_point(size=5, alpha=0.75) +
+  geom_smooth(aes(x=SAscore_all, y=pred_guiseShift), color="grey",
+              method='lm', se=T, alpha=0.3, fullrange=T, size=1, data=ind_au_pred)
+sf_plot
 
 sf_plot <-
 ggplot(aes(x=SAscore_all, y=guiseShift, color=speakerGuise), data=ind_au_pred) %>%
@@ -2509,6 +2524,7 @@ ggsave(path="plots", filename="au_ind_sf_fixef_pred.png", sf_plot, width=8, heig
 
 ```
 
+###### EQ (none)
 ```{r}
 ind_au_pred <- au_data_ind_fixef_noBL
 ind_au_pred$pred_guiseShift <- predict(ind_au_lm_fixef, type = "response", 
@@ -2538,7 +2554,7 @@ eq_plot
 ggsave(path="plots", filename="au_ind_eq_fixef_pred.png", eq_plot, width=8, height=4, units = "in" , dpi=72)
 ```
 
-
+###### Age
 ```{r include=F}
 ind_au_pred <- au_data_ind_fixef_noBL
 ind_au_pred$pred_guiseShift <- predict(ind_au_lm_fixef, type = "response", 
