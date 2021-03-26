@@ -135,6 +135,8 @@ axb_data_coded
 
 au_data_coded <- filter(axb_data_coded, vowel=='AU')
 ai_data_coded <- filter(axb_data_coded, vowel=='AI')
+
+save(au_data_coded, file="./data/au_data_coded.rData")
 ```
 
 # Data Visualization
