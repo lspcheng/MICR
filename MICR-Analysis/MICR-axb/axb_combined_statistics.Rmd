@@ -137,10 +137,112 @@ au_data_coded <- filter(axb_data_coded, vowel=='AU')
 ai_data_coded <- filter(axb_data_coded, vowel=='AI')
 ```
 
+# Data Visualization
+```{r}
+# Get subj means per condition
+subj.means <- axb_all_data %>% 
+  group_by(participantId, step, vowel, speakerGuise) %>%  summarise(mean.Prop = mean(respRS))
+
+# Get group means and se per condition (by averaging speaker means)
+condition.means <- subj.means %>%
+  group_by(step, vowel, speakerGuise) %>%  summarise(grandM.Prop = mean(mean.Prop), se = std.error(mean.Prop))
+
+# Plot lineplot with error bars on step points
+byGuise_prop_plot <- condition.means %>%
+  ggplot(aes(x = step, y = grandM.Prop))  %>% proportion_plot_theme +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
+  facet_grid(~vowel) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  coord_cartesian(ylim = c(0.2, 0.8)) + 
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=speakerGuise, linetype=speakerGuise), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.Prop-se, ymax = grandM.Prop+se,
+                                 colour = factor(speakerGuise)))
+byGuise_prop_plot
+
+```
+
+```{r}
+# Get subj means per condition
+subj.means <- axb_all_data %>% 
+  group_by(participantId, step, vowel, speakerGuise) %>% summarise(mean.logOdds = logit(mean(respRS))) %>%
+  mutate(mean.logOdds = ifelse(mean.logOdds == Inf | mean.logOdds == -Inf, 0, mean.logOdds))
+
+# Get group means and se per condition (by averaging speaker means)
+condition.means <- subj.means %>%
+  group_by(step, vowel, speakerGuise) %>%  summarise(grandM.logOdds = mean(mean.logOdds), se = std.error(mean.logOdds))
+
+# Plot lineplot with error bars on step points
+byGuise_prop_plot <- condition.means %>%
+  ggplot(aes(x = step, y = grandM.logOdds, color = speakerGuise)) %>% 
+  guise_colors(3) +
+  theme_minimal() +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
+  facet_grid(~vowel)  +
+  # geom_smooth(method="glm", se=T) 
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=speakerGuise, linetype=speakerGuise), lwd=1) +
+  geom_errorbar(width = .25, aes(ymin = grandM.logOdds-se, ymax = grandM.logOdds+se,
+                                 colour = factor(speakerGuise)))
+byGuise_prop_plot
+
+```
+
+### Check outliers
+```{r}
+flat_slopes = c('5bef64b373e44f0001092811', '5cdf2adac194e800187ad97a', '5de7c6d448241d73d36ceaef', '5e8cd8011a88ad08f181eb96', '5eafec905b4ec101bfac3661', '5ec44da606cb7931f04a35e9', '5f05ece827813a0da11cd397', '5f12fa2b44b6a42a83519a79', '5f5065f8c62ac41e03484ba1', '5fa941f4897b8d0670476392', '5fc769df1f4e27017a638e8e', '60053227125e504142df91e9')
+
+steep_slopes = c('5f902184d7badd065adb604b', '5fc52d94e910e8000a3ba817', '5fc79cabf9cb8c0a06fbe117', '5fd2871827a4dc0263f767fb', '601f037b4687cc41ce74102b', '603690a9ccf658762858408e')
+
+# Get subj means per condition
+subj.means <- axb_all_data %>% 
+  group_by(participantId, step, vowel, speakerGuise) %>%  summarise(mean.Prop = mean(respRS))
+
+# Plot lineplot
+byGuise_prop_plot <- subj.means %>% filter(vowel=='AU') %>% filter(speakerGuise!='BL') %>%
+  # filter(!participantId %in% flat_slopes) %>%
+  ggplot(aes(x = step, y = mean.Prop, color=participantId)) +
+  theme_bw() +
+  facet_grid(~speakerGuise) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  coord_cartesian(ylim = c(0, 1)) + 
+  # geom_point(stat="identity", cex=5) +
+  geom_line(lwd=1, alpha=0.3) +
+  theme(legend.position = 'none')
+byGuise_prop_plot
+
+byGuise_prop_plot <- subj.means %>% filter(vowel=='AU') %>% filter(speakerGuise!='BL') %>%
+  filter(participantId %in% steep_slopes) %>%
+  ggplot(aes(x = step, y = mean.Prop, color=participantId)) +
+  theme_bw() +
+  facet_grid(~speakerGuise) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  coord_cartesian(ylim = c(0, 1)) + 
+  # geom_point(stat="identity", cex=5) +
+  geom_line(lwd=1) +
+  theme(legend.position = 'none')
+byGuise_prop_plot
+
+byGuise_prop_plot <- subj.means %>% filter(vowel=='AU') %>%
+  filter(participantId %in% flat_slopes) %>%
+  ggplot(aes(x = step, y = mean.Prop, color=participantId)) +
+  theme_bw() +
+  facet_grid(~speakerGuise) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  coord_cartesian(ylim = c(0, 1)) + 
+  # geom_point(stat="identity", cex=5) +
+  geom_line(lwd=1) +
+  theme(legend.position = 'none')
+byGuise_prop_plot
+
+```
+
+
+
 #...
 # /au/
 ## Continuous Step Regression
-### Frequentist (glmer)
+### Original (glmer)
 
 #### Models
 
