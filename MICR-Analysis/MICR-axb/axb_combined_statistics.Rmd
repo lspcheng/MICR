@@ -370,9 +370,10 @@ cont_au_pred$pred_prop <- predict(cont_au_glm_base, newdata=cont_au_pred, type =
 cont_au_pred %>% ggplot(aes(x=step, y=pred_logOdds, color=speakerGuise)) %>% 
   guise_colors(3) +
   theme_minimal() +
-  geom_smooth(method="glm", formula = 'y ~ x') +
-  # geom_smooth(method="loess") +
-  geom_point(alpha=0.8) + 
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=speakerGuise, linetype=speakerGuise), lwd=1) +
+  # geom_smooth(method="glm", formula = 'y ~ x') +
+  # geom_point(alpha=0.8) + 
   geom_vline(xintercept = xint_bl, linetype="solid") +
   geom_vline(xintercept = xint_cn, linetype="dashed") +
   geom_vline(xintercept = xint_mi, linetype="dashed")
@@ -384,8 +385,10 @@ cont_au_pred %>% ggplot(aes(x=step, y=pred_prop, color=speakerGuise, fill=speake
   scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
   scale_y_continuous(breaks=seq(0,1,0.1)) +
   coord_cartesian(ylim = c(0.15, 0.85)) + 
-  geom_smooth(method="loess", alpha=0.3) +
-  geom_point(alpha=0.8) + 
+  geom_point(stat="identity", aes(colour = factor(speakerGuise)), cex=5) +
+  geom_line(aes(colour=speakerGuise, linetype=speakerGuise), lwd=1) +
+  # geom_smooth(method="loess", alpha=0.3) +
+  # geom_point(alpha=0.8) + 
   geom_vline(xintercept = xint_bl, linetype="solid") +
   geom_vline(xintercept = xint_cn, linetype="dashed") +
   geom_vline(xintercept = xint_mi, linetype="dashed")
@@ -402,8 +405,8 @@ cont_au_pred_actual <- au_data_coded %>%
 cont_au_pred_actual %>% ggplot(aes(x=step, y=predictions, color=speakerGuise)) %>% 
   guise_colors(3) +
   theme_minimal() +
-  geom_smooth(method="glm", se=T) +
-  # geom_point(alpha=0.1) +
+  geom_smooth(method="loess", alpha=0.3) +
+  # geom_smooth(method="glm", se=T) +
   geom_vline(xintercept = xint_bl) +
   geom_vline(xintercept = xint_cn) +
   geom_vline(xintercept = xint_mi) + 
