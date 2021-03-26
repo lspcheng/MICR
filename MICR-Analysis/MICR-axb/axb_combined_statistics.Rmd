@@ -534,10 +534,6 @@ rtscores <- au_data_coded %>% group_by(participantId) %>%
 
 #### Full
 ```{r}
-Q1 <- quantile(xints_coef_au$xint_pred, .25)
-Q3 <- quantile(xints_coef_au$xint_pred, .75)
-IQR <- IQR(xints_coef_au$xint_pred)
-
 au_data_ind_coef_max <- au_data_coded %>% select(-step:-rt) %>%
   merge(., xints_coef_au) %>%
   
@@ -825,6 +821,7 @@ ind_au_lm_coef <- lm(guiseShift ~ genderContr + scale(Age) + CEscore_all + guise
                      data=au_data_ind_coef_noBL)
 summary(ind_au_lm_coef)
 
+# Plus MSscore
 ind_au_lm_coef.F <- lm(guiseShift ~ genderContr + scale(Age) + CEscore_all + MSscore_all + guiseContr *
                        SAscore_all * EQscore_all, 
                      data=au_data_ind_coef_noBL)
@@ -862,12 +859,6 @@ ind_au_lm_coef.D <- lm(guiseShift ~ scale(Age) + genderContr * CEscore_all * gui
 summary(ind_au_lm_coef.D)
 anova(ind_au_lm_coef.D, ind_au_lm_coef)
 
-# Plus EVERYTHING
-# ind_au_lm_coef.E <- lm(guiseShift ~ scale(Age) * genderContr * CEscore_all * guiseContr *
-#                        SAscore_all * EQscore_all,
-#                      data=au_data_ind_coef_noBL)
-# summary(ind_au_lm_coef.E)
-# anova(ind_au_lm_coef.E, ind_au_lm_coef)
 ```
 
 #### Prediction Plots
@@ -2189,10 +2180,6 @@ get_ind_xints <- function(df, participant_col) {
 
 #### Full
 ```{r}
-Q1 <- quantile(xints_fixef_au$xint, .25)
-Q3 <- quantile(xints_fixef_au$xint, .75)
-IQR <- IQR(xints_fixef_au$xint)
-
 au_data_ind_fixef_max <- au_data_coded %>% select(-step:-rt) %>%
   # Match xints to participant data
   merge(., xints_fixef_au) %>%
@@ -2422,9 +2409,10 @@ ind_au_lm_fixef <- lm(guiseShift ~ genderContr + scale(Age) + CEscore_all + guis
                      data=au_data_ind_fixef_noBL)
 summary(ind_au_lm_fixef)
 
-# ind_au_lm_fixef.F <- lm(guiseShift ~ genderContr + scale(Age) + CEscore_all + MSscore_all + guiseContr *
-#                        SAscore_all * EQscore_all, 
-#                      data=au_data_ind_fixef_noBL)
+# Add MSscore control
+ind_au_lm_fixef.F <- lm(guiseShift ~ genderContr + scale(Age) + CEscore_all + MSscore_all + guiseContr *
+                       SAscore_all * EQscore_all,
+                     data=au_data_ind_fixef_noBL)
 summary(ind_au_lm_fixef.F)
 
 # Plus Gender model: 
