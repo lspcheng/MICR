@@ -528,7 +528,7 @@ xints_coef_au %>% ggplot(aes(x=xint_pred, y=reorder(guise_pred, desc(guise_pred)
 ```
 
 ### Process Data + Outliers
-```{r include=F}
+```{r eval=F, include=F}
 # Calculate RT score per participant
 rtscores <- au_data_coded %>% group_by(participantId) %>% 
   summarize(meanRT = mean(log(rt))) %>% ungroup() %>% 
@@ -666,7 +666,7 @@ au_data_ind_coef %>% ggplot(aes(y=guiseShift, x=EQscore_all, color=guise_pred)) 
 
 ```
 
-```{r include=F}
+```{r eval=F, include=F}
 au_data_ind_coef %>% ggplot(aes(y=guiseShift, x=RTscore, color=guise_pred)) %>% guise_colors(3) +
   theme_minimal() +
   coord_cartesian(ylim=c(-3, 3)) +
@@ -1407,11 +1407,16 @@ setdiff(au_data_ind_coef, au_data_ind_coef_noBL) %>% select(-Age:-genderContr)
 ```
 
 ```{r}
-# outs$participantId
-
 # Check outlier removals
-setdiff(au_data_ind_coef_max, au_data_ind_coef) %>% select(-Age:-genderContr)
-setdiff(au_data_ind_coef_noBL_max, au_data_ind_coef_noBL) %>% select(-Age:-genderContr)
+( outs <- setdiff(au_data_ind_coef_max, au_data_ind_coef) %>% select(-Age:-genderContr) )
+outs$participantId
+
+flat_slopes_coef = c('5bef64b373e44f0001092811', '5cdf2adac194e800187ad97a',
+                     '5de7c6d448241d73d36ceaef', '5e8cd8011a88ad08f181eb96', 
+                     '5eafec905b4ec101bfac3661', '5ec44da606cb7931f04a35e9', 
+                     '5f05ece827813a0da11cd397', '5f12fa2b44b6a42a83519a79',
+                     '5f5065f8c62ac41e03484ba1', '5fa941f4897b8d0670476392', 
+                     '5fc769df1f4e27017a638e8e', '60053227125e504142df91e9')
 ```
 
 #### Exploratory Plots (2)
@@ -2146,11 +2151,14 @@ Run individual regressions per participant and collect the intercept and slope, 
 # Function to calculate xint for one participant
 calculate_xint <- function(df, id) {
   ind_data <- df %>% filter(participantId == id)
-  ind_glm <- glmer(respRS ~ step + (1 | word),
+  ind_glm <- glmer(respRS ~ step + (1 + step | word),
                  family = "binomial", 
                  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
                  data = ind_data)
+  intercept <- fixef(ind_glm)[[1]]
+  slope <- fixef(ind_glm)[[2]]
   xint <- -(fixef(ind_glm)[[1]]) / fixef(ind_glm)[[2]]
+  c(intercept, slope, xint)
 }
 
 # Function to collect all xints for participant in list
@@ -2159,12 +2167,15 @@ get_ind_xints <- function(df, participant_col) {
   participant_list <- unique(as.character(participant_col))
 
   ind_xints <- data.frame(participantId=as.character(NA),
+                          slope_pred=as.integer(NA),
                         xint_pred=as.integer(NA),
                         stringsAsFactors=FALSE)
 
   for (participantId in participant_list) {
-    xint_pred = calculate_xint(df, participantId)
-    ind_row = cbind.data.frame(participantId, xint_pred)
+    fixefs <- calculate_xint(df, participantId)
+    slope_pred <- fixefs[2]
+    xint_pred <- fixefs[3]
+    ind_row <- cbind.data.frame(participantId, slope_pred, xint_pred)
     ind_xints <- rbind(ind_xints, ind_row)
   }
 
@@ -2177,12 +2188,16 @@ get_ind_xints <- function(df, participant_col) {
 
 # TODO: Also collect slopes for using to check whether outliers are due to shallow/flat slope
 ( xints_fixef_au <- get_ind_xints(au_data_coded, au_data_coded$participantId) )
+
+save(xints_fixef_au, file="./data/xints_fixef_au.rData")
 ```
 
 ### Process Data + Outliers
 
 #### Full
 ```{r}
+slope_lower = quantile(xints_fixef_au$slope_pred, .1)
+  
 au_data_ind_fixef_max <- au_data_coded %>% select(-step:-rt) %>%
   # Match xints to participant data
   merge(., xints_fixef_au) %>%
@@ -2229,6 +2244,18 @@ au_data_ind_fixef
 summary(au_data_ind_fixef)
 ```
 
+
+```{r}
+au_data_ind_fixef_noBL_max %>% filter(slope_pred > quantile(xints_fixef_au$slope_pred, .95))
+```
+
+```{r}
+au_data_ind_fixef_noBL_max %>% filter(slope_out == TRUE | xint_out == TRUE)
+au_data_ind_fixef_noBL_max %>% filter(slope_out == TRUE)
+au_data_ind_fixef_noBL_max %>% filter(xint_out == TRUE)
+au_data_ind_fixef_noBL_max %>% filter(slope_out == TRUE & xint_out == TRUE)
+```
+
 ```{r}
 # Check Data numbers
 au_data_ind_fixef %>% group_by(experimentId, speakerGuise) %>% count() %>%
@@ -2245,14 +2272,28 @@ au_data_ind_fixef %>% group_by(speakerGuise) %>% count() %>%
 ```
 
 ```{r}
-# Check outlier removals
+# Check BL removals
 setdiff(au_data_ind_fixef, au_data_ind_fixef_noBL) %>% select(-Age:-guiseRelvl)
 ```
 
 ```{r}
 # Check outlier removals
-setdiff(au_data_ind_fixef_max, au_data_ind_fixef) %>% select(-Age:-guiseRelvl)
+( outs <- setdiff(au_data_ind_fixef_max, au_data_ind_fixef) %>% 
+    select(-Age:-guiseRelvl) )
+
+flat_slopes_fixef = c('5bef64b373e44f0001092811', '5c8e975422f8f100162b5d39',
+                      '5cdf2adac194e800187ad97a', '5d485db699f83a00012bc391',
+                      '5de7c6d448241d73d36ceaef', '5e41a040ea48190420f09d26',
+                      '5eafec905b4ec101bfac3661', '5ec44da606cb7931f04a35e9',
+                      '5f12fa2b44b6a42a83519a79', '5f2d5ea5a073960008ed5894',
+                      '5f5065f8c62ac41e03484ba1', '5f5287a0af6c8c555f3015e1',
+                      '5f5fb8d1926d9e058c0efd96', '5fa0270a0f22bc03bd0380ee',
+                      '5fa941f4897b8d0670476392', '5fc620bd1fb5ab1eb2a9975a',
+                      '5fc769df1f4e27017a638e8e', '5fe54350116bbf2f3b287e04',
+                      '5ff15946b0feb85b821bbf86', '60053227125e504142df91e9',
+                      '6022a76125dc84000ae96179', '6024060b7e645502d5ff1f5b')
 ```
+
 
 
 #### Exploratory Plots
@@ -2456,12 +2497,6 @@ ind_au_lm_fixef.D <- lm(guiseShift ~ scale(Age) + genderContr * CEscore_all * gu
 summary(ind_au_lm_fixef.D)
 anova(ind_au_lm_fixef.D, ind_au_lm_fixef)
 
-# Plus EVERYTHING
-# ind_au_lm_fixef.E <- lm(guiseShift ~ scale(Age) * genderContr * CEscore_all * guiseContr * 
-#                        SAscore_all * EQscore_all, 
-#                      data=au_data_ind_fixef_noBL)
-# summary(ind_au_lm_fixef.E)
-# anova(ind_au_lm_fixef.E, ind_au_lm_fixef)
 ```
 
 
@@ -3344,7 +3379,7 @@ coef_au_bysubj_all %>% filter(!participantId %in% flat_slopes) %>%
 ```
 
 ```{r}
-# Without outlier removal
+# With outlier removal
 coef_au_bysubj_all %>% filter(!participantId %in% flat_slopes) %>% #filter(speakerGuise != 'BL') %>%
   ggplot() +
   geom_point(aes(x=participantId, y=xint_1), alpha=0.8) +
@@ -3355,4 +3390,13 @@ coef_au_bysubj_all %>% filter(!participantId %in% flat_slopes) %>% #filter(speak
   labs(y = 'Predicted x-intercepts') +
   theme_bw()
 
+```
+
+```{r}
+coef_au_bysubj %>% 
+  filter(!participantId %in% flat_slopes) %>%
+  group_by(speakerGuise) %>% 
+  summarize(int_1 = mean(xint_1),
+            int_2 = mean(xint_2),
+            int_3 = mean(xint_3))
 ```
