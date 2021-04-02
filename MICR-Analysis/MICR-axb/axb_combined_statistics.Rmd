@@ -3014,102 +3014,30 @@ ind_au_pred %>%
 
 
 # .
-## Schematic Visualizations
-### Continuum Plot
-```{r}
-library(sigmoid)
-df_noeffect <- 
-  data.frame(result = "no effect",
-    step = c(-5:5, -5:5, -5:5),
-    speakerGuise = c(rep("BL", 11), rep("CN", 11), rep("MI", 11))) %>%
-  mutate(respRS = logistic(c(rep(-5:5,3))))
-
-df_effect <- 
-  data.frame(result = "guise effect",
-    step = c(-5:5, -5.5:4.5, -4.5:5.5),
-    speakerGuise = c(rep("BL", 11), rep("CN", 11), rep("MI", 11))) %>%
-  mutate(respRS = logistic(c(rep(-5:5,3))))
-
-df <- rbind(df_noeffect, df_effect) %>%
-  mutate(result = as.factor(result))
-df$result <- relevel(df$result, ref="no effect")
-
-mock_prop <-
-  ggplot(df, aes(step, respRS, color=speakerGuise, linetype=speakerGuise)) %>%
-  proportion_plot_theme() +
-  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
-  facet_grid(~result) +
-  geom_hline(yintercept=0.5, linetype="dotted") +
-  geom_vline(xintercept=0, linetype="dotted") +
-  coord_cartesian(xlim=c(-3,3)) +
-  scale_x_continuous(breaks=seq(-3, 3, 1)) +
-  geom_line(size=2)
-mock_prop
-
-ggsave(path="plots", filename="au_group_prop_schematic.png", mock_prop, width=16, height=6, units = "in" , dpi=72)
-```
 
 
-### Interaction Visualizations
-```{r}
 
-mockdata <- expand.grid(SAscore = c(-2:2),
-                       #EQscore = c(-2:2),
-                       EQgroup = c("high", "mid", "low"))
-#mockdata
-
-mockdata.CS <- mockdata %>% mutate(guiseShift = c(-0.2,-0.15,-0.1,-0.05,0,
-                                              -0.2,-0.15,-0.1,-0.05,0,
-                                              -0.2,-0.15,-0.1,-0.05,0)) %>%
-  mutate(outcome = as.factor("CS.only"))
-
-mockdata.EQ <- mockdata %>% mutate(guiseShift = c(0,0,0,0,0,
-                                                -0.1,-0.1,-0.1,-0.1,-0.1,
-                                                -0.2,-0.2,-0.2,-0.2,-0.2)) %>%
-  mutate(outcome = as.factor("EQ.only"))
-
-mockdata.CSEQ <- mockdata %>% mutate(guiseShift = c(0,0.05,0.1,0.15,0.2,
-                                                -0.1,-0.05,0,0.05,0.1,
-                                                -0.2,-0.15,-0.1,-0.05,0)) %>%
-  mutate(outcome = as.factor("CS+EQ"))
-
-
-mockdata.int <- mockdata %>% mutate(guiseShift = c(-0.2,-0.1,0,0.1,0.2,
-                                              -0.2,-0.15,-0.1,-0.05,0,
-                                              -0.2,-0.2,-0.2,-0.2,-0.2)) %>%
-  mutate(outcome = as.factor("CS:EQ.int"))
-
-mockdata.all <- mockdata.CS %>%
-  rbind(., mockdata.EQ) %>%
-  rbind(., mockdata.CSEQ) %>%
-  rbind(., mockdata.int) %>%
-  select(outcome, everything())
-#mockdata.all
 
 ```
 
 ```{r}
-# Predicted slopes alone
 
-mock_int_plot <- ggplot(mockdata.all, aes(x=SAscore, y=guiseShift, color=EQgroup, linetype=EQgroup)) +
-  gg_theme() +
-  geom_line(size = 1) +
-  facet_grid(~outcome) + 
-  coord_cartesian(ylim=c(-.22, 0.22)) +
-  #scale_y_continuous(breaks=c(-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3)) +
-  
-  labs(y="Guise Effect", x = "Sterotype Familiarity", color="Empathy Quotient", linetype="Empathy Quotient") +
-  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(5,6,7)])+
-  theme(plot.title = (element_text(face = "bold", hjust=0.5, size=15))) 
-mock_int_plot
 
-ggsave(path="plots", filename="au_ind_guiseshift_schematic.png", mock_int_plot, width=16, height=6, units = "in" , dpi=72)
+
+  ggplot() +
+
+
+
+
+
 ```
 
+```{r}
+
+```
 
 # .
 ## Crossover Point Comparisons
-
 ### Coef w/ Guise v. Fixef
 ```{r}
 au_data_ind_xints <-
@@ -3392,4 +3320,100 @@ coef_au_bysubj %>%
   summarize(int_1 = mean(xint_1),
             int_2 = mean(xint_2),
             int_3 = mean(xint_3))
+```
+
+
+
+
+# .
+## Schematic Visualizations
+### Continuum Plot
+```{r}
+library(sigmoid)
+df_noeffect <- 
+  data.frame(result = "no effect",
+    step = c(-5:5, -5:5, -5:5),
+    speakerGuise = c(rep("BL", 11), rep("CN", 11), rep("MI", 11))) %>%
+  mutate(respRS = logistic(c(rep(-5:5,3))))
+
+df_effect <- 
+  data.frame(result = "guise effect",
+    step = c(-5:5, -5.5:4.5, -4.5:5.5),
+    speakerGuise = c(rep("BL", 11), rep("CN", 11), rep("MI", 11))) %>%
+  mutate(respRS = logistic(c(rep(-5:5,3))))
+
+df <- rbind(df_noeffect, df_effect) %>%
+  mutate(result = as.factor(result))
+df$result <- relevel(df$result, ref="no effect")
+
+mock_prop <-
+  ggplot(df, aes(step, respRS, color=speakerGuise, linetype=speakerGuise)) %>%
+  proportion_plot_theme() +
+  scale_linetype_manual(values=c("dotdash", "longdash", "solid")) +
+  facet_grid(~result) +
+  geom_hline(yintercept=0.5, linetype="dotted") +
+  geom_vline(xintercept=0, linetype="dotted") +
+  coord_cartesian(xlim=c(-3,3)) +
+  scale_x_continuous(breaks=seq(-3, 3, 1)) +
+  geom_line(size=2)
+mock_prop
+
+ggsave(path="plots", filename="au_group_prop_schematic.png", mock_prop, width=16, height=6, units = "in" , dpi=72)
+```
+
+
+### Interaction Visualizations
+```{r}
+
+mockdata <- expand.grid(SAscore = c(-2:2),
+                       #EQscore = c(-2:2),
+                       EQgroup = c("high", "mid", "low"))
+#mockdata
+
+mockdata.CS <- mockdata %>% mutate(guiseShift = c(-0.2,-0.15,-0.1,-0.05,0,
+                                              -0.2,-0.15,-0.1,-0.05,0,
+                                              -0.2,-0.15,-0.1,-0.05,0)) %>%
+  mutate(outcome = as.factor("CS.only"))
+
+mockdata.EQ <- mockdata %>% mutate(guiseShift = c(0,0,0,0,0,
+                                                -0.1,-0.1,-0.1,-0.1,-0.1,
+                                                -0.2,-0.2,-0.2,-0.2,-0.2)) %>%
+  mutate(outcome = as.factor("EQ.only"))
+
+mockdata.CSEQ <- mockdata %>% mutate(guiseShift = c(0,0.05,0.1,0.15,0.2,
+                                                -0.1,-0.05,0,0.05,0.1,
+                                                -0.2,-0.15,-0.1,-0.05,0)) %>%
+  mutate(outcome = as.factor("CS+EQ"))
+
+
+mockdata.int <- mockdata %>% mutate(guiseShift = c(-0.2,-0.1,0,0.1,0.2,
+                                              -0.2,-0.15,-0.1,-0.05,0,
+                                              -0.2,-0.2,-0.2,-0.2,-0.2)) %>%
+  mutate(outcome = as.factor("CS:EQ.int"))
+
+mockdata.all <- mockdata.CS %>%
+  rbind(., mockdata.EQ) %>%
+  rbind(., mockdata.CSEQ) %>%
+  rbind(., mockdata.int) %>%
+  select(outcome, everything())
+#mockdata.all
+
+```
+
+```{r}
+# Predicted slopes alone
+
+mock_int_plot <- ggplot(mockdata.all, aes(x=SAscore, y=guiseShift, color=EQgroup, linetype=EQgroup)) +
+  gg_theme() +
+  geom_line(size = 1) +
+  facet_grid(~outcome) + 
+  coord_cartesian(ylim=c(-.22, 0.22)) +
+  #scale_y_continuous(breaks=c(-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3)) +
+  
+  labs(y="Guise Effect", x = "Sterotype Familiarity", color="Empathy Quotient", linetype="Empathy Quotient") +
+  scale_color_manual(values=ghibli_palette("MononokeMedium")[c(5,6,7)])+
+  theme(plot.title = (element_text(face = "bold", hjust=0.5, size=15))) 
+mock_int_plot
+
+ggsave(path="plots", filename="au_ind_guiseshift_schematic.png", mock_int_plot, width=16, height=6, units = "in" , dpi=72)
 ```
