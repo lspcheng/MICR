@@ -532,13 +532,6 @@ xints_coef_au %>% ggplot(aes(x=xint_pred, y=reorder(guise_pred, desc(guise_pred)
 ```
 
 ### Process Data + Outliers
-```{r eval=F, include=F}
-# Calculate RT score per participant
-rtscores <- au_data_coded %>% group_by(participantId) %>% 
-  summarize(meanRT = mean(log(rt))) %>% ungroup() %>% 
-  mutate(RTscore = as.vector(scale(meanRT)))
-```
-
 #### Full
 ```{r}
 slope_lower = quantile(xints_coef_au$slope_pred, .05)
@@ -1287,9 +1280,7 @@ coef_au <-
   mutate(xint_ind = -(Intercept / step))
 
 # 5610c4ea7ffc8a0005811504	0.0341664050	1.048532356	-0.0325849792
-```
 
-```{r}
 xints_coef_au <-
   coef_au %>% select(participantId, xint_ind, step) %>%
   pivot_longer(., xint_ind, names_to="guise_pred", names_prefix="xint_", values_to="xint_pred", 
