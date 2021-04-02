@@ -1,0 +1,692 @@
+---
+title: "MICR Multiverse Analysis"
+output: html_notebook
+---
+
+# Set up
+## Packages
+```{r, warning=F}
+# Wrangling
+library(tidyverse)
+library(mgsub)
+
+# Statistics/Numerical processing
+library(lme4)
+library(brms)
+library(boot)
+
+# Plotting
+library(ggplot2)
+library(ghibli)
+
+# Optional settings
+options(dplyr.summarise.inform=F) # Stop dplyr from printing summarise error (that isn't an error)
+select <- dplyr::select # Ensure that select() command is the dplyr command (clashes with MASS, which is imported/required by paran)
+```
+
+## Functions
+```{r, warning=F}
+# Standard error function
+std.error <- function(x, na.rm = T) {
+  sqrt(var(x, na.rm = na.rm)/length(x[complete.cases(x)]))
+}
+
+# general standardized ggplot theme
+gg_theme <- function() {
+  theme_bw() +
+  theme(plot.title=element_text(size=25),
+        plot.subtitle=element_text(size=15, face="italic"),
+        axis.title=element_text(size=20),
+        axis.text=element_text(size=15),
+        strip.background =element_rect(fill="white"),
+        strip.text = element_text(size=15))+
+  theme(legend.title = element_text(size=15, face="bold"),
+        legend.text=element_text(size=15))
+}
+
+# color theme for guise plots
+guise_colors <- function(gg_object, n_contrasts) {
+  if (n_contrasts == 3) {
+    col_values <- c(6,4,3)
+  } else if (n_contrasts == 2) {
+    col_values <- c(4,3)
+  } else {
+    return(print('Number of contrasts invalid: Must be either 3 or 2'))
+  }
+  
+   return (
+      gg_object +
+        scale_fill_manual(values=ghibli_palette("PonyoMedium")[col_values])+
+        scale_color_manual(values=ghibli_palette("PonyoMedium")[col_values])
+    )
+}
+
+# color theme and labels for interaction plots
+interaction_plot_theme <- function(gg_object, n_contrasts) {
+    if (n_contrasts == 3) {
+      col_values <- c(7,6,5)
+  } else if (n_contrasts == 4) {
+    col_values <- c(7,6,5,2)
+  } else {
+    return(print('Number of contrasts invalid: Must be either 3 or 4'))
+  }
+  return(
+      gg_object +
+        gg_theme() +
+        scale_color_manual(values=ghibli_palette("MononokeMedium")[col_values])+
+        scale_fill_manual(values=ghibli_palette("MononokeMedium")[col_values])+
+        scale_shape_manual(values=c(16,15,17,18))+
+        scale_linetype_manual(values=c("solid", "longdash", "dashed", "dotted"))+
+        labs(y = 'Guise Effect', x = 'Stereotype Familiarity', 
+             color = 'Empathy Quotient', fill = 'Empathy Quotient', 
+             shape = 'Empathy Quotient', linetype = 'Empathy Quotient')
+    )
+}
+
+## theme for pca plots
+pca_plot_theme <- function(gg_object) {
+  gg_object +
+  gg_theme() +
+  scale_x_continuous(lim=c(-3, 3),breaks=seq(-3,3,1)) +
+  scale_y_continuous(lim=c(-3.5, 3.5),breaks=seq(-3,3,1)) +
+  geom_hline(yintercept=0, linetype="dashed") +
+  geom_vline(xintercept=0, linetype="dashed") +
+  labs(x="Dim 1 (XX.X%)", y="Dim 2 (XX.X%)")
+}
+
+## theme for proportion plots
+proportion_plot_theme <- function(gg_object) {
+  gg_object %>% guise_colors(3) +
+  gg_theme() +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(y = "Proportion 'raised' response", x = "Continuum Step (UR to RS)", 
+       color="Guise", fill="Guise", linetype = "Guise")
+}
+
+# Function to calculate xint for one participant
+calculate_xint <- function(df, id) {
+  ind_data <- df %>% filter(participantId == id)
+  ind_glm <- glmer(respRS ~ step + (1 + step | word),
+                 family = "binomial", 
+                 control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                 data = ind_data)
+  intercept <- fixef(ind_glm)[[1]]
+  slope <- fixef(ind_glm)[[2]]
+  xint <- -(fixef(ind_glm)[[1]]) / fixef(ind_glm)[[2]]
+  c(intercept, slope, xint)
+}
+
+# Function to collect all xints for participant in list
+get_ind_xints <- function(df, participant_col) {
+  
+  participant_list <- unique(as.character(participant_col))
+
+  ind_xints <- data.frame(participantId=as.character(NA),
+                          slope_pred=as.integer(NA),
+                        xint_pred=as.integer(NA),
+                        stringsAsFactors=FALSE)
+
+  for (participantId in participant_list) {
+    fixefs <- calculate_xint(df, participantId)
+    slope_pred <- fixefs[2]
+    xint_pred <- fixefs[3]
+    ind_row <- cbind.data.frame(participantId, slope_pred, xint_pred)
+    ind_xints <- rbind(ind_xints, ind_row)
+  }
+
+  ind_xints <- ind_xints %>% na.omit() %>% mutate_if(is.character, as.factor)
+}
+```
+
+## Load Data
+```{r}
+load(file="./data/au_data_coded.rData")
+load(file="./data/xints_fixef_au.rData")
+load(file="./data/xints_coef_au.rData")
+```
+
+# .
+## Preparation & Testing
+### Function for Outlier Options
+```{r}
+# For each value of quantile, calculate number of slope outliers per type of analysis
+
+get_ind_df <- function (df, i) {
+  slope_lower = quantile(df$slope_pred, i)
+  Q1 <- quantile(df$xint_pred, .25)
+  Q3 <- quantile(df$xint_pred, .75)
+  IQR <- IQR(df$xint_pred)
+
+  au_data_ind_max <- au_data_coded %>% select(-step:-rt) %>%
+    merge(., df) %>%
+    mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
+    mutate(slope_out = ifelse(slope_pred < slope_lower & slope_pred > -slope_lower, TRUE, FALSE)) %>%
+    # mutate(xint_out = ifelse(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5, FALSE, TRUE)) %>%
+    distinct() %>% droplevels()
+  
+  au_data_ind <- au_data_ind_max %>% filter(slope_out != TRUE) %>% filter(speakerGuise!='BL')
+}
+```
+
+
+```{r}
+outlier_sensitivity <- function (df) {
+  outlier_sens <- data.frame(quantile_val=as.integer(NA),
+                        n_outliers=as.integer(NA),
+                        max_slope=as.integer(NA),
+                        stringsAsFactors=FALSE)
+  
+  for (i in seq(0,1,0.01)) {
+    
+    slope_lower = quantile(df$slope_pred, i)
+    Q1 <- quantile(df$xint_pred, .25)
+    Q3 <- quantile(df$xint_pred, .75)
+    IQR <- IQR(df$xint_pred)
+  
+    au_data_ind_max <- au_data_coded %>% select(-step:-rt) %>%
+      merge(., df) %>%
+      mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
+      mutate(slope_out = ifelse(slope_pred < slope_lower & slope_pred > -slope_lower, TRUE, FALSE)) %>%
+      mutate(xint_out = ifelse(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5, FALSE, TRUE)) %>%
+      filter(speakerGuise!='BL') %>%
+      distinct() %>% droplevels() 
+    
+    au_data_ind <- au_data_ind_max %>% filter(slope_out != TRUE)
+    
+    outs <- setdiff(au_data_ind_max, au_data_ind)
+    quantile_val = i
+    n_outliers = nrow(outs)
+    max_slope = max(outs$slope_pred)
+    
+    row <- cbind.data.frame(quantile_val, n_outliers,  max_slope)
+    outlier_sens <- rbind(outlier_sens, row) %>% na.omit()
+  }
+  return(outlier_sens)
+}
+```
+
+### Collect estimates
+```{r}
+( outlier_sens_coef <- outlier_sensitivity(xints_coef_au) )
+```
+
+```{r}
+( outlier_sens_fixef <- outlier_sensitivity(xints_fixef_au) )
+```
+
+### Visualize
+```{r}
+outlier_sens_coef %>%
+  ggplot() +
+  scale_x_continuous(breaks=seq(0, 1, 0.05)) +
+  scale_y_continuous(breaks=seq(0, 2, 0.1)) +
+  theme_bw() +
+  geom_line(aes(x=quantile_val, y=max_slope)) +
+  geom_line(aes(x=quantile_val, y=max_slope), col='red', data=outlier_sens_fixef)
+
+outlier_sens_coef %>%
+  ggplot() +
+  scale_x_continuous(breaks=seq(0, 1, 0.05)) +
+  scale_y_continuous(breaks=seq(0, 240, 10)) +
+  theme_bw() +
+  geom_line(aes(x=quantile_val, y=n_outliers)) +
+  geom_line(aes(x=quantile_val, y=n_outliers), col='red', data=outlier_sens_fixef)
+
+```
+
+### Models
+```{r}
+ind_au_coef <- get_ind_df(xints_coef_au, 0.06)
+ind_au_lm <- lm(guiseShift ~ scale(Age) + genderContr + CEscore_all + 
+                  guiseContr * SAscore_all * EQscore_all, 
+                  data=ind_au_coef)
+plot(ind_au_lm)
+summary(ind_au_lm)
+```
+
+
+```{r}
+ind_au_fixef <- get_ind_df(xints_fixef_au, 0.06)
+ind_au_lm <- lm(guiseShift ~ scale(Age) + genderContr + CEscore_all + 
+                  guiseContr * SAscore_all * EQscore_all, 
+                  data=ind_au_fixef)
+plot(ind_au_lm)
+summary(ind_au_lm)
+```
+
+#### Extract p-values
+```{r}
+pval <- data.frame(summary(ind_au_lm)$coefficients[,4]) %>% 
+  rownames_to_column("predictor") %>% 
+  rename(pvalue = 2)
+pval
+```
+
+#### Check Residuals
+No relation apparent.
+##### Coef
+```{r}
+ind_au_resid <- data.frame(resid(ind_au_lm)) %>% rename(resid=resid.ind_au_lm.)
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=ind_au_coef$SAscore_all)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=ind_au_coef$EQscore_all)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=ind_au_coef$CEscore_all)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=ind_au_coef$genderContr)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=ind_au_coef$guiseContr)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=scale(ind_au_coef$Age))) +
+  geom_point() +
+  geom_smooth(method='lm')
+```
+##### Fixef
+```{r}
+ind_au_resid <- data.frame(resid(ind_au_lm)) %>% rename(resid=resid.ind_au_lm.)
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=ind_au_fixef$SAscore_all)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=ind_au_fixef$EQscore_all)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=ind_au_fixef$CEscore_all)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=ind_au_fixef$genderContr)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=ind_au_fixef$guiseContr)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+ind_au_resid %>%
+  ggplot(aes(y=resid, x=scale(ind_au_fixef$Age))) +
+  geom_point() +
+  geom_smooth(method='lm')
+```
+
+
+#### Version: Select
+```{r}
+ind_au_coef <- get_ind_df(xints_coef_au, 0.06)
+ind_au_lm <- lm(guiseShift ~ scale(Age) + CEscore_all + genderContr + 
+                  guiseContr * SAscore_all * EQscore_all, 
+                  data=ind_au_coef)
+summary(ind_au_lm)
+```
+
+#### Version: All
+```{r}
+ind_au_coef <- get_ind_df(xints_coef_au, 0.06)
+ind_au_lm <- lm(guiseShift ~ scale(Age) + CEscore_all * genderContr * guiseContr * 
+                  SAscore_all * EQscore_all, 
+                  data=ind_au_coef)
+summary(ind_au_lm)
+```
+
+
+```{r}
+ind_au_fixef <- get_ind_df(xints_fixef_au, 0.06)
+ind_au_lm <- lm(guiseShift ~ scale(Age) + CEscore_all * genderContr * guiseContr * 
+                  SAscore_all * EQscore_all, 
+                  data=ind_au_fixef)
+summary(ind_au_lm)
+```
+
+
+# .
+# Multiverse / Sensitivity Analysis
+Following method in Steegan et al. (2016)
+
+## Reasonable Choices
+
+1. Score calculation
+  (a) PCA composite score of the questions
+  (b) Average score of the questions
+  
+2. Crossover Point Extraction
+  (a) Coefficients from a no-Guise model based on random effects
+  (b) Fixed effect estimates from individual models per participant
+
+3. Outlier Removal
+  (a) No exclusion
+  (b...) 0.01 - 0.15 - 0.30 quantile based on slope only
+
+Excluding from individual analysis participants who have a *flat slope* across step is reasonable because it means that they did not distinguish the two end point tokens as being raised/unraised. In this case, there is no observed perceptual function to be shifted (which is the effect being tested), so any variation in crossover point appears to be just noise. In other words, any value of the crossover point (x-intercept) for such an individual with a *flat slope* is a meaningless measure since it is supposed to measure the _single point_ or _value of step_ at which participants are perceiving raised tokens 50% of the time, but these participants apparently perceived the _whole continuum_ as 50% raised (did not distinguish raising by step).
+
+The question here is what value of slope is "too low" to render the crossover point meaningless? What value is "too close to zero"? Since the values range continuously from values close to 0 to 1.XX, there is no natural breaking point. The choice appears to be arbitrary, even when trying to balance the number of individuals who would be removed from analysis based on a certain cut-off point (of which "too many" is also arbitrary—5% of the data? 10%? 15%?). 
+
+4. Model Specification
+  (a) Key interactions only (guiseShift ~ scale(Age) + genderContr + CEscore_all + 
+                              guiseContr * SAscore_all * EQscore_all)
+  (b) Additional CEscore interaction (guiseShift ~ scale(Age) + genderContr + CEscore_all *
+                                       guiseContr * SAscore_all * EQscore_all)
+  (c) Additional Gender interaction (guiseShift ~ scale(Age) + CEscore_all + genderContr *
+                                       guiseContr * SAscore_all * EQscore_all)
+  (d) Additional CEscore + Gender interaction (guiseShift ~ scale(Age) + CEscore_all * genderContr *
+                                                guiseContr * SAscore_all * EQscore_all)
+
+## .
+## Dataset Multiverse
+
+For each combination of reasonable options:
+1. Prepare the data (e.g., extract x-intercepts with one method, apply one outlier cut-off)
+2. Run the Key Interactions model
+3. Extract the p-value and save in dataframe
+
+With these values:
+4. Plot a histogram of each p-value including a line at a=0.05.
+5. Plot a grid of each combination of options, coloring in the cell if value is significant.
+
+### X-int Method + Slope Outlier
+
+For this first test analysis, I will vary the X-intercept extraction method (coef vs. fixef) and the slope outlier quantile value (from 0 to 0.15 in steps of 0.01 quantiles). The number of combinations is 2 * 16 = 32. I will try out the analysis lookingn at p-values for all predictors, using the other predictors as comparisons to the predictors of interest (particularly the SA x EQ interaction).
+
+#### MV Function
+```{r}
+multiverse_pvals <- function (df, xint_type, max_quantile) {
+  out_df <- data.frame(xint_method=as.factor(NA),
+                        slope_quantile=as.integer(NA),
+                        predictor=as.factor(NA),
+                        pvalue=as.integer(NA),
+                        stringsAsFactors=FALSE)
+  
+  for (i in seq(0, max_quantile, 0.01)) {
+    
+    ind_au_df <- get_ind_df(df, i)
+    ind_au_lm <- lm(guiseShift ~ scale(Age) + genderContr + CEscore_all + 
+                  guiseContr * SAscore_all * EQscore_all, 
+                  data=ind_au_df)
+    
+    out_pval <- data.frame(summary(ind_au_lm)$coefficients[,4]) %>% 
+      rownames_to_column("predictor") %>% 
+      rename(pvalue = 2) %>%
+      mutate(xint_method = xint_type,
+             slope_quantile = i) %>%
+      relocate(c(xint_method, slope_quantile))
+    
+    out_df <- rbind(out_df, out_pval) %>% na.omit()
+  }
+  return(out_df)
+}
+```
+
+#### Collect p-Values
+```{r}
+pvals <- multiverse_pvals(xints_coef_au, 'coef', 0.3) %>%
+  rbind(multiverse_pvals(xints_fixef_au, 'fixef', 0.3)) %>%
+  mutate(significant = case_when(pvalue < 0.05 ~ 1,
+                                 pvalue < 0.1 ~ 0.5,
+                                 TRUE ~ 0))
+pvals
+```
+
+#### Plot Histogram of p-values
+
+Based on these plots, showing the p-values from each combination of options together without differentiating by option, we can see that the two predictors that stand out as having particularly many instances of p-values below 0.05 are: `SAscore:EQscore` and `guise:SAscore` (to some extent). Other predictors with an intermediate number of instances below 0.05 are: `SAscore`, `Age`, and `Intercept`.
+
+```{r}
+pvals %>%
+  ggplot() +
+  geom_histogram(aes(x=pvalue), col='blue', fill='lightblue', bins=50) +
+  facet_wrap(~predictor) +
+  geom_vline(xintercept=0.05, col='red', linetype='dashed') +
+  theme_bw()
+```
+
+#### Plot Grid of Options
+
+In these plots, medium grey cells represent instances where the result was p<0.05 ("significant"), light grey cells represent p<0.1 ("marginal"), and white represents p>0.1 ("non-significant").
+
+
+
+```{r}
+pvals %>% filter(predictor == 'SAscore_all:EQscore_all' | 
+                   predictor == 'guiseContr:SAscore_all' |
+                   predictor == 'SAscore_all') %>%
+  ggplot(aes(x=xint_method, y=slope_quantile)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  facet_wrap(~predictor) +
+  geom_tile(aes(fill=significant), linetype='solid', col='black') +
+  geom_text(aes(label = round(pvalue, 3)), col='black') +
+  scale_fill_gradient(low = "white", high = "grey") +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+#### Summary Stats
+```{r}
+pvals %>% filter(predictor == 'SAscore_all:EQscore_all' | 
+                   predictor == 'guiseContr:SAscore_all' |
+                   predictor == 'SAscore_all') %>%
+  group_by(predictor) %>%
+  summarize(mean = mean(pvalue), median = median(pvalue), min=min(pvalue), max=max(pvalue))
+```
+
+##.
+## Model Multiverse
+
+### X-int Method + Slope Outlier
+This time, I will do the same thing but run each version of the model with more or fewer interactions.
+
+That is, I will vary the X-intercept extraction method (coef vs. fixef) and the slope outlier quantile value (from 0 to 0.15 in steps of 0.01 quantiles), then run these datasets through four possible models: including (1) only key interactions (guise * SA * EQ), (2) add in CE but not Gender (guise * SA * EQ * CE), (3) add in Gender but not CE (guise * SA * EQ * Gender), and (4) add in both  (guise * SA * EQ * CE * Gender). 
+
+The number of combinations is 2 * 16 * 4 = 128. I will try out the analysis looking at p-values for all of the predictors from the 'key interactions' model (because values would be skewed for predictors/interactions that only show up in the larger models), using the other predictors as comparisons to the predictors of interest (particularly the SA x EQ interaction).
+
+
+#### MV Function
+```{r}
+model_multiverse_pvals <- function (df, xint_type, max_quantile) {
+  out_df <- data.frame(xint_method=as.factor(NA),
+                        slope_quantile=as.integer(NA),
+                        model=as.factor(NA),
+                        predictor=as.factor(NA),
+                        pvalue=as.integer(NA),
+                        stringsAsFactors=FALSE)
+  
+  for (i in seq(0, max_quantile, 0.01)) {
+    
+    ind_au_df <- get_ind_df(df, i)
+    ind_au_lm <- lm(guiseShift ~ scale(Age) + genderContr + CEscore_all + 
+                  guiseContr * SAscore_all * EQscore_all, 
+                  data=ind_au_df)
+    
+    out_pval_1 <- data.frame(summary(ind_au_lm)$coefficients[,4]) %>% 
+      rownames_to_column("predictor") %>% 
+      rename(pvalue = 2) %>%
+      mutate(xint_method = xint_type,
+             slope_quantile = i,
+             model = 'key_int') %>%
+      relocate(c(xint_method, slope_quantile, model))
+    
+    ind_au_lm <- lm(guiseShift ~ scale(Age) + genderContr + CEscore_all * 
+                  guiseContr * SAscore_all * EQscore_all, 
+                  data=ind_au_df)
+    
+    out_pval_2 <- data.frame(summary(ind_au_lm)$coefficients[,4]) %>% 
+      rownames_to_column("predictor") %>% 
+      rename(pvalue = 2) %>%
+      mutate(xint_method = xint_type,
+             slope_quantile = i,
+             model = 'ce_int') %>%
+      relocate(c(xint_method, slope_quantile, model))
+    
+    ind_au_lm <- lm(guiseShift ~ scale(Age) + CEscore_all + genderContr * 
+                  guiseContr * SAscore_all * EQscore_all, 
+                  data=ind_au_df)
+    
+    out_pval_3 <- data.frame(summary(ind_au_lm)$coefficients[,4]) %>% 
+      rownames_to_column("predictor") %>% 
+      rename(pvalue = 2) %>%
+      mutate(xint_method = xint_type,
+             slope_quantile = i,
+             model = 'gen_int') %>%
+      relocate(c(xint_method, slope_quantile, model))
+    
+    ind_au_lm <- lm(guiseShift ~ scale(Age) + genderContr * CEscore_all * 
+                  guiseContr * SAscore_all * EQscore_all, 
+                  data=ind_au_df)
+    
+    out_pval_4 <- data.frame(summary(ind_au_lm)$coefficients[,4]) %>% 
+      rownames_to_column("predictor") %>% 
+      rename(pvalue = 2) %>%
+      mutate(xint_method = xint_type,
+             slope_quantile = i,
+             model = 'all_int') %>%
+      relocate(c(xint_method, slope_quantile, model))
+    
+    out_df <- rbind(out_df, out_pval_1, out_pval_2, out_pval_3, out_pval_4) %>% na.omit()
+  }
+  return(out_df)
+}
+```
+
+#### Collect p-Values
+```{r}
+pvals_models <- model_multiverse_pvals(xints_coef_au, 'coef', 0.3) %>%
+  rbind(model_multiverse_pvals(xints_fixef_au, 'fixef', 0.3)) %>%
+  mutate(significant = case_when(pvalue < 0.05 ~ 1,
+                                 pvalue < 0.1 ~ 0.5,
+                                 TRUE ~ 0))
+pvals_models
+```
+
+
+#### Plot Histogram of p-values
+
+Based on these plots, showing the p-values from each combination of options together without differentiating by option, the two predictors that stand out as having particularly many instances of p-values below 0.05 are clearly: `SAscore:EQscore` and `SAscore` (but notably **not** `guise:SAscore`). 
+
+```{r}
+pvals_models %>% filter(predictor == '(Intercept)' | predictor == 'EQscore_all' | 
+                          predictor == 'scale(Age)' | predictor == 'genderContr' | 
+                          predictor == 'CEscore_all' | predictor == 'guiseContr' | 
+                          predictor == 'guiseContr:EQscore_all' | predictor == 'guiseContr:SAscore_all' | 
+                          predictor == 'SAscore_all:EQscore_all' | predictor == 'SAscore_all') %>%
+  ggplot() +
+  geom_histogram(aes(x=pvalue), col='blue', fill='lightblue', bins=50) +
+  facet_wrap(~predictor) +
+  geom_vline(xintercept=0.05, col='red', linetype='dashed') +
+  theme_bw()
+```
+
+#### Plot Grid of Options
+
+##### Model Comparison plots
+It's impossible to read the values in this plot (see separate plots by model below), but from the grey shading in this composite plot, it's obvious what the patterns are. 
+
+1. While effects of guise:SA are present in the smaller models (within a certain range of slope_quantile values), this effect disappears when more variability is accounted for. *My interpretation: The guise effect was not a difference actually conditioned by guise, but possibly by other variability relating to gender and CE. This is because once Gender and CE were allowed to vary within guise along with SA score, this guise effect disappears.*
+
+2. While effects of SA and SA:EQ are present in all models, they become fully consistent and/or much more significant starting from a low slope_quantile cut-off (0.02 for Coef and 0.06 for Fixef), the same for both SA main effect and SA:EQ interaction. *Unsure: That the effects show up with a lower cut-off for the Coef model seems to match with the notion that this dataset has less noise.* 
+
+*My interpretation: Based on what I remember from Stats class, adding more predictors (e.g., control factors or covariates) means the model is 'soaking up' more variability, which if related to your factors of interest, can help with identifying real effects. Maybe that is what is happening in the larger models such that CE and Gender are related factors, so allowing them to vary in interactions with other factors helps to 'soak up' variability.*
+
+*c.f., In observational designs, covariates might be added to a model to 1) increase predictive ability, 2) because the researcher is interested in specific conditional effects, or 3) to eliminate confounding.*
+
+
+```{r}
+pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' | 
+                   predictor == 'guiseContr:SAscore_all' |
+                   predictor == 'SAscore_all') %>%
+  ggplot(aes(x=xint_method, y=slope_quantile)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  facet_grid(model~predictor) +
+  geom_tile(aes(fill=significant), linetype='solid', col='black') +
+  geom_text(aes(label = round(pvalue, 3)), col='black', size=1) +
+  scale_fill_gradient(low = "white", high = "grey") +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+##### By-Model plots
+```{r}
+pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' | 
+                   predictor == 'guiseContr:SAscore_all' |
+                   predictor == 'SAscore_all') %>%
+  filter(model == 'key_int') %>%
+  ggplot(aes(x=xint_method, y=slope_quantile)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  facet_grid(~predictor) +
+  geom_tile(aes(fill=significant), linetype='solid', col='black') +
+  geom_text(aes(label = round(pvalue, 3)), col='black') +
+  scale_fill_gradient(low = "white", high = "grey") +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' | 
+                   predictor == 'guiseContr:SAscore_all' |
+                   predictor == 'SAscore_all') %>%
+  filter(model == 'ce_int') %>%
+  ggplot(aes(x=xint_method, y=slope_quantile)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  facet_grid(~predictor) +
+  geom_tile(aes(fill=significant), linetype='solid', col='black') +
+  geom_text(aes(label = round(pvalue, 3)), col='black') +
+  scale_fill_gradient(low = "white", high = "grey") +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' | 
+                   predictor == 'guiseContr:SAscore_all' |
+                   predictor == 'SAscore_all') %>%
+  filter(model == 'gen_int') %>%
+  ggplot(aes(x=xint_method, y=slope_quantile)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  facet_grid(~predictor) +
+  geom_tile(aes(fill=significant), linetype='solid', col='black') +
+  geom_text(aes(label = round(pvalue, 3)), col='black') +
+  scale_fill_gradient(low = "white", high = "grey") +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' | 
+                   predictor == 'guiseContr:SAscore_all' |
+                   predictor == 'SAscore_all') %>%
+  filter(model == 'all_int') %>%
+  ggplot(aes(x=xint_method, y=slope_quantile)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  facet_grid(~predictor) +
+  geom_tile(aes(fill=significant), linetype='solid', col='black') +
+  geom_text(aes(label = round(pvalue, 3)), col='black') +
+  scale_fill_gradient(low = "white", high = "grey") +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+#### Summary Stats
+```{r}
+pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' | 
+                   predictor == 'guiseContr:SAscore_all' |
+                   predictor == 'SAscore_all') %>%
+  group_by(predictor) %>%
+  summarize(mean = mean(pvalue), median = median(pvalue), min=min(pvalue), max=max(pvalue))
+```
+
