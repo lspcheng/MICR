@@ -1,0 +1,559 @@
+---
+title: "MICR Method Comparisons"
+output: html_notebook
+---
+# Set up
+## Packages
+```{r, warning=F}
+# Wrangling
+library(tidyverse)
+library(mgsub)
+
+# Statistics/Numerical processing
+library(lme4)
+library(brms)
+library(boot)
+
+# Plotting
+library(ggplot2)
+library(ghibli)
+
+# Optional settings
+options(dplyr.summarise.inform=F) # Stop dplyr from printing summarise error (that isn't an error)
+select <- dplyr::select # Ensure that select() command is the dplyr command (clashes with MASS, which is imported/required by paran)
+```
+
+## Functions
+```{r, warning=F}
+# Standard error function
+std.error <- function(x, na.rm = T) {
+  sqrt(var(x, na.rm = na.rm)/length(x[complete.cases(x)]))
+}
+
+# general standardized ggplot theme
+gg_theme <- function() {
+  theme_bw() +
+  theme(plot.title=element_text(size=25),
+        plot.subtitle=element_text(size=15, face="italic"),
+        axis.title=element_text(size=20),
+        axis.text=element_text(size=15),
+        strip.background =element_rect(fill="white"),
+        strip.text = element_text(size=15))+
+  theme(legend.title = element_text(size=15, face="bold"),
+        legend.text=element_text(size=15))
+}
+
+# color theme for guise plots
+guise_colors <- function(gg_object, n_contrasts) {
+  if (n_contrasts == 3) {
+    col_values <- c(6,4,3)
+  } else if (n_contrasts == 2) {
+    col_values <- c(4,3)
+  } else {
+    return(print('Number of contrasts invalid: Must be either 3 or 2'))
+  }
+  
+   return (
+      gg_object +
+        scale_fill_manual(values=ghibli_palette("PonyoMedium")[col_values])+
+        scale_color_manual(values=ghibli_palette("PonyoMedium")[col_values])
+    )
+}
+
+# color theme and labels for interaction plots
+interaction_plot_theme <- function(gg_object, n_contrasts) {
+    if (n_contrasts == 3) {
+      col_values <- c(7,6,5)
+  } else if (n_contrasts == 4) {
+    col_values <- c(7,6,5,2)
+  } else {
+    return(print('Number of contrasts invalid: Must be either 3 or 4'))
+  }
+  return(
+      gg_object +
+        gg_theme() +
+        scale_color_manual(values=ghibli_palette("MononokeMedium")[col_values])+
+        scale_fill_manual(values=ghibli_palette("MononokeMedium")[col_values])+
+        scale_shape_manual(values=c(16,15,17,18))+
+        scale_linetype_manual(values=c("solid", "longdash", "dashed", "dotted"))+
+        labs(y = 'Guise Effect', x = 'Stereotype Familiarity', 
+             color = 'Empathy Quotient', fill = 'Empathy Quotient', 
+             shape = 'Empathy Quotient', linetype = 'Empathy Quotient')
+    )
+}
+
+## theme for pca plots
+pca_plot_theme <- function(gg_object) {
+  gg_object +
+  gg_theme() +
+  scale_x_continuous(lim=c(-3, 3),breaks=seq(-3,3,1)) +
+  scale_y_continuous(lim=c(-3.5, 3.5),breaks=seq(-3,3,1)) +
+  geom_hline(yintercept=0, linetype="dashed") +
+  geom_vline(xintercept=0, linetype="dashed") +
+  labs(x="Dim 1 (XX.X%)", y="Dim 2 (XX.X%)")
+}
+
+## theme for proportion plots
+proportion_plot_theme <- function(gg_object) {
+  gg_object %>% guise_colors(3) +
+  gg_theme() +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(y = "Proportion 'raised' response", x = "Continuum Step (UR to RS)", 
+       color="Guise", fill="Guise", linetype = "Guise")
+}
+
+# Function to calculate xint for one participant
+calculate_xint <- function(df, id) {
+  ind_data <- df %>% filter(participantId == id)
+  ind_glm <- glmer(respRS ~ step + (1 + step | word),
+                 family = "binomial", 
+                 control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                 data = ind_data)
+  intercept <- fixef(ind_glm)[[1]]
+  slope <- fixef(ind_glm)[[2]]
+  xint <- -(fixef(ind_glm)[[1]]) / fixef(ind_glm)[[2]]
+  c(intercept, slope, xint)
+}
+
+# Function to collect all xints for participant in list
+get_ind_xints <- function(df, participant_col) {
+  
+  participant_list <- unique(as.character(participant_col))
+
+  ind_xints <- data.frame(participantId=as.character(NA),
+                          slope_pred=as.integer(NA),
+                        xint_pred=as.integer(NA),
+                        stringsAsFactors=FALSE)
+
+  for (participantId in participant_list) {
+    fixefs <- calculate_xint(df, participantId)
+    slope_pred <- fixefs[2]
+    xint_pred <- fixefs[3]
+    ind_row <- cbind.data.frame(participantId, slope_pred, xint_pred)
+    ind_xints <- rbind(ind_xints, ind_row)
+  }
+
+  ind_xints <- ind_xints %>% na.omit() %>% mutate_if(is.character, as.factor)
+}
+```
+
+## Load Data
+```{r}
+load(file="./data/au_data_coded.rData")
+
+# Participants identified with slopes below 0.05 quantile / 5th percentile (based on Coef w/o Guise)
+flat_slopes_coef = c('5bef64b373e44f0001092811', '5cdf2adac194e800187ad97a', 
+                     '5de7c6d448241d73d36ceaef', '5e8cd8011a88ad08f181eb96', 
+                     '5eafec905b4ec101bfac3661', '5ec44da606cb7931f04a35e9', 
+                     '5f05ece827813a0da11cd397', '5f12fa2b44b6a42a83519a79', 
+                     '5f5065f8c62ac41e03484ba1', '5fa941f4897b8d0670476392', 
+                     '5fc769df1f4e27017a638e8e', '60053227125e504142df91e9')
+
+# Participants identified with slopes below 0.1 quantile / 10th percentile (based on Fixef)
+flat_slopes_fixef = c('5bef64b373e44f0001092811', '5c8e975422f8f100162b5d39',
+                      '5cdf2adac194e800187ad97a', '5d485db699f83a00012bc391',
+                      '5de7c6d448241d73d36ceaef', '5e41a040ea48190420f09d26',
+                      '5eafec905b4ec101bfac3661', '5ec44da606cb7931f04a35e9',
+                      '5f12fa2b44b6a42a83519a79', '5f2d5ea5a073960008ed5894',
+                      '5f5065f8c62ac41e03484ba1', '5f5287a0af6c8c555f3015e1',
+                      '5f5fb8d1926d9e058c0efd96', '5fa0270a0f22bc03bd0380ee',
+                      '5fa941f4897b8d0670476392', '5fc620bd1fb5ab1eb2a9975a',
+                      '5fc769df1f4e27017a638e8e', '5fe54350116bbf2f3b287e04',
+                      '5ff15946b0feb85b821bbf86', '60053227125e504142df91e9',
+                      '6022a76125dc84000ae96179', '6024060b7e645502d5ff1f5b')
+```
+
+# Crossover Point Comparisons
+
+The following will first compare the coefficients extracted from three versions of the main model: Model 1 (Step + Guise + Step:Guise), Model 2 (Step + Guise), and Model 3 (Step). After that, I will add in the fixed effect values extracted from individually-run models per participant (FixEf Model).
+
+## Coef w/ Guise v. w/o Guise
+```{r}
+# speakerGuise: Base Model for extracting fixed effects and model coefficients (BL vs CN & MI)
+cont_au_glm_base1 <- glmer(respRS ~ step + speakerGuise + step:speakerGuise +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded
+                    ) 
+summary(cont_au_glm_base1)
+
+cont_au_glm_base2 <- glmer(respRS ~ step + speakerGuise  +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded
+                    ) 
+summary(cont_au_glm_base2)
+
+cont_au_glm_base3 <- glmer(respRS ~ step  +
+                       (1 | participantId) + (0 + step | participantId) +
+                       (1 | word) + (0 + step | word),
+                    family = "binomial", 
+                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                    data = au_data_coded
+                    ) 
+summary(cont_au_glm_base3)
+```
+
+### Extract Random Effects
+```{r}
+( ranef_au1 <- ranef(cont_au_glm_base1)[1] )
+( ranef_au2 <- ranef(cont_au_glm_base2)[1] )
+( ranef_au3 <- ranef(cont_au_glm_base3)[1] )
+```
+
+### Extract Coefficients Effects
+Step slopes are the same throughout (with some error). Intercepts are the same (with some error) in models 1 and 2 (because it is the BL group intercept specifically, since BL is the reference condition for Guise, which is included). In comparison, intercepts are different in model 3 (because it is the overall grand mean intercept, not the BL group since there is no guise included in the model). *This all checks out---the difference between models with a Guise fixed effect and without is/are the intercept(s).*
+
+```{r}
+( coef_au1 <- coef(cont_au_glm_base1)[1] )
+( coef_au2 <- coef(cont_au_glm_base2)[1] )
+( coef_au3 <- coef(cont_au_glm_base3)[1] )
+```
+
+Combine values into one dataframe.
+
+```{r include=F}
+options(scipen = 999) # prevent scientific notation
+
+coef_au_bysubj1 <-
+  data.frame(coef_au1) %>% rownames_to_column("participantId") %>% 
+  rename_with( ~gsub("participantId.","", .x), starts_with("participantId.")) %>%
+  rename_with( ~gsub("^\\.|\\.$","", .x)) %>%
+  mutate(xint_bl = -(Intercept / step),
+         xint_cn = -((Intercept + speakerGuiseCN) / (step + step.speakerGuiseCN)),
+         xint_mi = -((Intercept + speakerGuiseMI) / (step + step.speakerGuiseMI))) %>%
+  select(participantId, xint_bl, xint_cn, xint_mi) %>%
+  pivot_longer(., xint_bl:xint_mi, names_to="guise_pred", names_prefix="xint_", values_to="xint_1", 
+               names_transform = list(guise_pred = toupper)) %>%
+  mutate_if(is.character,as.factor) %>%
+  merge(., au_data_coded  %>% select(participantId:speakerGuise)) %>%
+  filter(speakerGuise == guise_pred) %>%
+  select(-guise_pred) %>% distinct() %>% droplevels()
+
+coef_au_bysubj2 <-
+  data.frame(coef_au2) %>% rownames_to_column("participantId") %>% 
+  rename_with( ~gsub("participantId.","", .x), starts_with("participantId.")) %>%
+  rename_with( ~gsub("^\\.|\\.$","", .x)) %>%
+  mutate(xint_bl = -(Intercept / step),
+         xint_cn = -((Intercept + speakerGuiseCN) / (step)),
+         xint_mi = -((Intercept + speakerGuiseMI) / (step))) %>%
+  select(participantId, xint_bl, xint_cn, xint_mi) %>%
+  pivot_longer(., xint_bl:xint_mi, names_to="guise_pred", names_prefix="xint_", values_to="xint_2", 
+               names_transform = list(guise_pred = toupper)) %>%
+  mutate_if(is.character,as.factor) %>%
+  merge(., au_data_coded  %>% select(participantId:speakerGuise)) %>%
+  filter(speakerGuise == guise_pred) %>%
+  select(-guise_pred) %>% distinct() %>% droplevels()
+
+coef_au_bysubj3 <-
+  data.frame(coef_au3) %>% rownames_to_column("participantId") %>% 
+  rename_with( ~gsub("participantId.","", .x), starts_with("participantId.")) %>%
+  rename_with( ~gsub("^\\.|\\.$","", .x)) %>%
+  mutate(xint_3 = -(Intercept / step)) %>%
+  select(participantId, xint_3) %>%
+  merge(., au_data_coded  %>% select(participantId:speakerGuise)) %>%
+  distinct() %>% droplevels()
+
+( coef_au_bysubj <- coef_au_bysubj1 %>% merge(coef_au_bysubj2) %>% merge(coef_au_bysubj3) )
+```
+
+Remove flat-slope outliers (i.e., those who didn't reliably distinguish the two ends of the continuum, which renders their crossover point meaningless).
+
+```{r}
+( coef_au_bysubj_outrm <- coef_au_bysubj %>% filter(!participantId %in% flat_slopes_coef) )
+```
+
+### Check Alignment between Methods
+
+
+#### Correlations
+
+The coefficients from Model 1 and 2 are basically identical (almost perfect correlation). Those from Model 3 are highly correlated, but there is variability.
+
+```{r}
+# Check correlation of model coefficients vs. individual model estimates
+with(coef_au_bysubj_outrm, cor.test(xint_1, xint_2, na.rm=T))
+with(coef_au_bysubj_outrm, cor.test(xint_1, xint_3, na.rm=T))
+with(coef_au_bysubj_outrm, cor.test(xint_2, xint_3, na.rm=T))
+
+
+# Plot correlation
+coef_au_bysubj_outrm %>% 
+  ggplot(aes(x=xint_1, y=xint_2)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw()
+
+coef_au_bysubj_outrm %>% 
+  ggplot(aes(x=xint_1, y=xint_3)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw()
+
+coef_au_bysubj_outrm %>% 
+  ggplot(aes(x=xint_2, y=xint_3)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw()
+```
+
+#### Comparison Plot
+
+Based on this plot, we can clearly see that Model 1 and 2 coefficients (black and blue) are all overlapping fully, while Model 3 coefficients (red) are shifted in different directions based on Guise. Specifically, we can see that for the red dots (1) BL is very similar across the three Models, (2) CN is shifted upwards in comparison, and (3) MI is shifted downwards in comparison.
+
+*My Interpretation: This is showing that Models 1 and 2 demonstrate coefficient shrinkage towards the GUISE MEANS (per-Guise intercept, where BL is close to 0, CN is more neg, and MI is more pos) while Model 3 demonstrates coefficient shrinkage towards the GRAND MEAN (model intercept, which is close to 0). In other words, Model 3 appears to be "artificially" reducing effect sizes for all guises, leading to reduced differences between guises, whereas Models 1 and 2 are "maximizing" the difference across guises.*
+
+```{r}
+# With outlier removal
+coef_au_bysubj_outrm %>% #filter(speakerGuise != 'BL') %>%
+  ggplot() +
+  geom_point(aes(x=participantId, y=xint_1), alpha=0.8) +
+  geom_point(aes(x=participantId, y=xint_2), color='blue', alpha=0.3) +
+  geom_point(aes(x=participantId, y=xint_3), color='red', alpha=0.3) +
+  facet_wrap(~speakerGuise, ncol=1) +
+  labs(y = 'Predicted x-intercepts') +
+  theme_bw()
+
+```
+
+```{r eval=F, include=F}
+# Without outlier removal (scale is very skewed, so not very useful)
+coef_au_bysubj %>%
+  ggplot() +
+  geom_point(aes(x=participantId, y=xint_1)) +
+  
+  geom_point(aes(x=participantId, y=xint_2), color='blue', alpha=0.3) +
+  geom_point(aes(x=participantId, y=xint_3), color='red', alpha=0.3) +
+  facet_wrap(~speakerGuise, ncol=1) +
+  theme_bw()
+
+```
+
+### Summary Values across Methods (1)
+The group-level Guise x-intercepts (from model 1) don't exactly match the individual-level Guise x-interceptions. Once extreme outliers are removed, we see a similar difference between guises across all versions of the analysis.  *My Interpretation: The original mismatching values are due to the extreme outliers doing different (unpredictable?) things in each version of the analysis.* 
+
+In particular, coefficients from Models 1 and 2 are basically identical, while those from Model 3 are different. Specifically, they are different in being much closer to 0 (confirming what we see above: the values show shrinkage towards the grand mean, which is roughly 0).
+
+#### Group Fixef x-ints
+```{r}
+# Check intercept values
+fixef_au <- fixef(cont_au_glm_base1)
+
+# Calculate intercepts per guise
+ int_bl <- fixef_au[[1]] 
+ int_cn <- int_bl + fixef_au[[3]] 
+ int_mi <- int_bl + fixef_au[[4]] 
+
+# Calculate slopes per guise
+ slope_bl <- fixef_au[[2]] 
+ slope_cn <- slope_bl + fixef_au[[5]] 
+ slope_mi <- slope_bl + fixef_au[[6]] 
+
+# Calculate x-intercepts per guise, i.e., where y=0, using the formula [y = ax + b]  ~  [x = -b/a]
+( xint_bl = -(int_bl / slope_bl) )
+( xint_cn = -(int_cn / slope_cn) )
+( xint_mi = -(int_mi / slope_mi) )
+```
+
+#### Ind Coef x-ints (mean)
+```{r}
+# w/ outlier removal
+coef_au_bysubj_outrm %>%
+  group_by(speakerGuise) %>% 
+  summarize(int_1 = mean(xint_1),
+            int_2 = mean(xint_2),
+            int_3 = mean(xint_3))
+```
+
+```{r}
+# w/o outlier removal
+coef_au_bysubj %>%
+  group_by(speakerGuise) %>% 
+  summarize(int_1 = mean(xint_1),
+            int_2 = mean(xint_2),
+            int_3 = mean(xint_3))
+```
+
+## Coef w/(o) Guise v. Fixef
+
+Add in a comparison to the method where individual models are run and fixed effects are extracted. 
+```{r, warning=F}
+load(file="./data/xints_fixef_au.rData")
+
+slope_lower = quantile(xints_fixef_au$slope_pred, .1)
+
+Q1 <- quantile(xints_fixef_au$xint, .25)
+Q3 <- quantile(xints_fixef_au$xint, .75)
+IQR <- IQR(xints_fixef_au$xint)
+
+au_data_ind_fixef <- au_data_coded %>% select(-step:-rt) %>%
+  # Match xints to participant data
+  merge(., xints_fixef_au) %>%
+
+  # Create normalized guise bias/shift effect size score
+  mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
+
+  # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
+  mutate(slope_out = ifelse(slope_pred < slope_lower & slope_pred > -slope_lower, TRUE, FALSE)) %>%
+  mutate(xint_out = ifelse(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5, FALSE, TRUE)) %>%
+  
+  # Remove extra rows by summarizing
+  distinct() %>%
+  droplevels()
+
+au_data_ind_fixef_noBL <- au_data_ind_fixef %>% filter(speakerGuise!='BL')
+```
+
+```{r}
+# w/ outlier removal
+( coef_au_bysubj_all_outrm <- coef_au_bysubj_all %>% filter(!participantId %in% flat_slopes_fixef) )
+```
+
+```{r}
+# w/o outlier removal (for comparison)
+( coef_au_bysubj_all <- coef_au_bysubj %>%
+  merge(au_data_ind_fixef %>% select(participantId, xint_pred)) )
+```
+
+### Check Alignment between Methods
+#### Correlations
+
+Values from the Fixef Model are extremely correlated with those from Model 3 (Coef w/o Guise). Comparatively, the same values are less strongly correlated with Model 1 and 2, though still strong.
+
+*My Interpretation: The _w/Guise_ models (Models 1 and 2) go together (values based on guise intercepts) while the _w/oGuise_ models go together (values not based on guise means).*
+
+```{r}
+# Check correlation of model coefficients vs. individual model estimates
+with(coef_au_bysubj_all_outrm, cor.test(xint_1, xint_pred, na.rm=T))
+with(coef_au_bysubj_all_outrm, cor.test(xint_2, xint_pred, na.rm=T))
+with(coef_au_bysubj_all_outrm, cor.test(xint_3, xint_pred, na.rm=T))
+
+# Plot correlation
+coef_au_bysubj_all_outrm %>% 
+  ggplot(aes(x=xint_1, y=xint_pred)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw()
+
+coef_au_bysubj_all_outrm %>% 
+  ggplot(aes(x=xint_2, y=xint_pred)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw()
+
+coef_au_bysubj_all_outrm %>% 
+  ggplot(aes(x=xint_3, y=xint_pred)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw()
+```
+
+#### Comparison Plot
+
+Based on this plot, we can see that the FixEf Model values (green) show much larger range of scores and variability than the Model Coefficients. The values appear to vary in both directions compared to the Coefficient values.
+
+```{r}
+# With outlier removal
+coef_au_bysubj_all_outrm %>% filter(speakerGuise != 'BL') %>%
+  ggplot() +
+  geom_point(aes(x=participantId, y=xint_1), alpha=0.8) +
+  geom_point(aes(x=participantId, y=xint_2), color='blue', alpha=0.3) +
+  geom_point(aes(x=participantId, y=xint_3), color='red', alpha=0.3) +
+  geom_point(aes(x=participantId, y=xint_pred), color='yellowgreen', alpha=0.75) +
+  facet_wrap(~speakerGuise, ncol=1) +
+  labs(y = 'Predicted x-intercepts') +
+  theme_bw()
+```
+
+```{r eval=F, include=F}
+# Without outlier removal
+coef_au_bysubj_all %>% #filter(speakerGuise != 'BL') %>%
+  ggplot() +
+  geom_point(aes(x=participantId, y=xint_1), alpha=0.8) +
+  geom_point(aes(x=participantId, y=xint_2), color='blue', alpha=0.3) +
+  geom_point(aes(x=participantId, y=xint_3), color='red', alpha=0.3) +
+  geom_point(aes(x=participantId, y=xint_pred), color='yellowgreen', alpha=0.75) +
+  facet_wrap(~speakerGuise, ncol=1) +
+  labs(y = 'Predicted x-intercepts') +
+  theme_bw()
+
+```
+
+### Summary of Values across Method (2)
+
+The means and SD confirms the above observations. 
+
+```{r}
+coef_au_means <- coef_au_bysubj_all_outrm %>%
+  group_by(speakerGuise) %>% 
+  summarize(mean_1 = mean(xint_1), 
+            mean_2 = mean(xint_2), 
+            mean__3 = mean(xint_3), 
+            mean_pred = mean(xint_pred))
+coef_au_means
+```
+
+```{r}
+coef_au_sd <- coef_au_bysubj_all_outrm %>%
+  group_by(speakerGuise) %>% 
+  summarize(sd_1 = sd(xint_1),
+            sd_2 = sd(xint_2),
+            sd_3 = sd(xint_3),
+            sd_pred = sd(xint_pred))
+coef_au_sd
+```
+
+### ANOVA: Are the three guises different in xint (cross-over point)? 
+
+#### w/ Guise models
+The models that included guise prior to x-intercept calculations find significant differences between BL-CN and CN-MI guises (no sig. diff. for BL-MI). 
+
+```{r}
+# Step + Guise + Guise:step (grp)
+ind_au_aov <- aov(xint_1 ~ speakerGuise, data=coef_au_bysubj_all_outrm)
+summary(ind_au_aov)
+TukeyHSD(ind_au_aov)
+
+# Step + Guise (grp)
+ind_au_aov <- aov(xint_2 ~ speakerGuise, data=coef_au_bysubj_all_outrm)
+summary(ind_au_aov)
+TukeyHSD(ind_au_aov)
+```
+
+#### w/o Guise models
+
+The models that do not include guise prior to x-intercept calculations find a significant difference only between CN-MI guises (i.e., no sig. diff. between BL and CN/MI). 
+
+*My Interpretation: There _is_ group-level priming in expected directions (evidenced by CN-MI difference and numerical difference from BL), though this group-level shift is not large enough to see statistically sig. difference from baseline for each guise. I would predict that with a large enough sample, we would see a statistically sig. difference from baseline.*
+
+```{r}
+# Step (grp)
+ind_au_aov <- aov(xint_3 ~ speakerGuise, data=coef_au_bysubj_all_outrm)
+summary(ind_au_aov)
+TukeyHSD(ind_au_aov)
+
+# Step (ind)
+ind_au_aov <- aov(xint_pred ~ speakerGuise, data=coef_au_bysubj_all_outrm)
+summary(ind_au_aov)
+TukeyHSD(ind_au_aov)
+```
+
+# Conclusions
+
+The _w/Guise_ models indicate that there are much more significant differences between guises than the _w/oGuise_ models (see above). For example, we can see this in the significant differences for BL-CN in the former but the lack thereof in the latter. 
+
+*My Interpretation: Because the coefficients extracted from the _w/Guise_ models have shrunken towards the guise means, the range of variability is smaller. With a smaller variability within-guise, the differences between guises appear more certainly to be different (i.e., comes out as more significant in the model). In comparison, the _w/oGuise_ models have larger variability across coefficients in the same guise condition, so significance is much decreased (despite an apparently similar ratio of means across guises).*
+
+For a more accurate(?) view of the data, I should use the values from Model 3 or FixEf Model. 
+
+<!-- The question of selection between these two is still open.
+
+Moreover, the question about how to deal with outliers is still open. Based on some fiddling around, differential removal of outliers (i.e., using different arbitrary cut-off values for the slope that is "too flat") leads to different results (specifically of the EQ:SA effect that I'm interested in). It's possible that sensitivity analysis will make sense here just to be explicit and clear about what I did and what I think the data are showing since the effect comes and goes based on specific choices that are made (including model size/specifications).
+
+It may simply be that the effects are small and difficult to capture.
+-->
