@@ -478,7 +478,7 @@ coef_au <-
   rename_with( ~gsub("participantId.","", .x), starts_with("participantId.")) %>%
   rename_with( ~gsub("^\\.|\\.$","", .x)) %>%
   
-  # Calculate xints per guise per individual (i.e., predicted patterns per guises that they didn't see)
+# Calculate xints per guise per individual (i.e., predicted patterns per guises that they didn't see)
   mutate(xint_bl = -(Intercept / step),
          xint_cn = -((Intercept + speakerGuiseCN) / (step + step.speakerGuiseCN)),
          xint_mi = -((Intercept + speakerGuiseMI) / (step + step.speakerGuiseMI)),
@@ -1289,6 +1289,8 @@ xints_coef_au <-
   select(-guise_pred) %>%
   mutate_if(is.character,as.factor) 
 xints_coef_au
+
+save(xints_coef_au, file="./data/xints_coef_au.rData")
 ```
 
 
