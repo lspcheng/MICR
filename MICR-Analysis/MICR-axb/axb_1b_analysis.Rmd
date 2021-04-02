@@ -92,6 +92,7 @@ condata.read <- condata.read %>%
   subset(participantId != '601f04fb235cb14020c7a96f') %>%   # did twice, once with condA then condC, so can't use even full data
   subset(participantId != '5fe0e7892738afa6a21cfd7c') %>%   # did not finish study/questionnaire -- RETURNED
   subset(participantId != '602d9608316d30263e3b94f2') %>%   # 167 (99%) guy
+  subset(participantId != '5ca9603a78958e0016c4ff01') %>%   # 46% low effort
 # subset(participantId != '5fc511c32b9bc60bc189b893') %>%   # alien guy --- KEPT in the end
 
   # Remove levels of dropped subjects
@@ -285,6 +286,7 @@ View(condata.test.outliers)
 
 # C
 # 167/168 # 0.9940476 subj 602d9608316d30263e3b94f2
+# 77/168 # 0.4583333 subj 5ca9603a78958e0016c4ff01
 # 85/168 #0.5059524 subj 5699d25625d9e9000db0c7cc **BUT ALSO IN COND E???
 14/168 #0.08333333 subj 5e42f74f5b772a18434cabf7 --- all were longer; can keep if necessary
 # 4/168 #0.02380952 subj 5a68d1c1c0d83600010821e0
