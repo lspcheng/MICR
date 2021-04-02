@@ -481,14 +481,18 @@ coef_au <-
   # Calculate xints per guise per individual (i.e., predicted patterns per guises that they didn't see)
   mutate(xint_bl = -(Intercept / step),
          xint_cn = -((Intercept + speakerGuiseCN) / (step + step.speakerGuiseCN)),
-         xint_mi = -((Intercept + speakerGuiseMI) / (step + step.speakerGuiseMI)))
-```
+         xint_mi = -((Intercept + speakerGuiseMI) / (step + step.speakerGuiseMI)),
+         slope_bl = step,
+         slope_cn = (step + step.speakerGuiseCN),
+         slope_mi = (step + step.speakerGuiseMI))
 
-```{r}
 xints_coef_au <-
   coef_au %>% select(participantId, xint_bl, xint_cn, xint_mi) %>%
-  pivot_longer(., xint_bl:xint_mi, names_to="guise_pred", names_prefix="xint_", values_to="xint_pred", 
-               names_transform = list(guise_pred = toupper)) %>%
+  pivot_longer(., xint_bl:xint_mi, names_to="guise_pred", names_prefix="xint_", values_to="xint_pred", names_transform = list(guise_pred = toupper)) %>%
+  merge(coef_au %>% select(participantId, slope_bl, slope_cn, slope_mi) %>%
+          pivot_longer(., slope_bl:slope_mi, names_to="guise_pred", 
+                       names_prefix="slope_", values_to="slope_pred", 
+                       names_transform = list(guise_pred = toupper))) %>%
   mutate_if(is.character,as.factor)
 xints_coef_au
 ```
@@ -537,6 +541,8 @@ rtscores <- au_data_coded %>% group_by(participantId) %>%
 
 #### Full
 ```{r}
+slope_lower = quantile(xints_coef_au$slope_pred, .05)
+
 au_data_ind_coef_max <- au_data_coded %>% select(-step:-rt) %>%
   merge(., xints_coef_au) %>%
   
@@ -545,6 +551,9 @@ au_data_ind_coef_max <- au_data_coded %>% select(-step:-rt) %>%
   
   # Create normalized guise bias/shift effect size score
   mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
+  
+  mutate(slope_out = ifelse(slope_pred < slope_lower & slope_pred > -slope_lower, TRUE, FALSE)) %>%
+  mutate(xint_out = ifelse(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5, FALSE, TRUE)) %>%
   
   # Remove extra rows by summarizing
   distinct() %>%
@@ -566,7 +575,10 @@ au_data_ind_coef <- au_data_coded %>% select(-step:-rt) %>%
   filter(speakerGuise == guise_pred) %>%
   
   # Remove outliers of xint values beyond 1.5x the IQR (there are a few extreme outliers)
-  filter(xint_pred > Q1-IQR*3 & xint_pred < Q3+IQR*3) %>%
+  mutate(slope_out = ifelse(slope_pred < slope_lower & slope_pred > -slope_lower, TRUE, FALSE)) %>%
+  mutate(xint_out = ifelse(xint_pred > Q1-IQR*1.5 & xint_pred < Q3+IQR*1.5, FALSE, TRUE)) %>%
+  # filter(slope_out != TRUE | xint_out != TRUE) %>%
+  filter(slope_out != TRUE) %>%
 
   # Create normalized guise bias/shift effect size score
   mutate(guiseShift = ifelse(speakerGuise == 'CN', -xint_pred, xint_pred)) %>%
@@ -666,16 +678,6 @@ au_data_ind_coef %>% ggplot(aes(y=guiseShift, x=EQscore_all, color=guise_pred)) 
 
 ```
 
-```{r eval=F, include=F}
-au_data_ind_coef %>% ggplot(aes(y=guiseShift, x=RTscore, color=guise_pred)) %>% guise_colors(3) +
-  theme_minimal() +
-  coord_cartesian(ylim=c(-3, 3)) +
-  geom_point(alpha=0.5) +
-  geom_smooth(method='lm', se=T, alpha=0.25, fullrange=T) #+
-  # facet_grid(~guise_pred)
-
-```
-
 ```{r}
 indgroups_coef <- 
   au_data_ind_coef_noBL %>% 
@@ -714,7 +716,15 @@ indgroups_coef %>%
 
 ### Models
 ```{r}
-# Are the three guises different in xint? YES all differenet
+# ANOVA: Are the three guises different in xint?
+ind_au_aov_guise <- aov(xint_pred ~ speakerGuise, data=au_data_ind_coef)
+summary(ind_au_aov_guise)
+
+TukeyHSD(ind_au_aov_guise)
+```
+
+```{r}
+# Basic LM: Are the three guises different in xint? 
 ind_au_lm_guise <- lm(xint_pred ~ speakerGuise, data=au_data_ind_coef)
 summary(ind_au_lm_guise)
 
@@ -725,11 +735,6 @@ summary(ind_au_lm_guise_relvl)
 
 
 ```{r}
-# Are the two guises different in xint? YES, they strongly go in opposite directions
-ind_au_lm <- lm(xint_pred ~ guiseContr,
-                data=au_data_ind_coef_noBL)
-summary(ind_au_lm)
-
 # Are the two guises different in guiseShift? YES, CN has slightly larger effect size
 ind_au_lm <- lm(guiseShift ~ guiseContr,
                 data=au_data_ind_coef_noBL)
@@ -1295,33 +1300,6 @@ xints_coef_au <-
 xints_coef_au
 ```
 
-```{r}
-cont_au_pred_actual <- au_data_coded %>%
-  mutate(predictions =  predict(cont_au_glm_base_noguise, type = "link") ) %>%
-  group_by(participantId, speakerGuise, step) %>%
-  summarize(predictions = mean(predictions))
-
-cont_au_pred_actual %>% #filter(speakerGuise=='CN') %>%
-  ggplot(aes(x=step, y=predictions, color=participantId)) +
-  facet_wrap(~speakerGuise) +
-  theme_minimal() +
-  coord_cartesian(ylim = c(-4, 4)) +
-  geom_smooth(method="glm", se=T, alpha=0.005) +
-  theme(legend.position = 'none')
-
-flat_slopes = c('5cdf2adac194e800187ad97a', '5de7c6d448241d73d36ceaef', '5e8cd8011a88ad08f181eb96', '5ec44da606cb7931f04a35e9', '5f05ece827813a0da11cd397', '5f12fa2b44b6a42a83519a79', '5f5065f8c62ac41e03484ba1',  '60053227125e504142df91e9')
-
-cont_au_pred_actual %>% filter(participantId %in% flat_slopes) %>%
-  ggplot(aes(x=step, y=predictions, color=participantId)) +
-  facet_wrap(~speakerGuise) +
-  theme_minimal() +
-  coord_cartesian(ylim = c(-4, 4)) +
-  geom_smooth(method="glm", se=T, alpha=0.005) +
-  theme(legend.position = 'none')
-
-
-```
-
 
 ### Process Data + Outliers
 #### Full
@@ -1379,10 +1357,10 @@ au_data_ind_coef_noBL_max %>% filter(slope_pred > quantile(xints_coef_au$slope_p
 ```
 
 ```{r}
-au_data_ind_coef_noBL_max %>% filter(slope_out == TRUE | xint_out == TRUE)
-au_data_ind_coef_noBL_max %>% filter(slope_out == TRUE)
-au_data_ind_coef_noBL_max %>% filter(xint_out == TRUE)
-au_data_ind_coef_noBL_max %>% filter(slope_out == TRUE & xint_out == TRUE)
+au_data_ind_coef_max %>% filter(slope_out == TRUE | xint_out == TRUE)
+au_data_ind_coef_max %>% filter(slope_out == TRUE)
+au_data_ind_coef_max %>% filter(xint_out == TRUE)
+au_data_ind_coef_max %>% filter(slope_out == TRUE & xint_out == TRUE)
 ```
 
 
@@ -1420,6 +1398,31 @@ flat_slopes_coef = c('5bef64b373e44f0001092811', '5cdf2adac194e800187ad97a',
 ```
 
 #### Exploratory Plots (2)
+```{r}
+cont_au_pred_actual <- au_data_coded %>%
+  mutate(predictions =  predict(cont_au_glm_base_noguise, type = "link") ) %>%
+  group_by(participantId, speakerGuise, step) %>%
+  summarize(predictions = mean(predictions))
+
+cont_au_pred_actual %>% #filter(speakerGuise=='CN') %>%
+  ggplot(aes(x=step, y=predictions, color=participantId)) +
+  facet_wrap(~speakerGuise) +
+  theme_minimal() +
+  coord_cartesian(ylim = c(-4, 4)) +
+  geom_smooth(method="glm", se=T, alpha=0.005) +
+  theme(legend.position = 'none')
+
+cont_au_pred_actual %>% filter(participantId %in% flat_slopes_coef) %>%
+  ggplot(aes(x=step, y=predictions, color=participantId)) +
+  facet_wrap(~speakerGuise) +
+  theme_minimal() +
+  coord_cartesian(ylim = c(-4, 4)) +
+  geom_smooth(method="glm", se=T, alpha=0.005) +
+  theme(legend.position = 'none')
+
+
+```
+
 ```{r}
 quantile(au_data_ind_coef$slope_pred, c(0,.1, .25,.5,.75, .9, 1.0))
 mean(au_data_ind_coef$slope_pred)-1*sd(au_data_ind_coef$slope_pred)
@@ -1552,12 +1555,8 @@ summary(ind_au_lm_guise_relvl)
 
 
 ```{r}
-# Are the two guises different in xint? YES, they strongly go in opposite directions
-ind_au_lm <- lm(xint_pred ~ guiseContr,
-                data=au_data_ind_coef_noBL)
-summary(ind_au_lm)
 
-# Are the two guises different in guiseShift? YES, CN has slightly larger effect size
+# Are the two guises different in guiseShift? 
 ind_au_lm <- lm(guiseShift ~ guiseContr,
                 data=au_data_ind_coef_noBL)
 summary(ind_au_lm)
