@@ -1534,7 +1534,10 @@ indgroups_coef %>%
 ind_au_aov <- aov(xint_pred ~ speakerGuise, data=au_data_ind_coef)
 summary(ind_au_aov)
 TukeyHSD(ind_au_aov)
+```
 
+
+```{r}
 ## LM
 ind_au_lm_guise <- lm(xint_pred ~ speakerGuise, data=au_data_ind_coef)
 summary(ind_au_lm_guise)
@@ -2240,10 +2243,10 @@ au_data_ind_fixef_noBL_max %>% filter(slope_pred > quantile(xints_fixef_au$slope
 ```
 
 ```{r}
-au_data_ind_fixef_noBL_max %>% filter(slope_out == TRUE | xint_out == TRUE)
-au_data_ind_fixef_noBL_max %>% filter(slope_out == TRUE)
-au_data_ind_fixef_noBL_max %>% filter(xint_out == TRUE)
-au_data_ind_fixef_noBL_max %>% filter(slope_out == TRUE & xint_out == TRUE)
+au_data_ind_fixef_max %>% filter(slope_out == TRUE | xint_out == TRUE)
+au_data_ind_fixef_max %>% filter(slope_out == TRUE)
+au_data_ind_fixef_max %>% filter(xint_out == TRUE)
+au_data_ind_fixef_max %>% filter(slope_out == TRUE & xint_out == TRUE)
 ```
 
 ```{r}
