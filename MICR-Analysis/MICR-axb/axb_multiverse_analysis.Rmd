@@ -24,121 +24,6 @@ options(dplyr.summarise.inform=F) # Stop dplyr from printing summarise error (th
 select <- dplyr::select # Ensure that select() command is the dplyr command (clashes with MASS, which is imported/required by paran)
 ```
 
-## Functions
-```{r, warning=F}
-# Standard error function
-std.error <- function(x, na.rm = T) {
-  sqrt(var(x, na.rm = na.rm)/length(x[complete.cases(x)]))
-}
-
-# general standardized ggplot theme
-gg_theme <- function() {
-  theme_bw() +
-  theme(plot.title=element_text(size=25),
-        plot.subtitle=element_text(size=15, face="italic"),
-        axis.title=element_text(size=20),
-        axis.text=element_text(size=15),
-        strip.background =element_rect(fill="white"),
-        strip.text = element_text(size=15))+
-  theme(legend.title = element_text(size=15, face="bold"),
-        legend.text=element_text(size=15))
-}
-
-# color theme for guise plots
-guise_colors <- function(gg_object, n_contrasts) {
-  if (n_contrasts == 3) {
-    col_values <- c(6,4,3)
-  } else if (n_contrasts == 2) {
-    col_values <- c(4,3)
-  } else {
-    return(print('Number of contrasts invalid: Must be either 3 or 2'))
-  }
-  
-   return (
-      gg_object +
-        scale_fill_manual(values=ghibli_palette("PonyoMedium")[col_values])+
-        scale_color_manual(values=ghibli_palette("PonyoMedium")[col_values])
-    )
-}
-
-# color theme and labels for interaction plots
-interaction_plot_theme <- function(gg_object, n_contrasts) {
-    if (n_contrasts == 3) {
-      col_values <- c(7,6,5)
-  } else if (n_contrasts == 4) {
-    col_values <- c(7,6,5,2)
-  } else {
-    return(print('Number of contrasts invalid: Must be either 3 or 4'))
-  }
-  return(
-      gg_object +
-        gg_theme() +
-        scale_color_manual(values=ghibli_palette("MononokeMedium")[col_values])+
-        scale_fill_manual(values=ghibli_palette("MononokeMedium")[col_values])+
-        scale_shape_manual(values=c(16,15,17,18))+
-        scale_linetype_manual(values=c("solid", "longdash", "dashed", "dotted"))+
-        labs(y = 'Guise Effect', x = 'Stereotype Familiarity', 
-             color = 'Empathy Quotient', fill = 'Empathy Quotient', 
-             shape = 'Empathy Quotient', linetype = 'Empathy Quotient')
-    )
-}
-
-## theme for pca plots
-pca_plot_theme <- function(gg_object) {
-  gg_object +
-  gg_theme() +
-  scale_x_continuous(lim=c(-3, 3),breaks=seq(-3,3,1)) +
-  scale_y_continuous(lim=c(-3.5, 3.5),breaks=seq(-3,3,1)) +
-  geom_hline(yintercept=0, linetype="dashed") +
-  geom_vline(xintercept=0, linetype="dashed") +
-  labs(x="Dim 1 (XX.X%)", y="Dim 2 (XX.X%)")
-}
-
-## theme for proportion plots
-proportion_plot_theme <- function(gg_object) {
-  gg_object %>% guise_colors(3) +
-  gg_theme() +
-  coord_cartesian(ylim=c(0, 1)) +
-  scale_x_continuous(breaks = -3:3) +
-  labs(y = "Proportion 'raised' response", x = "Continuum Step (UR to RS)", 
-       color="Guise", fill="Guise", linetype = "Guise")
-}
-
-# Function to calculate xint for one participant
-calculate_xint <- function(df, id) {
-  ind_data <- df %>% filter(participantId == id)
-  ind_glm <- glmer(respRS ~ step + (1 + step | word),
-                 family = "binomial", 
-                 control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
-                 data = ind_data)
-  intercept <- fixef(ind_glm)[[1]]
-  slope <- fixef(ind_glm)[[2]]
-  xint <- -(fixef(ind_glm)[[1]]) / fixef(ind_glm)[[2]]
-  c(intercept, slope, xint)
-}
-
-# Function to collect all xints for participant in list
-get_ind_xints <- function(df, participant_col) {
-  
-  participant_list <- unique(as.character(participant_col))
-
-  ind_xints <- data.frame(participantId=as.character(NA),
-                          slope_pred=as.integer(NA),
-                        xint_pred=as.integer(NA),
-                        stringsAsFactors=FALSE)
-
-  for (participantId in participant_list) {
-    fixefs <- calculate_xint(df, participantId)
-    slope_pred <- fixefs[2]
-    xint_pred <- fixefs[3]
-    ind_row <- cbind.data.frame(participantId, slope_pred, xint_pred)
-    ind_xints <- rbind(ind_xints, ind_row)
-  }
-
-  ind_xints <- ind_xints %>% na.omit() %>% mutate_if(is.character, as.factor)
-}
-```
-
 ## Load Data
 ```{r}
 load(file="./data/au_data_coded.rData")
@@ -146,7 +31,7 @@ load(file="./data/xints_fixef_au.rData")
 load(file="./data/xints_coef_au.rData")
 ```
 
-# .
+
 ## Preparation & Testing
 ### Function for Outlier Options
 ```{r}
@@ -168,7 +53,6 @@ get_ind_df <- function (df, i) {
   au_data_ind <- au_data_ind_max %>% filter(slope_out != TRUE) %>% filter(speakerGuise!='BL')
 }
 ```
-
 
 ```{r}
 outlier_sensitivity <- function (df) {
@@ -241,7 +125,7 @@ ind_au_coef <- get_ind_df(xints_coef_au, 0.06)
 ind_au_lm <- lm(guiseShift ~ scale(Age) + genderContr + CEscore_all + 
                   guiseContr * SAscore_all * EQscore_all, 
                   data=ind_au_coef)
-plot(ind_au_lm)
+# plot(ind_au_lm)
 summary(ind_au_lm)
 ```
 
@@ -251,7 +135,7 @@ ind_au_fixef <- get_ind_df(xints_fixef_au, 0.06)
 ind_au_lm <- lm(guiseShift ~ scale(Age) + genderContr + CEscore_all + 
                   guiseContr * SAscore_all * EQscore_all, 
                   data=ind_au_fixef)
-plot(ind_au_lm)
+# plot(ind_au_lm)
 summary(ind_au_lm)
 ```
 
@@ -363,40 +247,43 @@ summary(ind_au_lm)
 ```
 
 
-# .
+
+
+
 # Multiverse / Sensitivity Analysis
-Following method in Steegan et al. (2016)
+Following method in Steegan et al. (2016).
 
-## Reasonable Choices
+## List Reasonable Choices
 
-1. Score calculation
-  (a) PCA composite score of the questions
-  (b) Average score of the questions
+1. Score calculation [not testing (yet)]
+      (a) PCA composite score of the questions
+      (b) Average score of the questions
   
 2. Crossover Point Extraction
-  (a) Coefficients from a no-Guise model based on random effects
-  (b) Fixed effect estimates from individual models per participant
+      (a) Coefficients from a no-Guise model based on random effects
+      (b) Fixed effect estimates from individual models per participant
 
 3. Outlier Removal
-  (a) No exclusion
-  (b...) 0.01 - 0.15 - 0.30 quantile based on slope only
+      (a) No exclusion
+      (b) ... 0.01 - 0.30 quantile based on slope only
 
 Excluding from individual analysis participants who have a *flat slope* across step is reasonable because it means that they did not distinguish the two end point tokens as being raised/unraised. In this case, there is no observed perceptual function to be shifted (which is the effect being tested), so any variation in crossover point appears to be just noise. In other words, any value of the crossover point (x-intercept) for such an individual with a *flat slope* is a meaningless measure since it is supposed to measure the _single point_ or _value of step_ at which participants are perceiving raised tokens 50% of the time, but these participants apparently perceived the _whole continuum_ as 50% raised (did not distinguish raising by step).
 
 The question here is what value of slope is "too low" to render the crossover point meaningless? What value is "too close to zero"? Since the values range continuously from values close to 0 to 1.XX, there is no natural breaking point. The choice appears to be arbitrary, even when trying to balance the number of individuals who would be removed from analysis based on a certain cut-off point (of which "too many" is also arbitrary—5% of the data? 10%? 15%?). 
 
 4. Model Specification
-  (a) Key interactions only (guiseShift ~ scale(Age) + genderContr + CEscore_all + 
-                              guiseContr * SAscore_all * EQscore_all)
-  (b) Additional CEscore interaction (guiseShift ~ scale(Age) + genderContr + CEscore_all *
-                                       guiseContr * SAscore_all * EQscore_all)
-  (c) Additional Gender interaction (guiseShift ~ scale(Age) + CEscore_all + genderContr *
-                                       guiseContr * SAscore_all * EQscore_all)
-  (d) Additional CEscore + Gender interaction (guiseShift ~ scale(Age) + CEscore_all * genderContr *
-                                                guiseContr * SAscore_all * EQscore_all)
+      (a) Key interactions only 
+      (b) Additional CEscore interaction 
+      (c) Additional Gender interaction 
+      (d) Additional CEscore + Gender interaction 
 
-## .
-## Dataset Multiverse
+The corresponding model specification would be:
+(a) guiseShift ~ scale(Age) + genderContr + CEscore_all + guiseContr * SAscore_all * EQscore_all;
+(b) guiseShift ~ scale(Age) + genderContr + CEscore_all * guiseContr * SAscore_all * EQscore_all;
+(c) guiseShift ~ scale(Age) + CEscore_all + genderContr * guiseContr * SAscore_all * EQscore_all;
+(d) guiseShift ~ scale(Age) + CEscore_all * genderContr *  guiseContr * SAscore_all * EQscore_all
+
+## Run Dataset Multiverse
 
 For each combination of reasonable options:
 1. Prepare the data (e.g., extract x-intercepts with one method, apply one outlier cut-off)
@@ -409,7 +296,7 @@ With these values:
 
 ### X-int Method + Slope Outlier
 
-For this first test analysis, I will vary the X-intercept extraction method (coef vs. fixef) and the slope outlier quantile value (from 0 to 0.15 in steps of 0.01 quantiles). The number of combinations is 2 * 16 = 32. I will try out the analysis lookingn at p-values for all predictors, using the other predictors as comparisons to the predictors of interest (particularly the SA x EQ interaction).
+For this first test analysis, I will vary the X-intercept extraction method (coef vs. fixef) and the slope outlier quantile value (from 0 to 0.30 in steps of 0.01 quantiles). The number of combinations is 2 * 31 = 62. I will try out the analysis looking at p-values for all predictors, using the other predictors as comparisons to the predictors of interest (particularly the SA x EQ interaction).
 
 #### MV Function
 ```{r}
@@ -452,7 +339,9 @@ pvals
 
 #### Plot Histogram of p-values
 
-Based on these plots, showing the p-values from each combination of options together without differentiating by option, we can see that the two predictors that stand out as having particularly many instances of p-values below 0.05 are: `SAscore:EQscore` and `guise:SAscore` (to some extent). Other predictors with an intermediate number of instances below 0.05 are: `SAscore`, `Age`, and `Intercept`.
+Based on these plots that show the p-values from each combination of options together without differentiating by option, we can see that the two predictors that stand out as having particularly many instances of p-values below 0.05 are: `SAscore:EQscore` and `guise:SAscore` (to some extent). Other predictors with an intermediate number of instances below 0.05 are: `SAscore`, `Age`, and `Intercept`.
+
+*My interpretation: the predicted SA:EQ unteraction appears to be a robust effect across all possible combinations of x-intercept extract method and slope outlier cut-off value.*
 
 ```{r}
 pvals %>%
@@ -465,17 +354,26 @@ pvals %>%
 
 #### Plot Grid of Options
 
-In these plots, medium grey cells represent instances where the result was p<0.05 ("significant"), light grey cells represent p<0.1 ("marginal"), and white represents p>0.1 ("non-significant").
+In these plots, medium grey cells represent instances where the result was p<0.05 ("significant"), light grey cells represent p<0.1 ("marginal"), and white represents p>0.1 ("non-significant"). I show only relevant (SA, EQ, SA:EQ) or notable (guise:SA) predictors here.
 
+As expected based on the above histogram, there is just no effect found for EQ, regardless of data analysis choices that were made. 
 
+For the remaining three predictors, we see that at low slope cut-offs (below 0.6-0.8 quantile), there is generally no effect found, compared to some values above. 
+
+*This suggests that there is some strong/relevant influence (skewing?) of the results due to participants with low slope values (i.e., have particularly or almost fully flat slopes). This was my hypothesis, that x-intercepts extracted from functions that are extremely flat would result in noisy/meaningless cross-over point values.*
+
+In addition, we see a region of cut-off values where we see significant p-values for all three predictors, between ~0.6-0.14. However, above that, we see no significance (for SA) or spotty/inconsistent significance with marginal effects filling in some gaps (guise:SA and SA:EQ). However, the effect still seems more stable for SA:EQ than guise:SA across both x-int methods and cut-off scores. 
+
+*My interpretation: These effects are quite sensitive to outlier removal across different values of slope quantile, which may indicate that particular individuals (likely with particularly large priming magnitude effect) are very influential. There is a reasonable explanation for why inclusion of more low-slope individuals leads to null results. For regions above, it may be that certain participants in that range have particularly influential x-intercept values (whether following or not following the general group trends), and this would be completely unrelated to their degree of slope (as long as they did differentiate across the continuum to some degree).*
 
 ```{r}
 pvals %>% filter(predictor == 'SAscore_all:EQscore_all' | 
                    predictor == 'guiseContr:SAscore_all' |
-                   predictor == 'SAscore_all') %>%
+                   predictor == 'SAscore_all' |
+                   predictor == 'EQscore_all') %>%
   ggplot(aes(x=xint_method, y=slope_quantile)) +
   scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
-  facet_wrap(~predictor) +
+  facet_wrap(~predictor, ncol=4) +
   geom_tile(aes(fill=significant), linetype='solid', col='black') +
   geom_text(aes(label = round(pvalue, 3)), col='black') +
   scale_fill_gradient(low = "white", high = "grey") +
@@ -484,23 +382,28 @@ pvals %>% filter(predictor == 'SAscore_all:EQscore_all' |
 ```
 
 #### Summary Stats
+
+If the mean of p-values are taken across all datsets (a possibility mentioned in Steegan et al., 2016), the values are large enough that they don't indicate reliable significance. 
+
+If we take the median p-value, this measure of central tendency suggests that SA:EQ and marginally guise:SA may be considered robustly significant across research decisions, aligning with the insight provided by the histogram above.
+
 ```{r}
 pvals %>% filter(predictor == 'SAscore_all:EQscore_all' | 
                    predictor == 'guiseContr:SAscore_all' |
-                   predictor == 'SAscore_all') %>%
+                   predictor == 'SAscore_all' |
+                   predictor == 'EQscore_all') %>%
   group_by(predictor) %>%
   summarize(mean = mean(pvalue), median = median(pvalue), min=min(pvalue), max=max(pvalue))
 ```
 
-##.
-## Model Multiverse
+## Run Model Multiverse
 
 ### X-int Method + Slope Outlier
 This time, I will do the same thing but run each version of the model with more or fewer interactions.
 
-That is, I will vary the X-intercept extraction method (coef vs. fixef) and the slope outlier quantile value (from 0 to 0.15 in steps of 0.01 quantiles), then run these datasets through four possible models: including (1) only key interactions (guise * SA * EQ), (2) add in CE but not Gender (guise * SA * EQ * CE), (3) add in Gender but not CE (guise * SA * EQ * Gender), and (4) add in both  (guise * SA * EQ * CE * Gender). 
+That is, I will vary the X-intercept extraction method (coef vs. fixef) and the slope outlier quantile value (from 0 to 0.30 in steps of 0.01 quantiles), then run these datasets through four possible models: including (1) only key interactions (guise * SA * EQ), (2) add in CE but not Gender (guise * SA * EQ * CE), (3) add in Gender but not CE (guise * SA * EQ * Gender), and (4) add in both  (guise * SA * EQ * CE * Gender). 
 
-The number of combinations is 2 * 16 * 4 = 128. I will try out the analysis looking at p-values for all of the predictors from the 'key interactions' model (because values would be skewed for predictors/interactions that only show up in the larger models), using the other predictors as comparisons to the predictors of interest (particularly the SA x EQ interaction).
+The number of combinations is 2 * 31 * 4 = 248. I will try out the analysis looking at p-values for all of the predictors from the 'key interactions' model (because values would be skewed for predictors/interactions that only show up in the larger models), using the other predictors as comparisons to the predictors of interest (particularly the SA x EQ interaction).
 
 
 #### MV Function
@@ -603,19 +506,17 @@ pvals_models %>% filter(predictor == '(Intercept)' | predictor == 'EQscore_all' 
 ##### Model Comparison plots
 It's impossible to read the values in this plot (see separate plots by model below), but from the grey shading in this composite plot, it's obvious what the patterns are. 
 
-1. While effects of guise:SA are present in the smaller models (within a certain range of slope_quantile values), this effect disappears when more variability is accounted for. *My interpretation: The guise effect was not a difference actually conditioned by guise, but possibly by other variability relating to gender and CE. This is because once Gender and CE were allowed to vary within guise along with SA score, this guise effect disappears.*
+1. While effects of guise:SA are present in the smaller models (within a certain range of slope_quantile values), this effect disappears when more variability is accounted for. *My interpretation(?): The guise effect was not a difference actually conditioned by guise, but possibly by other variability relating to gender and CE. This is because once Gender and CE were allowed to vary within guise along with SA score, this guise effect disappears.*
 
-2. While effects of SA and SA:EQ are present in all models, they become fully consistent and/or much more significant starting from a low slope_quantile cut-off (0.02 for Coef and 0.06 for Fixef), the same for both SA main effect and SA:EQ interaction. *Unsure: That the effects show up with a lower cut-off for the Coef model seems to match with the notion that this dataset has less noise.* 
+2. While effects of SA and SA:EQ are present in all models, as the models get larger, the effects become fully consistent and/or much more significant above a certain slope_quantile cut-off (0.02 for Coef and 0.06 for Fixef). This seems to indcate a clear "boundary" for outliers. *My interpretation(?): That the effects show up with a lower cut-off for the Coef model compared to the Fixef seems to match with the notion that this dataset has less noise.* 
 
-*My interpretation: Based on what I remember from Stats class, adding more predictors (e.g., control factors or covariates) means the model is 'soaking up' more variability, which if related to your factors of interest, can help with identifying real effects. Maybe that is what is happening in the larger models such that CE and Gender are related factors, so allowing them to vary in interactions with other factors helps to 'soak up' variability.*
-
-*c.f., In observational designs, covariates might be added to a model to 1) increase predictive ability, 2) because the researcher is interested in specific conditional effects, or 3) to eliminate confounding.*
-
+*My interpretation(?): Based on what I remember from Stats class, adding more predictors (e.g., control factors or covariates) means the model is 'soaking up' more variability, which if related to your factors of interest, can help with identifying effects that are really there but may have been partially masked by other intertwined factors (i.e., reduce confounding and/or increase predictive ability). Maybe that is what is happening in the larger models such that CE and Gender are related factors, so allowing them to vary in interactions with other factors helps to 'soak up' noise/variability. Whether this is what's happening and whether a larger model would make sense in the current design, however, I'm not sure about.*
 
 ```{r}
 pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' | 
                    predictor == 'guiseContr:SAscore_all' |
-                   predictor == 'SAscore_all') %>%
+                   predictor == 'SAscore_all' |
+                   predictor == 'EQscore_all') %>%
   ggplot(aes(x=xint_method, y=slope_quantile)) +
   scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
   facet_grid(model~predictor) +
@@ -682,11 +583,24 @@ pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' |
 ```
 
 #### Summary Stats
+
+If the mean of p-values are taken across all datsets, the values are again large enough that they don't indicate reliable significance. 
+
+If we take the median p-value, this suggests that SA:EQ and SA may be considered robustly significant across research decisions and models, aligning with the insight provided by the histogram above.
+
 ```{r}
 pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' | 
                    predictor == 'guiseContr:SAscore_all' |
-                   predictor == 'SAscore_all') %>%
+                   predictor == 'SAscore_all' |
+                   predictor == 'EQscore_all') %>%
   group_by(predictor) %>%
   summarize(mean = mean(pvalue), median = median(pvalue), min=min(pvalue), max=max(pvalue))
 ```
 
+## Conclusion
+
+The SA:EQ interaction appears robust across different datsets and models, though more so in larger models. It can also be sensitive to outlier exclusion at various quantile values in smaller models. In general, this multiverse analysis supports the notion that the SA:EQ is a "real" effect in the data, occuring in the majority of cases irrespective of arbitrary data analysis choices.
+
+There appears to be consistent outlier effects (leading to null results for all predictor) when not excluding participants with slope values below the 0.2-0.6 quantile. This aligns with previous examination of the data which show that the few extremely large values of x-intercept all come from individuals with low slope values, and the reasonable interpretation that "cross-over" points from individuals who do not actually distinguish raised and unraised variants is meaningless (as there is no single point at which they perceive half of the stimuli as raised). 
+
+The SA main effect and Guise:SA interaction are both less robust and less clear in interpretation. SA appears more robust in larger models while Guise:SA is only apparent in smaller models within a range of slope quantile cut-off values. I would be inclined to not take the Guise:SA as real, but I'm not sure how to interpret the SA effect that increase as the model included more interactions. The SA main effect does look quite robust in the larger models, and it's behavior was similar to the SA:EQ predictor.
