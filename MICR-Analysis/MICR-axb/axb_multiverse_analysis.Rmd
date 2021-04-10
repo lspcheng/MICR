@@ -307,7 +307,7 @@ multiverse_pvals <- function (df, xint_type, max_quantile) {
                         pvalue=as.integer(NA),
                         stringsAsFactors=FALSE)
   
-  for (i in seq(0, max_quantile, 0.01)) {
+  for (i in seq(0, max_quantile, 0.05)) {
     
     ind_au_df <- get_ind_df(df, i)
     ind_au_lm <- lm(guiseShift ~ scale(Age) + genderContr + CEscore_all + 
@@ -372,7 +372,7 @@ pvals %>% filter(predictor == 'SAscore_all:EQscore_all' |
                    predictor == 'SAscore_all' |
                    predictor == 'EQscore_all') %>%
   ggplot(aes(x=xint_method, y=slope_quantile)) +
-  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.05)) +
   facet_wrap(~predictor, ncol=4) +
   geom_tile(aes(fill=significant), linetype='solid', col='black') +
   geom_text(aes(label = round(pvalue, 3)), col='black') +
@@ -392,6 +392,14 @@ pvals %>% filter(predictor == 'SAscore_all:EQscore_all' |
                    predictor == 'guiseContr:SAscore_all' |
                    predictor == 'SAscore_all' |
                    predictor == 'EQscore_all') %>%
+  group_by(predictor) %>%
+  summarize(mean = mean(pvalue), median = median(pvalue), min=min(pvalue), max=max(pvalue))
+
+pvals %>% filter(predictor == 'SAscore_all:EQscore_all' | 
+                   predictor == 'guiseContr:SAscore_all' |
+                   predictor == 'SAscore_all' |
+                   predictor == 'EQscore_all') %>%
+  filter(xint_method=='coef') %>%
   group_by(predictor) %>%
   summarize(mean = mean(pvalue), median = median(pvalue), min=min(pvalue), max=max(pvalue))
 ```
@@ -416,7 +424,7 @@ model_multiverse_pvals <- function (df, xint_type, max_quantile) {
                         pvalue=as.integer(NA),
                         stringsAsFactors=FALSE)
   
-  for (i in seq(0, max_quantile, 0.01)) {
+  for (i in seq(0, max_quantile, 0.05)) {
     
     ind_au_df <- get_ind_df(df, i)
     ind_au_lm <- lm(guiseShift ~ scale(Age) + genderContr + CEscore_all + 
@@ -518,7 +526,7 @@ pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' |
                    predictor == 'SAscore_all' |
                    predictor == 'EQscore_all') %>%
   ggplot(aes(x=xint_method, y=slope_quantile)) +
-  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.05)) +
   facet_grid(model~predictor) +
   geom_tile(aes(fill=significant), linetype='solid', col='black') +
   geom_text(aes(label = round(pvalue, 3)), col='black', size=1) +
@@ -534,7 +542,7 @@ pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' |
                    predictor == 'SAscore_all') %>%
   filter(model == 'key_int') %>%
   ggplot(aes(x=xint_method, y=slope_quantile)) +
-  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.05)) +
   facet_grid(~predictor) +
   geom_tile(aes(fill=significant), linetype='solid', col='black') +
   geom_text(aes(label = round(pvalue, 3)), col='black') +
@@ -547,7 +555,7 @@ pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' |
                    predictor == 'SAscore_all') %>%
   filter(model == 'ce_int') %>%
   ggplot(aes(x=xint_method, y=slope_quantile)) +
-  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.05)) +
   facet_grid(~predictor) +
   geom_tile(aes(fill=significant), linetype='solid', col='black') +
   geom_text(aes(label = round(pvalue, 3)), col='black') +
@@ -560,7 +568,7 @@ pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' |
                    predictor == 'SAscore_all') %>%
   filter(model == 'gen_int') %>%
   ggplot(aes(x=xint_method, y=slope_quantile)) +
-  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.05)) +
   facet_grid(~predictor) +
   geom_tile(aes(fill=significant), linetype='solid', col='black') +
   geom_text(aes(label = round(pvalue, 3)), col='black') +
@@ -573,7 +581,7 @@ pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' |
                    predictor == 'SAscore_all') %>%
   filter(model == 'all_int') %>%
   ggplot(aes(x=xint_method, y=slope_quantile)) +
-  scale_y_continuous(breaks=seq(0, 0.3, 0.01)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.05)) +
   facet_grid(~predictor) +
   geom_tile(aes(fill=significant), linetype='solid', col='black') +
   geom_text(aes(label = round(pvalue, 3)), col='black') +
@@ -593,6 +601,14 @@ pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' |
                    predictor == 'guiseContr:SAscore_all' |
                    predictor == 'SAscore_all' |
                    predictor == 'EQscore_all') %>%
+  group_by(predictor) %>%
+  summarize(mean = mean(pvalue), median = median(pvalue), min=min(pvalue), max=max(pvalue))
+
+pvals_models %>% filter(predictor == 'SAscore_all:EQscore_all' | 
+                   predictor == 'guiseContr:SAscore_all' |
+                   predictor == 'SAscore_all' |
+                   predictor == 'EQscore_all') %>%
+  filter(xint_method=='coef') %>%
   group_by(predictor) %>%
   summarize(mean = mean(pvalue), median = median(pvalue), min=min(pvalue), max=max(pvalue))
 ```
