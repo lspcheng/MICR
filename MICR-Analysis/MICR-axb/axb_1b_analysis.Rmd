@@ -646,7 +646,7 @@ with(quesdata.demo, unique(Ethnicity))
 ```{r}
 quesdata.demo <- quesdata.demo %>%
   
-  mutate(Gender = mgsub(Gender, c("woman.*|female|cis female", "male|cis male", "non-binary|non binary|nonbinary"), c("f", "m", "nb"))) %>%
+  mutate(Gender = mgsub(Gender, c("woman.*|female|cis female", "male|cis male|.*male", "non-binary|non binary|nonbinary"), c("f", "m", "nb"))) %>%
   
   mutate_at(vars(starts_with("Loc") & ends_with("_4")), ~ mgsub(.x, c("michig.*|mi[/, ].*"), c("mi"))) %>%
   
@@ -999,21 +999,21 @@ rotLoadings.df
 
 ```{r}
 # PC1 Only Contributors
-rotLoadings.df %>% filter(abs(PC1) > 0.2)
+rotLoadings.df %>% filter(abs(PC1) > 0.3)
 ```
 
 
 ```{r}
 # PC2 Only Contributors
-rotLoadings.df %>% filter(abs(PC2) > 0.2)
+rotLoadings.df %>% filter(abs(PC2) > 0.3)
 ```
 
 ```{r, warning=F}
 # Check for overlapping contributors
-rotLoadings.df %>% filter(abs(PC2) > 0.2 & abs(PC1) > 0.2)
+rotLoadings.df %>% filter(abs(PC2) > 0.3 & abs(PC1) > 0.3)
 
 # Check for non-contributors
-rotLoadings.df %>% filter(abs(PC2) < 0.2 & abs(PC1) < 0.2)
+rotLoadings.df %>% filter(abs(PC2) < 0.3 & abs(PC1) < 0.3)
 ```
 
 

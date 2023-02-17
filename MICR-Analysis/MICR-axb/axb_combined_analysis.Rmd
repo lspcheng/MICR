@@ -154,7 +154,7 @@ lbq_1b <- read.csv('data/axb_1b_lbq_data.csv', skipNul=T)
 Check the data to make sure everything is as expected.
 ```{r}
 # Number of subjects
-axb_bysubj %>% group_by(experimentId, speakerGuise) %>% summarize(count = n())
+axb_bysubj %>% group_by(experimentId, speakerGuise) %>% summarise(count = n())
 
 ```
 
@@ -165,12 +165,39 @@ colnames(axb_bysubj)
 ## Check Data (Interim)
 
 ```{r}
-summary(axb_data)
+colnames(axb_data)
 ```
 
 ```{r}
-axb_bysubj %>% group_by(experimentId) %>% summarize(count = n(), meanEQ = mean(EQscore))
+axb_bysubj %>% group_by(Gender) %>% summarise(count = n(), meanEQ = mean(EQ.raws), minEQ = min(EQ.raws), maxEQ = max(EQ.raws))
 ```
+
+```{r}
+axb_bysubj %>% group_by(Gender) %>% summarise(count = n(), mean = mean(IK2.au), min = min(IK2.au), max = max(IK2.au))
+```
+
+```{r}
+axb_bysubj %>% group_by(Gender) %>% summarise(count = n(), mean = mean(SE1.Fam.oot_1), min = min(SE1.Fam.oot_1), max = max(SE1.Fam.oot_1))
+```
+
+```{r}
+axb_bysubj %>% group_by(Gender) %>% summarise(count = n(), mean = mean(SE2.Freq.Overall_1), min = min(SE2.Freq.Overall_1), max = max(SE2.Freq.Overall_1))
+```
+
+```{r}
+axb_bysubj %>% group_by(Gender) %>% summarise(count = n(), mean = mean(PE2.CanSpeakFreq.Overall_1), min = min(PE2.CanSpeakFreq.Overall_1), max = max(PE2.CanSpeakFreq.Overall_1))
+```
+
+```{r}
+axb_bysubj %>% group_by(Gender) %>% summarise(count = n(), mean = mean(ME4.CanHearFreq.Overall_1), min = min(ME4.CanHearFreq.Overall_1), max = max(ME4.CanHearFreq.Overall_1))
+```
+
+```{r}
+axb_bysubj %>% summarise(across(c(EQ.raws, IK2.au, SE1.Fam.oot_1, SE2.Freq.Overall_1, PE2.CanSpeakFreq.Overall_1, ME4.CanHearFreq.Overall_1), list(mean = mean))) %>%
+  pivot_longer(., cols=everything(), names_to = c("Question", NA), names_sep = "_", values_to = "mean")
+
+```
+
 
 ### Plots
 #### Yes/No Questions
@@ -209,7 +236,7 @@ axb_bysubj %>% mutate(EK3.CanAI = ifelse(EK3.CanAI==1, "yes", "no")) %>% count(E
   theme(legend.position = "none")
 yn_prop
 
-ggsave(path="plots", filename="ynQues_prop.png", yn_prop, width=9, height=6, units = "in" , dpi=72)
+ggsave(path="plots", filename="ynQues_prop.png", yn_prop, width=8, height=6, units = "in" , dpi=72)
 
 ```
 
@@ -477,21 +504,21 @@ rotLoadings.df
 
 ```{r}
 # PC1 Only Contributors
-rotLoadings.df %>% filter(abs(PC1) > 0.2)
+rotLoadings.df %>% filter(abs(PC1) > 0.3)
 ```
 
 
 ```{r}
 # PC2 Only Contributors
-rotLoadings.df %>% filter(abs(PC2) > 0.2)
+rotLoadings.df %>% filter(abs(PC2) > 0.3)
 ```
 
 ```{r, warning=F}
 # Check for overlapping contributors
-rotLoadings.df %>% filter(abs(PC2) > 0.2 & abs(PC1) > 0.2)
+rotLoadings.df %>% filter(abs(PC2) > 0.3 & abs(PC1) > 0.3)
 
 # Check for non-contributors
-rotLoadings.df %>% filter(abs(PC2) < 0.2 & abs(PC1) < 0.2)
+rotLoadings.df %>% filter(abs(PC2) < 0.3 & abs(PC1) < 0.3)
 ```
 
 
@@ -537,7 +564,7 @@ save(axb_all_data, file="./data/axb_combined_data.rData")
 
 # ...
 # Visualizations
-## Summarize Data (Final)
+## summarise Data (Final)
 
 ### Score Plots
 #### Score Distributions
@@ -652,7 +679,7 @@ axb_subj_data %>% ggplot(aes(y=CEscore, x=SAscore)) %>%
   theme(legend.position="bottom") +
   scale_x_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
   scale_y_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
-  labs(y="CanEx Scores", x="StereoFam Scores", color="Participant Group", shape="Participant Group")+
+  labs(y="CE Score", x="SF Score", color="Participant Group", shape="Participant Group")+
   geom_point(na.rm=TRUE, size=5, alpha=0.5) +
   geom_smooth(method='lm', color="blue")
 pca_dist_plot
@@ -668,7 +695,7 @@ axb_subj_data %>% ggplot(aes(y=EQscore, x=SAscore)) %>%
   theme(legend.position="bottom") +
   scale_x_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
   scale_y_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
-  labs(y="EQ Scores", x="StereoFam Scores", color="Participant Group", shape="Participant Group")+
+  labs(y="EQ Score", x="SF Score", color="Participant Group", shape="Participant Group")+
   geom_point(na.rm=TRUE, size=5, alpha=0.5) +
   geom_smooth(method='lm', color="blue")
 pca_dist_plot
@@ -676,6 +703,20 @@ pca_dist_plot
 ggsave(path="plots", filename="scores_EQSA_distributions.png", pca_dist_plot, width=9, height=6, units = "in" , dpi=72)
 ```
 
+```{r}
+pca_dist_plot <-
+axb_subj_data %>% ggplot(aes(y=EQscore, x=CEscore)) %>% 
+  pca_plot_theme() +
+  theme(legend.position="bottom") +
+  scale_x_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  scale_y_continuous(lim=c(-2.5, 2.5),breaks=seq(-3,3,1)) +
+  labs(y="EQ Score", x="CE Score", color="Participant Group", shape="Participant Group")+
+  geom_point(na.rm=TRUE, size=5, alpha=0.5) +
+  geom_smooth(method='lm', color="blue")
+pca_dist_plot
+
+# ggsave(path="plots", filename="scores_EQSA_distributions.png", pca_dist_plot, width=9, height=6, units = "in" , dpi=72)
+```
 
 ```{r}
 pca_dist_plot <-

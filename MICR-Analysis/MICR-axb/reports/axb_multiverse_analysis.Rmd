@@ -26,9 +26,9 @@ select <- dplyr::select # Ensure that select() command is the dplyr command (cla
 
 ## Load Data
 ```{r}
-load(file="./data/au_data_coded.rData")
-load(file="./data/xints_fixef_au.rData")
-load(file="./data/xints_coef_au.rData")
+load(file="../data/au_data_coded.rData")
+load(file="../data/xints_fixef_au.rData")
+load(file="../data/xints_coef_au.rData")
 ```
 
 
@@ -150,7 +150,7 @@ pval
 #### Check Residuals
 No relation apparent.
 ##### Coef
-```{r}
+```{r include=F}
 ind_au_resid <- data.frame(resid(ind_au_lm)) %>% rename(resid=resid.ind_au_lm.)
 
 ind_au_resid %>%
@@ -184,7 +184,7 @@ ind_au_resid %>%
   geom_smooth(method='lm')
 ```
 ##### Fixef
-```{r}
+```{r include=F}
 ind_au_resid <- data.frame(resid(ind_au_lm)) %>% rename(resid=resid.ind_au_lm.)
 
 ind_au_resid %>%
@@ -307,7 +307,7 @@ multiverse_pvals <- function (df, xint_type, max_quantile) {
                         pvalue=as.integer(NA),
                         stringsAsFactors=FALSE)
   
-  for (i in seq(0, max_quantile, 0.05)) {
+  for (i in seq(0, max_quantile, 0.02)) {
     
     ind_au_df <- get_ind_df(df, i)
     ind_au_lm <- lm(guiseShift ~ scale(Age) + genderContr + CEscore_all + 
@@ -372,13 +372,14 @@ pvals %>% filter(predictor == 'SAscore_all:EQscore_all' |
                    predictor == 'SAscore_all' |
                    predictor == 'EQscore_all') %>%
   ggplot(aes(x=xint_method, y=slope_quantile)) +
-  scale_y_continuous(breaks=seq(0, 0.3, 0.05)) +
+  scale_y_continuous(breaks=seq(0, 0.3, 0.02)) +
   facet_wrap(~predictor, ncol=4) +
   geom_tile(aes(fill=significant), linetype='solid', col='black') +
   geom_text(aes(label = round(pvalue, 3)), col='black') +
   scale_fill_gradient(low = "white", high = "grey") +
   theme_minimal() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
 ```
 
 #### Summary Stats
